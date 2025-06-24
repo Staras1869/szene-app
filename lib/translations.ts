@@ -83,6 +83,17 @@ export const translations = {
     googleMapsText: "We use Google Maps to display venue locations. Google's privacy policy applies to this service.",
     socialMediaText:
       "We integrate social media features. When you use these features, data may be transmitted to the respective social media platforms.",
+    loading: "Loading",
+    eventNotFound: "Event Not Found",
+    backToHome: "Back to Home",
+    backToEvents: "Back to Events",
+    date: "Date",
+    time: "Time",
+    location: "Location",
+    price: "Price",
+    getTickets: "Get Tickets",
+    shareEvent: "Share Event",
+    viewDetails: "View Details",
   },
 
   de: {
@@ -171,6 +182,17 @@ export const translations = {
       "Wir verwenden Google Maps, um Veranstaltungsorte anzuzeigen. Die Datenschutzbestimmungen von Google gelten für diesen Dienst.",
     socialMediaText:
       "Wir integrieren Social-Media-Funktionen. Wenn Sie diese Funktionen nutzen, können Daten an die jeweiligen Social-Media-Plattformen übertragen werden.",
+    loading: "Laden",
+    eventNotFound: "Event nicht gefunden",
+    backToHome: "Zurück zur Startseite",
+    backToEvents: "Zurück zu Events",
+    date: "Datum",
+    time: "Zeit",
+    location: "Ort",
+    price: "Preis",
+    getTickets: "Tickets kaufen",
+    shareEvent: "Event teilen",
+    viewDetails: "Details anzeigen",
   },
 
   es: {
@@ -258,6 +280,17 @@ export const translations = {
       "Utilizamos Google Maps para mostrar ubicaciones de lugares. La política de privacidad de Google se aplica a este servicio.",
     socialMediaText:
       "Integramos funciones de redes sociales. Cuando utiliza estas funciones, los datos pueden transmitirse a las respectivas plataformas de redes sociales.",
+    loading: "Cargando",
+    eventNotFound: "Evento no encontrado",
+    backToHome: "Volver al inicio",
+    backToEvents: "Volver a eventos",
+    date: "Fecha",
+    time: "Hora",
+    location: "Ubicación",
+    price: "Precio",
+    getTickets: "Comprar entradas",
+    shareEvent: "Compartir evento",
+    viewDetails: "Ver detalles",
   },
 }
 

@@ -106,8 +106,8 @@ export function DynamicEvents() {
   }
 
   const handleEventClick = (event: any) => {
-    const eventUrl = event.sourceUrl || event.url || `#event-${event.id}`
-    window.open(eventUrl, "_blank", "noopener,noreferrer")
+    // Navigate to event detail page instead of external URL
+    window.location.href = `/event/${event.id}`
   }
 
   if (!mounted) {
@@ -195,7 +195,7 @@ export function DynamicEvents() {
                       variant="secondary"
                       className="text-xs bg-blue-500 text-white border-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      {t("clickToOpen")}
+                      {t("viewDetails")}
                     </Badge>
                   </div>
                 </div>

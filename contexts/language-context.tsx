@@ -17,21 +17,25 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Load saved language from localStorage
-    const savedLanguage = localStorage.getItem("szene-language") as Language
-    if (savedLanguage && translations[savedLanguage]) {
-      setLanguage(savedLanguage)
-    } else {
-      // Detect browser language
-      const browserLang = navigator.language.split("-")[0] as Language
-      if (translations[browserLang]) {
-        setLanguage(browserLang)
+    if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem("szene-language") as Language
+      if (savedLanguage && translations[savedLanguage]) {
+        setLanguage(savedLanguage)
+      } else {
+        // Detect browser language
+        const browserLang = navigator.language.split("-")[0] as Language
+        if (translations[browserLang]) {
+          setLanguage(browserLang)
+        }
       }
     }
   }, [])
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)
-    localStorage.setItem("szene-language", lang)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("szene-language", lang)
+    }
   }
 
   const t = (key: keyof typeof translations.en): string => {
