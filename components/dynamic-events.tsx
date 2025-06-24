@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { MapPin, Clock, Euro, AlertCircle, RefreshCw, ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useLanguage } from "@/contexts/language-context"
+import { useLanguage } from "@/contexts/language-context" // Ensure this path is correct
 
 const fallbackEvents = [
   {
@@ -18,6 +18,7 @@ const fallbackEvents = [
     price: "€15",
     description: "Experience summer nights on our spectacular rooftop terrace with panoramic city views.",
     imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&auto=format",
+    sourceUrl: "https://example.com/rooftop-event",
   },
   {
     id: "2",
@@ -30,6 +31,7 @@ const fallbackEvents = [
     price: "€20",
     description: "Deep electronic beats in Mannheim's premier underground venue.",
     imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop&auto=format",
+    sourceUrl: "https://example.com/electronic-night",
   },
   {
     id: "3",
@@ -42,6 +44,7 @@ const fallbackEvents = [
     price: "€25",
     description: "Sophisticated evening with live jazz and premium wines.",
     imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop&auto=format",
+    sourceUrl: "https://example.com/jazz-wine",
   },
 ]
 
@@ -63,25 +66,23 @@ export function DynamicEvents() {
     try {
       setError(null)
       setRefreshing(true)
-      console.log("Fetching events with catchy images...")
-      const response = await fetch("/api/events?status=approved&limit=9")
+      // This API route should now fetch events processed by the background discovery
+      const response = await fetch("/api/events?status=approved&limit=9&source=discovered")
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
 
       const data = await response.json()
-      console.log("Received events with images:", data)
 
       if (data.events && data.events.length > 0) {
         setEvents(data.events)
       } else {
-        console.log("No events returned, using fallback events")
         setEvents(fallbackEvents)
       }
     } catch (error) {
       console.error("Failed to fetch events:", error)
-      setError("Using demo events - automation system starting up")
+      setError(t("errorFetchingEventsDefault")) // Use translation
       setEvents(fallbackEvents)
     } finally {
       setLoading(false)
@@ -106,8 +107,12 @@ export function DynamicEvents() {
   }
 
   const handleEventClick = (event: any) => {
-    // Navigate to event detail page instead of external URL
-    window.location.href = `/event/${event.id}`
+    // Reverted to opening external source URL
+    const eventUrl =
+      event.sourceUrl ||
+      event.url ||
+      `https://www.google.com/search?q=${encodeURIComponent(event.title + " " + event.venue)}`
+    window.open(eventUrl, "_blank", "noopener,noreferrer")
   }
 
   if (!mounted) {
@@ -133,9 +138,7 @@ export function DynamicEvents() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-16">
           <h2 className="text-4xl font-bold text-gray-900">{t("thisWeeksHighlights")}</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {error ? "Demo events while system initializes" : t("eventsDescription")}
-          </p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{error ? error : t("eventsDescription")}</p>
           <div className="flex items-center justify-center gap-2">
             <Badge variant="outline" className="text-xs">
               {t("autoUpdated")}
@@ -144,7 +147,7 @@ export function DynamicEvents() {
               {t("realVenueImages")}
             </Badge>
             {error && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="destructive" className="text-xs">
                 <AlertCircle className="w-3 h-3 mr-1" />
                 {t("demoMode")}
               </Badge>
@@ -195,7 +198,7 @@ export function DynamicEvents() {
                       variant="secondary"
                       className="text-xs bg-blue-500 text-white border-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      {t("viewDetails")}
+                      {t("clickToOpen")}
                     </Badge>
                   </div>
                 </div>

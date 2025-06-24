@@ -13,23 +13,23 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("en")
+  const [language, setLanguage] = useState<Language>("en") // Default to 'en'
 
   useEffect(() => {
-    // Load saved language from localStorage
+    // This effect runs only on the client side
     if (typeof window !== "undefined") {
       const savedLanguage = localStorage.getItem("szene-language") as Language
       if (savedLanguage && translations[savedLanguage]) {
         setLanguage(savedLanguage)
       } else {
-        // Detect browser language
         const browserLang = navigator.language.split("-")[0] as Language
         if (translations[browserLang]) {
           setLanguage(browserLang)
         }
+        // If no saved or browser lang, it remains 'en'
       }
     }
-  }, [])
+  }, []) // Empty dependency array ensures this runs once on mount
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)
@@ -39,7 +39,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }
 
   const t = (key: keyof typeof translations.en): string => {
-    return translations[language]?.[key] || translations.en[key] || key
+    // Fallback to English if a translation is missing for the current language
+    return translations[language]?.[key] || translations.en[key] || String(key)
   }
 
   return (
