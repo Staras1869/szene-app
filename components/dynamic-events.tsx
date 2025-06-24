@@ -5,13 +5,14 @@ import { MapPin, Clock, Euro, AlertCircle, RefreshCw, ImageIcon } from "lucide-r
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context" // Ensure this path is correct
+import { EventWeather } from "./event-weather" // Import the new component
 
 const fallbackEvents = [
   {
     id: "1",
     title: "🌆 Rooftop Summer Sessions",
     venue: "Skybar Mannheim",
-    date: "2024-07-15",
+    date: "2025-07-15", // Ensure dates are in the future for forecast
     time: "21:00",
     city: "Mannheim",
     category: "Nightlife",
@@ -19,12 +20,14 @@ const fallbackEvents = [
     description: "Experience summer nights on our spectacular rooftop terrace with panoramic city views.",
     imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&auto=format",
     sourceUrl: "https://example.com/rooftop-event",
+    lat: 49.4875, // Example coordinates for Mannheim
+    lon: 8.4661,
   },
   {
     id: "2",
     title: "🎵 Underground Electronic Night",
     venue: "MS Connexion",
-    date: "2024-07-20",
+    date: "2025-07-20",
     time: "23:00",
     city: "Mannheim",
     category: "Music",
@@ -32,12 +35,14 @@ const fallbackEvents = [
     description: "Deep electronic beats in Mannheim's premier underground venue.",
     imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop&auto=format",
     sourceUrl: "https://example.com/electronic-night",
+    lat: 49.4875,
+    lon: 8.4661,
   },
   {
     id: "3",
     title: "🎷 Jazz & Wine Evening",
     venue: "Heidelberg Castle",
-    date: "2024-07-22",
+    date: "2025-07-22",
     time: "19:30",
     city: "Heidelberg",
     category: "Art",
@@ -45,11 +50,14 @@ const fallbackEvents = [
     description: "Sophisticated evening with live jazz and premium wines.",
     imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop&auto=format",
     sourceUrl: "https://example.com/jazz-wine",
+    lat: 49.4123, // Example coordinates for Heidelberg
+    lon: 8.71,
   },
 ]
 
 export function DynamicEvents() {
-  const { t } = useLanguage()
+  const languageHook = useLanguage // Pass the hook itself
+  const { t } = languageHook()
   const [events, setEvents] = useState<any[]>(fallbackEvents)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,23 +74,22 @@ export function DynamicEvents() {
     try {
       setError(null)
       setRefreshing(true)
-      // This API route should now fetch events processed by the background discovery
-      const response = await fetch("/api/events?status=approved&limit=9&source=discovered")
+      const response = await fetch("/api/events?status=approved&limit=9") // Or your preferred endpoint
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }
-
       const data = await response.json()
-
       if (data.events && data.events.length > 0) {
-        setEvents(data.events)
+        // Ensure events have a 'date' field in YYYY-MM-DD format for weather
+        // And ideally lat/lon
+        setEvents(data.events.map((e: any) => ({ ...e, date: e.eventDate || e.date })))
       } else {
         setEvents(fallbackEvents)
       }
     } catch (error) {
       console.error("Failed to fetch events:", error)
-      setError(t("errorFetchingEventsDefault")) // Use translation
+      setError(t("errorFetchingEventsDefault"))
       setEvents(fallbackEvents)
     } finally {
       setLoading(false)
@@ -107,7 +114,6 @@ export function DynamicEvents() {
   }
 
   const handleEventClick = (event: any) => {
-    // Reverted to opening external source URL
     const eventUrl =
       event.sourceUrl ||
       event.url ||
@@ -203,23 +209,33 @@ export function DynamicEvents() {
                   </div>
                 </div>
 
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                         {event.title}
                       </h3>
-                      <p className="text-gray-600">{event.venue}</p>
+                      <p className="text-sm text-gray-600">{event.venue}</p>
                     </div>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="outline" className="text-xs whitespace-nowrap">
                       {event.category}
                     </Badge>
                   </div>
 
                   <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">{event.description}</p>
 
-                  <div className="flex items-center justify-between text-sm text-gray-500 pt-2 border-t border-gray-100">
-                    <div className="flex items-center space-x-4">
+                  {event.date && (event.city || (event.lat && event.lon)) && (
+                    <EventWeather
+                      city={event.city}
+                      date={event.date}
+                      lat={event.lat}
+                      lon={event.lon}
+                      languageHook={languageHook}
+                    />
+                  )}
+
+                  <div className="flex items-center justify-between text-sm text-gray-500 pt-3 border-t border-gray-100 mt-auto">
+                    <div className="flex items-center space-x-3">
                       <div className="flex items-center space-x-1">
                         <MapPin className="w-4 h-4" />
                         <span>{event.city}</span>
