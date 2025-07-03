@@ -1,35 +1,64 @@
 # Szene App - Quick Start Guide
 
-## 🚀 Getting Started
+## Prerequisites
+- Node.js 18+ installed
+- VS Code (recommended)
+- Git
 
-1. **Open Terminal in VS Code:**
-   - Terminal → New Terminal (or Ctrl+`)
+## Getting Started
 
-2. **Install Dependencies:**
-   \`\`\`bash
-   npm install
-   \`\`\`
+### 1. Install Dependencies
+\`\`\`bash
+npm install
+\`\`\`
 
-3. **Start Development Server:**
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+### 2. Start Development Server
+\`\`\`bash
+npm run dev
+\`\`\`
 
-4. **Open Browser:**
-   - Go to: http://localhost:3000
+### 3. Open Browser
+Navigate to: http://localhost:3000
 
-## 🎯 What You Should See:
-- Your Szene app running locally
-- All restaurant and event data
-- Mobile-responsive design
-- PWA functionality
+## Available Scripts
 
-## 🔧 Common Issues:
-- If `npm` doesn't work, try `yarn`
-- If port 3000 is busy, it will use 3001
-- Check terminal for any error messages
+- \`npm run dev\` - Start development server
+- \`npm run build\` - Build for production
+- \`npm run start\` - Start production server
+- \`npm run lint\` - Run ESLint
 
-## 📱 Testing on Mobile:
-1. Find your computer's IP address
-2. On phone, go to: http://[YOUR-IP]:3000
-3. Test PWA installation
+## Project Structure
+
+\`\`\`
+szene-app/
+├── app/                 # Next.js 13+ App Router
+├── components/          # React components
+├── lib/                # Utility functions
+├── public/             # Static assets
+├── styles/             # CSS files
+└── package.json        # Dependencies
+\`\`\`
+
+## Features
+
+- 🍽️ Restaurant listings
+- 🎉 Event discovery
+- 📱 PWA support
+- 🌐 Multi-language
+- 📍 Location-based
+- ⚡ Real-time updates
+
+## Troubleshooting
+
+### Port Already in Use
+\`\`\`bash
+lsof -ti:3000 | xargs kill -9
+npm run dev
+\`\`\`
+
+### Clear Cache
+\`\`\`bash
+npm cache clean --force
+rm -rf node_modules
+npm install
+\`\`\`

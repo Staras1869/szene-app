@@ -1,12 +1,18 @@
-# Navigate to your project directory
-cd szene-app
+# First, let's check if we're in the right directory
+pwd
 
-# Install all dependencies
+# List files to confirm package.json exists
+ls -la | grep package.json
+
+# Install dependencies
 npm install
 
 # Start the development server
 npm run dev
 
-# Alternative if npm doesn't work
+# If you get permission errors, try:
+sudo npm install
+
+# Alternative if npm has issues:
 yarn install
 yarn dev
