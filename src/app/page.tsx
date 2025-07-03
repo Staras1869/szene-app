@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Clock, Users, Star } from "lucide-react"
-import Image from "next/image"
 
 export default function Home() {
   const events = [
@@ -21,76 +20,55 @@ export default function Home() {
     {
       id: 2,
       title: "Street Food Festival",
-      description: "Explore a variety of delicious street food from around the world.",
-      location: "Marktplatz G1, Mannheim",
+      description: "A variety of street food from around the world.",
+      location: "Marktplatz, Mannheim",
       time: "12:00 - 22:00",
       date: "July 5-7, 2025",
       category: "Food",
-      rating: 4.6,
+      rating: 4.5,
       attendees: 500,
       image: "/placeholder.svg?height=200&width=400",
     },
   ]
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12 lg:p-24 bg-gray-50 dark:bg-gray-900">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gray-50">
       <div className="w-full max-w-4xl">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 sm:mb-12 text-gray-900 dark:text-gray-100">
-          Events in Mannheim
-        </h1>
-        <div className="grid gap-6 sm:gap-8">
+        <h1 className="text-4xl font-bold mb-8 text-center">Mannheim Events</h1>
+        <div className="grid gap-6 md:grid-cols-2">
           {events.map((event) => (
-            <Card
-              key={event.id}
-              className="w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 dark:bg-gray-800"
-            >
-              <div className="md:flex">
-                <div className="md:flex-shrink-0">
-                  <Image
-                    src={event.image || "/placeholder.svg"}
-                    alt={event.title}
-                    width={400}
-                    height={200}
-                    className="h-48 w-full object-cover md:h-full md:w-48"
-                  />
+            <Card key={event.id} className="overflow-hidden">
+              <img src={event.image || "/placeholder.svg"} alt={event.title} className="w-full h-48 object-cover" />
+              <CardHeader>
+                <CardTitle>{event.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">{event.description}</p>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  <span>{event.location}</span>
                 </div>
-                <div className="p-6 flex flex-col justify-between">
-                  <div>
-                    <CardHeader className="p-0 mb-4">
-                      <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {event.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 space-y-3 text-sm sm:text-base text-gray-600 dark:text-gray-300">
-                      <p>{event.description}</p>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-gray-500" />
-                        <span>{event.location}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-gray-500" />
-                        <span>
-                          {event.date}, {event.time}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-4 pt-2">
-                        <Badge variant="secondary">{event.category}</Badge>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 text-yellow-500" />
-                          <span className="font-medium">{event.rating}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4 text-gray-500" />
-                          <span className="font-medium">{event.attendees} attendees</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </div>
-                  <div className="mt-6">
-                    <Button>View Details</Button>
-                  </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <Clock className="mr-2 h-4 w-4" />
+                  <span>
+                    {event.date} at {event.time}
+                  </span>
                 </div>
-              </div>
+                <div className="flex justify-between items-center pt-4">
+                  <div className="flex items-center gap-4">
+                    <Badge>{event.category}</Badge>
+                    <div className="flex items-center">
+                      <Star className="mr-1 h-4 w-4 text-yellow-500 fill-yellow-500" />
+                      <span>{event.rating}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Users className="mr-1 h-4 w-4" />
+                      <span>{event.attendees}</span>
+                    </div>
+                  </div>
+                  <Button>Details</Button>
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
