@@ -10,7 +10,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ["localhost", "vercel.app"],
+    domains: ["localhost"],
     remotePatterns: [
       {
         protocol: "https",
