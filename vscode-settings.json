@@ -1,9 +1,10 @@
 {
+  "workbench.startupEditor": "none",
+  "terminal.integrated.defaultProfile.osx": "zsh",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "typescript.preferences.importModuleSpecifier": "relative",
   "emmet.includeLanguages": {
     "javascript": "javascriptreact",
     "typescript": "typescriptreact"
@@ -11,8 +12,5 @@
   "files.associations": {
     "*.tsx": "typescriptreact",
     "*.ts": "typescript"
-  },
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "terminal.integrated.defaultProfile.osx": "zsh"
+  }
 }

@@ -10,8 +10,16 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ["placeholder.svg", "images.unsplash.com"],
+    domains: ["placeholder.svg", "images.unsplash.com", "via.placeholder.com"],
     unoptimized: true,
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "/api/:path*",
+      },
+    ]
   },
 }
 
