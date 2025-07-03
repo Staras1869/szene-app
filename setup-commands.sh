@@ -1,19 +1,22 @@
-#!/bin/bash
+# First, let's check where we are
+pwd
 
-# Create a Projects directory in your home folder
-mkdir -p ~/Documents/Projects
+# Navigate to Desktop
+cd ~/Desktop
 
-# Navigate to the Projects directory
-cd ~/Documents/Projects
-
-# Clone your repository
-git clone https://github.com/Staras1869/szene-app.git
-
-# Navigate into the project
+# Create a proper project directory
+mkdir szene-app
 cd szene-app
 
-# Install Node.js dependencies
-npm install
+# Initialize the project
+npm init -y
 
-# Start the development server
-npm run dev
+# Install Next.js and dependencies
+npm install next@latest react@latest react-dom@latest
+npm install @types/node @types/react @types/react-dom typescript
+npm install tailwindcss postcss autoprefixer
+npm install lucide-react
+npm install @radix-ui/react-slot class-variance-authority clsx tailwind-merge
+
+# Initialize Tailwind CSS
+npx tailwindcss init -p
