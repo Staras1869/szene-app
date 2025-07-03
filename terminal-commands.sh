@@ -1,26 +1,25 @@
-# First, let's check if we're in the right directory
+# First, let's check where we are
 pwd
 
-# List files to confirm project folder exists
-ls -la
-
-# You should see a folder like 'szene-app' or 'mannheim-restaurants'
-# Navigate INTO that folder:
+# Navigate to your project folder (I can see it's called SZENE-APP in VS Code)
 cd szene-app
 
-# OR if it's called something else:
+# If that doesn't work, try:
 # cd mannheim-restaurants
 
-# Now check if package.json exists:
+# Or if it's in a different location:
+# cd ~/Desktop/szene-app
+
+# Check if package.json exists
 ls -la | grep package.json
 
 # If you see package.json, then run:
 npm install
 npm run dev
 
-# If you get permission errors, try:
+# If you get permission errors:
 sudo npm install
 
-# Alternative if npm has issues:
-# yarn install
-# yarn dev
+# Alternative package manager:
+yarn install
+yarn dev

@@ -15,5 +15,12 @@
   "tailwindCSS.includeLanguages": {
     "typescript": "html",
     "typescriptreact": "html"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/dist": true,
+    "**/.next": true
   }
 }
