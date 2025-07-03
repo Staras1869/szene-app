@@ -1,15 +1,19 @@
 #!/bin/bash
-# Commands to run in VS Code terminal
 
-echo "🎯 Step 1: Clone your repository"
-git clone https://gitlab.com/Staras1869-group/Staras1869-project.git
-cd Staras1869-project
+# Create a Projects directory in your home folder
+mkdir -p ~/Documents/Projects
 
-echo "🎯 Step 2: Install Node.js dependencies"
+# Navigate to the Projects directory
+cd ~/Documents/Projects
+
+# Clone your repository
+git clone https://github.com/Staras1869/szene-app.git
+
+# Navigate into the project
+cd szene-app
+
+# Install Node.js dependencies
 npm install
 
-echo "🎯 Step 3: Start development server"
+# Start the development server
 npm run dev
-
-echo "🎯 Step 4: Open in browser"
-echo "Go to: http://localhost:3000"

@@ -1,83 +1,95 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Code, Server, Smartphone, Globe } from "lucide-react"
+import { CheckCircle, XCircle, AlertCircle, Terminal, Folder, Play } from "lucide-react"
 
 export function DevelopmentHelper() {
-  const [isLocal, setIsLocal] = useState(false)
-  const [networkIP, setNetworkIP] = useState<string>("")
+  const [nodeVersion, setNodeVersion] = useState<string | null>(null)
+  const [projectPath, setProjectPath] = useState<string>("")
+  const [isServerRunning, setIsServerRunning] = useState(false)
 
   useEffect(() => {
-    setIsLocal(window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-
-    // Try to get network IP for mobile testing
+    // Check if we're in development mode
     if (typeof window !== "undefined") {
-      const hostname = window.location.hostname
-      if (hostname.startsWith("192.168.") || hostname.startsWith("10.") || hostname.startsWith("172.")) {
-        setNetworkIP(hostname)
-      }
+      setProjectPath(window.location.origin)
+      setIsServerRunning(window.location.hostname === "localhost")
     }
   }, [])
 
-  if (!isLocal) return null
+  const steps = [
+    {
+      id: 1,
+      title: "Clone Repository",
+      description: "Download your code from GitHub",
+      status: projectPath ? "complete" : "pending",
+      command: "git clone https://github.com/Staras1869/szene-app.git",
+    },
+    {
+      id: 2,
+      title: "Install Dependencies",
+      description: "Install all required packages",
+      status: "pending",
+      command: "npm install",
+    },
+    {
+      id: 3,
+      title: "Start Development Server",
+      description: "Run your app locally",
+      status: isServerRunning ? "complete" : "pending",
+      command: "npm run dev",
+    },
+  ]
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "complete":
+        return <CheckCircle className="w-5 h-5 text-green-500" />
+      case "error":
+        return <XCircle className="w-5 h-5 text-red-500" />
+      default:
+        return <AlertCircle className="w-5 h-5 text-yellow-500" />
+    }
+  }
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm">
-      <Card className="border-green-200 bg-green-50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2 text-green-800">
-            <Code className="w-4 h-4" />
-            Development Mode
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="flex items-center gap-2 mb-6">
+        <Terminal className="w-6 h-6 text-blue-500" />
+        <h2 className="text-2xl font-bold">Development Setup Helper</h2>
+      </div>
+
+      <div className="space-y-4">
+        {steps.map((step) => (
+          <div key={step.id} className="flex items-start gap-4 p-4 border rounded-lg">
+            <div className="flex-shrink-0 mt-1">{getStatusIcon(step.status)}</div>
+            <div className="flex-grow">
+              <h3 className="font-semibold text-lg">{step.title}</h3>
+              <p className="text-gray-600 mb-2">{step.description}</p>
+              <code className="block p-2 bg-gray-100 rounded text-sm font-mono">{step.command}</code>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {isServerRunning && (
+        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center gap-2">
-            <Server className="w-4 h-4 text-green-600" />
-            <span className="text-sm text-green-700">Local server running</span>
-            <Badge variant="outline" className="text-xs border-green-300 text-green-700">
-              Active
-            </Badge>
+            <Play className="w-5 h-5 text-green-500" />
+            <span className="font-semibold text-green-800">Development server is running!</span>
           </div>
+          <p className="text-green-700 mt-1">
+            Your app is available at: <strong>{projectPath}</strong>
+          </p>
+        </div>
+      )}
 
-          <div className="text-xs text-green-600 space-y-1">
-            <div className="flex items-center gap-2">
-              <Globe className="w-3 h-3" />
-              <span>Desktop: localhost:3000</span>
-            </div>
-            {networkIP && (
-              <div className="flex items-center gap-2">
-                <Smartphone className="w-3 h-3" />
-                <span>Mobile: {networkIP}:3000</span>
-              </div>
-            )}
-          </div>
-
-          <div className="pt-2 border-t border-green-200">
-            <p className="text-xs text-green-600 mb-2">Quick Actions:</p>
-            <div className="flex gap-1">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-6 px-2 border-green-300 text-green-700 hover:bg-green-100 bg-transparent"
-                onClick={() => window.location.reload()}
-              >
-                Reload
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-6 px-2 border-green-300 text-green-700 hover:bg-green-100 bg-transparent"
-                onClick={() => console.clear()}
-              >
-                Clear Console
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <Folder className="w-5 h-5 text-blue-500" />
+          <span className="font-semibold text-blue-800">Recommended Project Structure:</span>
+        </div>
+        <code className="block text-sm text-blue-700">~/Documents/Projects/szene-app/</code>
+      </div>
     </div>
   )
 }
