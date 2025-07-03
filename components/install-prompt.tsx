@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Download, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useLanguage } from "@/contexts/language-context"
+import { Card, CardContent } from "@/components/ui/card"
+import { Download, X } from "lucide-react"
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -11,7 +11,6 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPrompt() {
-  const { t } = useLanguage()
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
 
@@ -24,7 +23,9 @@ export function InstallPrompt() {
 
     window.addEventListener("beforeinstallprompt", handler)
 
-    return () => window.removeEventListener("beforeinstallprompt", handler)
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler)
+    }
   }, [])
 
   const handleInstall = async () => {
@@ -41,39 +42,50 @@ export function InstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false)
-    setDeferredPrompt(null)
   }
 
-  if (!showPrompt) return null
+  if (!showPrompt || !deferredPrompt) {
+    return null
+  }
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:max-w-sm">
-      <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+      <Card className="border-blue-200 bg-blue-50">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Download className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-blue-900">Install Szene App</h3>
+              </div>
+              <p className="text-sm text-blue-700 mb-3">
+                Add Szene to your home screen for quick access to Mannheim's best events!
+              </p>
+              <div className="flex gap-2">
+                <Button onClick={handleInstall} size="sm" className="bg-blue-600 hover:bg-blue-700">
+                  Install
+                </Button>
+                <Button
+                  onClick={handleDismiss}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100 bg-transparent"
+                >
+                  Later
+                </Button>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">{t("installApp")}</h3>
-              <p className="text-sm text-gray-600">{t("installAppDescription")}</p>
-            </div>
+            <Button
+              onClick={handleDismiss}
+              variant="ghost"
+              size="sm"
+              className="p-1 h-auto text-blue-600 hover:bg-blue-100"
+            >
+              <X className="w-4 h-4" />
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleDismiss}>
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <div className="flex space-x-2">
-          <Button onClick={handleInstall} size="sm" className="flex-1">
-            <Download className="w-4 h-4 mr-2" />
-            {t("install")}
-          </Button>
-          <Button variant="outline" onClick={handleDismiss} size="sm">
-            {t("later")}
-          </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
