@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-center text-3xl font-bold">Welcome to Szene App</CardTitle>
@@ -15,7 +15,7 @@ export default function Home() {
             <Button>Explore Events</Button>
             <Button variant="secondary">View Venues</Button>
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
             <Badge>Nightlife</Badge>
             <Badge variant="secondary">Food</Badge>
             <Badge variant="outline">Music</Badge>
