@@ -1,89 +1,36 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Calendar, Users } from "lucide-react"
-import Image from "next/image"
 
-export default function HomePage() {
-  const events = [
-    {
-      title: "Jazz im Park",
-      category: "Musik",
-      location: "Herzogenriedpark",
-      date: "15. Juli 2025",
-      attendees: 80,
-      image: "/placeholder.svg?height=200&width=400",
-    },
-    {
-      title: "Mannheimer Weinfest",
-      category: "Genuss",
-      location: "Friedrichsplatz",
-      date: "22. Juli 2025",
-      attendees: 150,
-      image: "/placeholder.svg?height=200&width=400",
-    },
-    {
-      title: "Open-Air-Kino",
-      category: "Film",
-      location: "Schlosshof",
-      date: "5. August 2025",
-      attendees: 200,
-      image: "/placeholder.svg?height=200&width=400",
-    },
-  ]
-
+export default function Home() {
   return (
-    <div className="bg-gray-50 dark:bg-gray-900">
-      <main className="container mx-auto px-4 py-8">
-        <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-            Willkommen bei Szene Mannheim
-          </h1>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-            Dein Guide für die besten Events und Locations der Stadt.
-          </p>
-        </header>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
+        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
+          Get started by editing&nbsp;
+          <code className="font-mono font-bold">src/app/page.tsx</code>
+        </p>
+      </div>
 
-        <section>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">Aktuelle Highlights</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.map((event, index) => (
-              <Card key={index} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="p-0">
-                  <Image
-                    src={event.image || "/placeholder.svg"}
-                    alt={event.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-48 object-cover"
-                  />
-                </CardHeader>
-                <CardContent className="p-6">
-                  <Badge variant="secondary" className="mb-2">
-                    {event.category}
-                  </Badge>
-                  <CardTitle className="text-xl font-bold mb-2">{event.title}</CardTitle>
-                  <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{event.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>{event.attendees} Zusagen</span>
-                    </div>
-                  </div>
-                  <Button className="w-full mt-6">Details ansehen</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-      </main>
-    </div>
+      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
+        <h1 className="text-4xl font-bold">Welcome to Szene App</h1>
+      </div>
+
+      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
+        <Card>
+          <CardHeader>
+            <CardTitle>Event 1</CardTitle>
+            <CardDescription>Description for event 1</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Details about the event.</p>
+            <Badge>Music</Badge>
+          </CardContent>
+          <CardFooter>
+            <Button>Learn More</Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </main>
   )
 }
