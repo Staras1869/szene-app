@@ -1,28 +1,23 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
-
-const inter = Inter({ subsets: ["latin"] })
+import { LanguageProvider } from "@/contexts/language-context"
 
 export const metadata: Metadata = {
-  title: "Szene App - Mannheim Events & Restaurants",
-  description: "Discover the best events, restaurants, and nightlife in Mannheim",
-  manifest: "/manifest.json",
-  themeColor: "#3b82f6",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-    generator: 'v0.dev'
+  title: "v0 App",
+  description: "Created with v0",
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="min-h-screen bg-background">{children}</div>
+      <body>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   )
