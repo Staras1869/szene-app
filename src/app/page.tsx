@@ -33,21 +33,20 @@ export default function Home() {
   ]
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 sm:p-12 md:p-24 bg-gray-50">
-      <div className="w-full max-w-5xl">
-        <h1 className="text-4xl font-bold mb-8 text-gray-800">Upcoming Events in Mannheim</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gray-50">
+      <div className="w-full max-w-4xl">
+        <h1 className="text-4xl font-bold mb-8 text-center">Mannheim Events</h1>
+        <div className="grid gap-6 md:grid-cols-2">
           {events.map((event) => (
-            <Card key={event.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <Card key={event.id} className="overflow-hidden">
               <CardHeader className="p-0">
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={event.image || "/placeholder.svg"}
-                    alt={event.title}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
+                <Image
+                  src={event.image || "/placeholder.svg"}
+                  alt={event.title}
+                  width={400}
+                  height={200}
+                  className="w-full h-48 object-cover"
+                />
               </CardHeader>
               <CardContent className="p-6">
                 <Badge variant="secondary" className="mb-2">
@@ -55,25 +54,27 @@ export default function Home() {
                 </Badge>
                 <CardTitle className="text-2xl font-bold mb-2">{event.title}</CardTitle>
                 <p className="text-gray-600 mb-4">{event.description}</p>
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {event.location}
-                </div>
-                <div className="flex items-center text-sm text-gray-500 mb-4">
-                  <Clock className="w-4 h-4 mr-2" />
-                  {event.date} at {event.time}
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <Users className="w-4 h-4 mr-2 text-gray-500" />
-                    <span className="text-sm text-gray-600">{event.attendees} going</span>
+                <div className="flex flex-col gap-2 text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>{event.location}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 mr-1 text-yellow-500" />
-                    <span className="text-sm font-semibold">{event.rating}</span>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>
+                      {event.date} at {event.time}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    <span>{event.attendees} attendees</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    <span>{event.rating} / 5.0</span>
                   </div>
                 </div>
-                <Button className="w-full mt-6">View Details</Button>
+                <Button className="mt-6 w-full">View Event</Button>
               </CardContent>
             </Card>
           ))}
