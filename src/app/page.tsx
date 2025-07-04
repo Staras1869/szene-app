@@ -1,25 +1,24 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-2xl">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50">
+      <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle className="text-center text-3xl font-bold">Welcome to Szene App</CardTitle>
+          <CardTitle>Project Szene</CardTitle>
+          <CardDescription>Your local scene, discovered.</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4">
-          <p className="text-center text-muted-foreground">Your ultimate guide to the Mannheim scene.</p>
-          <div className="flex gap-4">
-            <Button>Explore Events</Button>
-            <Button variant="secondary">View Venues</Button>
-          </div>
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            <Badge>Nightlife</Badge>
-            <Badge variant="secondary">Food</Badge>
-            <Badge variant="outline">Music</Badge>
-            <Badge variant="destructive">Art</Badge>
+        <CardContent>
+          <div className="space-y-4">
+            <p>Welcome to your new Next.js application. We've set up a few things for you to get started.</p>
+            <div className="flex gap-2">
+              <Badge variant="secondary">Next.js</Badge>
+              <Badge variant="secondary">Tailwind CSS</Badge>
+              <Badge variant="secondary">shadcn/ui</Badge>
+            </div>
+            <Button>Get Started</Button>
           </div>
         </CardContent>
       </Card>
