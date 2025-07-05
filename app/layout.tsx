@@ -1,7 +1,8 @@
+import { LanguageProvider } from "@/contexts/language-context"
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { LanguageProvider } from "@/contexts/language-context" // <-- This is the missing line
+// import { LanguageProvider } from "@/contexts/language-context" // <-- This is the missing line
 
 export const metadata: Metadata = {
   title: "Szene - Discover Mannheim",
