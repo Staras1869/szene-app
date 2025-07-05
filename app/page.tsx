@@ -1,9 +1,13 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MapPin, Clock, Users, Star } from "lucide-react"
+import { MobileOptimizedHeader } from "@/components/mobile-optimized-header"
+import { Hero } from "@/components/hero"
+import { Categories } from "@/components/categories"
+import { FeaturedRestaurants } from "@/components/featured-restaurants"
+import { DynamicEvents } from "@/components/dynamic-events"
+import { Newsletter } from "@/components/newsletter"
+import { Footer } from "@/components/footer"
+import { InstallPrompt } from "@/components/install-prompt"
 
-export default function Home() {
+export default function HomePage() {
   const events = [
     {
       id: 1,
@@ -41,56 +45,17 @@ export default function Home() {
   ]
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-blue-600 mb-4">Szene Mannheim</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Discover the best events, restaurants, and nightlife in Mannheim. Your guide to the city's vibrant scene.
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <Card key={event.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <Badge variant="secondary">{event.category}</Badge>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium">{event.rating}</span>
-                </div>
-              </div>
-              <CardTitle className="text-lg">{event.title}</CardTitle>
-              <CardDescription>{event.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  {event.location}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4" />
-                  {event.date} at {event.time}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="w-4 h-4" />
-                  {event.attendees} attending
-                </div>
-              </div>
-              <Button className="w-full">View Details</Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="mt-12 text-center">
-        <h2 className="text-2xl font-bold mb-4">Ready to explore Mannheim?</h2>
-        <p className="text-gray-600 mb-6">Join thousands of locals discovering the best the city has to offer.</p>
-        <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-          Get Started
-        </Button>
-      </div>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <MobileOptimizedHeader />
+      <main className="flex-grow">
+        <Hero />
+        <Categories />
+        <FeaturedRestaurants />
+        <DynamicEvents events={events} />
+        <Newsletter />
+      </main>
+      <Footer />
+      <InstallPrompt />
     </div>
   )
 }
