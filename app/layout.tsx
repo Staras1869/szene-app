@@ -1,12 +1,12 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { LanguageProvider } from "@/contexts/language-context"
+import { LanguageProvider } from "@/contexts/language-context" // <-- This is the missing line
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.dev",
+  title: "Szene - Discover Mannheim",
+  description: "Discover the best events, restaurants, and nightlife in Mannheim",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
