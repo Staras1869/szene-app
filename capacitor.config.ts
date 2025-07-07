@@ -4,7 +4,9 @@ const config: CapacitorConfig = {
   appId: "com.app.szene",
   appName: "Szene",
   webDir: "out",
-  bundledWebRuntime: false,
+  server: {
+    androidScheme: "https",
+  },
 }
 
 export default config
