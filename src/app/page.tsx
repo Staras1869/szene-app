@@ -1,24 +1,50 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Header } from "@/components/header";
+import { Hero } from "@/components/hero";
+import { SearchSystem } from "@/components/search-system";
+import { DynamicEvents } from "@/components/dynamic-events";
+import { Categories } from "@/components/categories";
+import { TimeBasedSections } from "@/components/time-based-sections";
+import { FunAutomationStatus } from "@/components/fun-automation-status";
+import { Newsletter } from "@/components/newsletter";
+import { Footer } from "@/components/footer";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Welcome to Szene App!</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <p>This is your starting point. Let's build something amazing.</p>
-          <div className="flex gap-2">
-            <Badge>Next.js</Badge>
-            <Badge variant="secondary">Tailwind CSS</Badge>
-            <Badge variant="outline">Shadcn/ui</Badge>
+    <div className="min-h-screen bg-white">
+      <Header />
+
+      {/* Hero with gradient background */}
+      <Hero />
+
+      {/* Search bar centred below hero */}
+      <section className="relative z-10 -mt-8 pb-4">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100">
+            <SearchSystem />
           </div>
-          <Button>Get Started</Button>
-        </CardContent>
-      </Card>
-    </main>
-  )
+        </div>
+      </section>
+
+      {/* This week's events */}
+      <DynamicEvents />
+
+      {/* Category grid */}
+      <Categories />
+
+      {/* Time-aware venue sections (Clubs / Bars / Wine / Cafés / Brunch) */}
+      <TimeBasedSections />
+
+      {/* Automation bot status — shows real-time discovery stats */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FunAutomationStatus />
+        </div>
+      </section>
+
+      {/* Newsletter sign-up */}
+      <Newsletter />
+
+      <Footer />
+    </div>
+  );
 }

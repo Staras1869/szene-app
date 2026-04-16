@@ -1,6 +1,8 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -9,91 +11,69 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  username      String?   @unique
-  fullName      String?
-  password      String
-  avatarUrl     String?
-  phone         String?
-  dateOfBirth   DateTime?
-  city          String?
-  preferences   Json?     @default("{}")
-  isVerified    Boolean   @default(false)
-  isPremium     Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@map("users")
-}
-
-model Venue {
-  id            String    @id @default(uuid())
-  name          String
-  slug          String    @unique
-  category      String
-  subcategory   String?
-  city          String
-  district      String?
-  address       String
-  latitude      Float?
-  longitude     Float?
-  phone         String?
-  email         String?
-  website       String?
-  instagram     String?
-  facebook      String?
-  description   String?
-  shortDescription String?
-  priceRange    String?
-  openingHours  Json?     @default("{}")
-  features      Json?     @default("[]")
-  amenities     Json?     @default("[]")
-  images        Json?     @default("[]")
-  menuUrl       String?
-  reservationUrl String?
-  rating        Float     @default(0)
-  reviewCount   Int       @default(0)
-  checkInCount  Int       @default(0)
-  favoriteCount Int       @default(0)
-  verified      Boolean   @default(false)
-  featured      Boolean   @default(false)
-  status        String    @default("active")
-  ownerId       String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  events        Event[]
-
-  @@map("venues")
+  id             String         @id @default(cuid())
+  name           String?
+  email          String?        @unique
+  hashedPassword String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  events         Event[]
+  reviews        Review[]
+  favorites      UserFavorite[]
+  checkIns       CheckIn[]
 }
 
 model Event {
-  id              String    @id @default(uuid())
-  venueId         String
-  venue           Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
-  organizerId     String?
-  title           String
-  slug            String    @unique
-  description     String?
-  shortDescription String?
-  eventDate       DateTime
-  startTime       DateTime?
-  endTime         DateTime?
-  price           String?
-  category        String?
-  tags            Json?     @default("[]")
-  imageUrl        String?
-  images          Json?     @default("[]")
-  ticketUrl       String?
-  capacity        Int?
-  attendeesCount  Int       @default(0)
-  rsvpCount       Int       @default(0)
-  ageRestriction  Int?
-  dressCode       String?
-  status          String    @default("active")
-  featured        Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  venues      Venue[]
+}
 
-  @@map("events")
+model Venue {
+  id      String  @id @default(cuid())
+  name    String
+  address String
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+}
+
+// OSM venue id stored as string — no FK into Venue table (venues come from OpenStreetMap live)
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  rating    Int      // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, venueId])
+  @@map("reviews")
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, venueId])
+  @@map("user_favorites")
+}
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  createdAt DateTime @default(now())
+
+  @@map("check_ins")
 }

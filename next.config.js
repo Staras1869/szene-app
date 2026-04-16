@@ -1,24 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    domains: ["localhost"],
+    unoptimized: false,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      { protocol: "https", hostname: "picsum.photos" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
+      { protocol: "https", hostname: "**" },
+      { protocol: "http",  hostname: "**" },
     ],
-    unoptimized: true,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(npx cap *)",
+      "Bash(convert -version)",
+      "Bash(vercel --version)",
+      "Bash(sudo npm *)",
+      "Bash(npx vercel *)",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('hex'\\)\\)\")"
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+        <string>Szene</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- Location — used for "Near me" venue discovery -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Szene uses your location to show nearby bars, clubs and restaurants.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Szene uses your location to show nearby venues and send you relevant event alerts.</string>
+
+	<!-- Camera — for profile photos and venue check-in photos -->
+	<key>NSCameraUsageDescription</key>
+	<string>Szene needs camera access so you can upload photos of venues and events.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Szene needs photo library access so you can choose a profile picture or share venue photos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Szene saves photos of venues and events to your photo library.</string>
+
+	<!-- Notifications — for event alerts and venue deals -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- Face ID (future payments / secure login) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Szene uses Face ID for quick, secure sign-in.</string>
+
+	<!-- Lock orientation to portrait on iPhone -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>

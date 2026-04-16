@@ -39,10 +39,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }
 
   const t = (key: keyof typeof translations.en): string => {
-    // Fallback to English if a translation is missing for the current language
-    return translations[language]?.[key] || translations.en[key] || String(key)
-  }
+    // Safely access the translation for the current language
+    const currentTranslation = translations[language as keyof typeof translations];
+    if (currentTranslation && currentTranslation[key]) {
+      return currentTranslation[key];
+    }
 
+    // If it doesn't exist, fall back to English
+    const fallbackTranslation = translations.en[key];
+    if (fallbackTranslation) {
+      return fallbackTranslation;
+    }
+
+    // If no translation is found, return the key itself
+    return key;
+  }
   return (
     <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
