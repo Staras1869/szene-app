@@ -1,281 +1,118 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useLanguage } from "@/contexts/language-context"
-import { BrunchSection } from "./brunch-section"
-import { WineSection } from "./wine-section"
+import { useState } from "react"
+import { Clock } from "lucide-react"
 
-// Mock sections for clubs, bars, cafes, etc.
-function ClubsSection() {
-  const { t } = useLanguage()
-
-  return (
-    <section className="py-16 bg-gradient-to-br from-purple-900 via-blue-900 to-black text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">{t("clubsNightlife")}</h2>
-          <p className="text-xl text-purple-200">The hottest clubs and nightlife spots in Mannheim & Heidelberg</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { name: "Tiffany Club", style: "Electronic", capacity: "500", until: "6:00" },
-            { name: "MS Connexion", style: "Techno", capacity: "800", until: "5:00" },
-            { name: "Palazzo", style: "Mixed", capacity: "400", until: "4:00" },
-          ].map((club) => (
-            <div
-              key={club.name}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all"
-            >
-              <h3 className="text-xl font-bold mb-2">{club.name}</h3>
-              <div className="space-y-2 text-sm">
-                <p>
-                  🎵 {t("musicStyle")}: {club.style}
-                </p>
-                <p>
-                  👥 {t("capacity")}: {club.capacity}
-                </p>
-                <p>
-                  🕐 {t("openUntil")}: {club.until}:00
-                </p>
-                <p>🔞 {t("ageRestriction")}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function BarsSection() {
-  const { t } = useLanguage()
-
-  return (
-    <section className="py-16 bg-gradient-to-br from-amber-50 to-orange-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t("barsLounges")}</h2>
-          <p className="text-xl text-gray-600">Craft cocktails and sophisticated atmospheres</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { name: "Hemingway Bar", style: "Classic Cocktails", happy: "17:00-19:00", until: "2:00" },
-            { name: "Skybar Mannheim", style: "Rooftop Views", happy: "18:00-20:00", until: "1:00" },
-            { name: "The Parlour", style: "Speakeasy", happy: "16:00-18:00", until: "3:00" },
-          ].map((bar) => (
-            <div key={bar.name} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
-              <h3 className="text-xl font-bold mb-2 text-gray-900">{bar.name}</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>🍸 {bar.style}</p>
-                <p>
-                  ⏰ {t("happyHour")}: {bar.happy}
-                </p>
-                <p>
-                  🕐 {t("openUntil")}: {bar.until}:00
-                </p>
-                <p>🪑 {t("outdoorSeating")}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function CafesSection() {
-  const { t } = useLanguage()
-
-  return (
-    <section className="py-16 bg-gradient-to-br from-amber-50 to-yellow-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t("cafesCoffee")}</h2>
-          <p className="text-xl text-gray-600">Perfect spots for coffee, work, and relaxation</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { name: "Café Central", features: ["WiFi", "Outdoor"], until: "22:00", specialty: "Specialty Coffee" },
-            { name: "Kaffeehaus", features: ["Pet Friendly", "WiFi"], until: "20:00", specialty: "Austrian Style" },
-            { name: "Beans & Books", features: ["WiFi", "Quiet"], until: "19:00", specialty: "Reading Corner" },
-          ].map((cafe) => (
-            <div key={cafe.name} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
-              <h3 className="text-xl font-bold mb-2 text-gray-900">{cafe.name}</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>☕ {cafe.specialty}</p>
-                <p>
-                  🕐 {t("openUntil")}: {cafe.until}
-                </p>
-                <div className="flex gap-2 flex-wrap">
-                  {cafe.features.map((feature) => (
-                    <span key={feature} className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs">
-                      {feature === "WiFi"
-                        ? t("wifiAvailable")
-                        : feature === "Pet Friendly"
-                          ? t("petFriendly")
-                          : feature === "Outdoor"
-                            ? t("outdoorSeating")
-                            : feature}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function DayDrinkingSection() {
-  const { t } = useLanguage()
-
-  return (
-    <section className="py-16 bg-gradient-to-br from-green-50 to-blue-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t("dayDrinking")}</h2>
-          <p className="text-xl text-gray-600">Beer gardens, outdoor bars, and sunny terraces</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            { name: "Biergarten Luisenpark", type: "Beer Garden", open: "11:00", features: ["Outdoor", "Family"] },
-            { name: "Rheinterrasse", type: "River Bar", open: "12:00", features: ["River View", "Outdoor"] },
-            { name: "Sonnendeck", type: "Rooftop", open: "14:00", features: ["City View", "Cocktails"] },
-          ].map((spot) => (
-            <div key={spot.name} className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all">
-              <h3 className="text-xl font-bold mb-2 text-gray-900">{spot.name}</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>🌞 {spot.type}</p>
-                <p>🕐 Open from: {spot.open}</p>
-                <div className="flex gap-2 flex-wrap">
-                  {spot.features.map((feature) => (
-                    <span key={feature} className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
+const SECTIONS = [
+  {
+    id: "clubs",
+    label: "Clubs",
+    emoji: "🖤",
+    time: "22:00 – 06:00",
+    venues: [
+      { name: "Tiffany Club",    area: "C-Quadrat",  style: "Electronic / House",  until: "06:00", emoji: "💜" },
+      { name: "MS Connexion",    area: "Hafen",       style: "Techno / Multi-floor", until: "05:00", emoji: "🎧" },
+      { name: "BASE Club",       area: "Jungbusch",   style: "Bass / Electronic",   until: "05:00", emoji: "🔊" },
+      { name: "Zeitraumexit",    area: "Jungbusch",   style: "Techno / Underground", until: "06:00", emoji: "🖤" },
+      { name: "halle02",         area: "Heidelberg",  style: "Festival / Electronic", until: "05:00", emoji: "🏭" },
+      { name: "Schwimmbad Club", area: "Heidelberg",  style: "Indie / Alternative",  until: "04:00", emoji: "🎸" },
+    ],
+  },
+  {
+    id: "bars",
+    label: "Bars",
+    emoji: "🍸",
+    time: "18:00 – 02:00",
+    venues: [
+      { name: "Hemingway Bar",          area: "Innenstadt",  style: "Cocktails / Classic",  until: "02:00", emoji: "🍸" },
+      { name: "Ella & Louis",           area: "Jungbusch",   style: "Jazz / Wine",          until: "01:00", emoji: "🎷" },
+      { name: "Weinkeller Wasserturm",  area: "Wasserturm",  style: "Wine / Upscale",       until: "00:00", emoji: "🍷" },
+      { name: "Tapas Bar Mannheim",     area: "P-Quadrate",  style: "Tapas / Spanish",      until: "01:00", emoji: "🫒" },
+      { name: "Skybar Mannheim",        area: "Quadrate",    style: "Rooftop / Cocktails",  until: "01:00", emoji: "🏙️" },
+    ],
+  },
+  {
+    id: "cafes",
+    label: "Cafés",
+    emoji: "☕",
+    time: "08:00 – 18:00",
+    venues: [
+      { name: "Café Vanille",     area: "Jungbusch",   style: "Brunch / Coffee",    until: "18:00", emoji: "☕" },
+      { name: "Café Wien",        area: "Quadrate",    style: "Viennese / Coffee",  until: "20:00", emoji: "🥐" },
+      { name: "Café Journal",     area: "Heidelberg",  style: "Coffee / Breakfast", until: "18:00", emoji: "📰" },
+    ],
+  },
+  {
+    id: "food",
+    label: "Food",
+    emoji: "🍜",
+    time: "11:00 – 23:00",
+    venues: [
+      { name: "Alter Messplatz",       area: "Neckarstadt",  style: "Street Food / Market", until: "20:00", emoji: "🍜" },
+      { name: "Tapas Bar Mannheim",    area: "P-Quadrate",   style: "Spanish / Tapas",      until: "01:00", emoji: "🫒" },
+      { name: "Reindl's Restaurant",   area: "Innenstadt",   style: "German / Modern",      until: "22:00", emoji: "🍽️" },
+    ],
+  },
+]
 
 export function TimeBasedSections() {
-  const { t } = useLanguage()
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [timeOfDay, setTimeOfDay] = useState<"morning" | "afternoon" | "evening" | "night">("morning")
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date()
-      setCurrentTime(now)
-
-      const hour = now.getHours()
-      if (hour >= 6 && hour < 12) setTimeOfDay("morning")
-      else if (hour >= 12 && hour < 18) setTimeOfDay("afternoon")
-      else if (hour >= 18 && hour < 23) setTimeOfDay("evening")
-      else setTimeOfDay("night")
-    }
-
-    updateTime()
-    const interval = setInterval(updateTime, 60000) // Update every minute
-
-    return () => clearInterval(interval)
-  }, [])
-
-  const getTimeGreeting = () => {
-    switch (timeOfDay) {
-      case "morning":
-        return t("goodMorning")
-      case "afternoon":
-        return t("goodAfternoon")
-      case "evening":
-        return t("goodEvening")
-      case "night":
-        return t("lateNight")
-    }
-  }
-
-  const getTimeActivity = () => {
-    switch (timeOfDay) {
-      case "morning":
-        return t("coffeeAndBrunch")
-      case "afternoon":
-        return t("dayDrinkingFun")
-      case "evening":
-        return t("cocktailsAndDinner")
-      case "night":
-        return t("clubsAndParties")
-    }
-  }
-
-  const getSectionOrder = () => {
-    switch (timeOfDay) {
-      case "morning":
-        return [
-          <CafesSection key="cafes" />,
-          <BrunchSection key="brunch" />,
-          <WineSection key="wine" />,
-          <BarsSection key="bars" />,
-          <DayDrinkingSection key="day-drinking" />,
-          <ClubsSection key="clubs" />,
-        ]
-      case "afternoon":
-        return [
-          <DayDrinkingSection key="day-drinking" />,
-          <WineSection key="wine" />,
-          <BarsSection key="bars" />,
-          <CafesSection key="cafes" />,
-          <BrunchSection key="brunch" />,
-          <ClubsSection key="clubs" />,
-        ]
-      case "evening":
-        return [
-          <WineSection key="wine" />,
-          <BarsSection key="bars" />,
-          <ClubsSection key="clubs" />,
-          <DayDrinkingSection key="day-drinking" />,
-          <BrunchSection key="brunch" />,
-          <CafesSection key="cafes" />,
-        ]
-      case "night":
-        return [
-          <ClubsSection key="clubs" />,
-          <BarsSection key="bars" />,
-          <WineSection key="wine" />,
-          <DayDrinkingSection key="day-drinking" />,
-          <BrunchSection key="brunch" />,
-          <CafesSection key="cafes" />,
-        ]
-    }
-  }
+  const [active, setActive] = useState("clubs")
+  const section = SECTIONS.find((s) => s.id === active)!
 
   return (
-    <div>
-      {/* Time-based header */}
-      <section className="py-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-2">{getTimeGreeting()}!</h2>
-          <p className="text-xl text-purple-100">
-            {t("perfectTimeFor")} {getTimeActivity()}
-          </p>
-          <p className="text-sm text-purple-200 mt-2">
-            {currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-          </p>
-        </div>
-      </section>
+    <section className="py-20 bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      {/* Dynamic sections based on time */}
-      {getSectionOrder()}
-    </div>
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-white tracking-tight">By type</h2>
+          <p className="text-zinc-500 text-sm mt-1">Filter by what you're looking for</p>
+        </div>
+
+        {/* Tab row */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-1">
+          {SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setActive(s.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
+                active === s.id
+                  ? "bg-violet-600 text-white"
+                  : "border border-white/10 text-zinc-400 hover:text-white hover:border-white/20"
+              }`}
+            >
+              <span>{s.emoji}</span>
+              {s.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Time badge */}
+        <div className="flex items-center gap-2 mb-6">
+          <Clock className="w-3.5 h-3.5 text-zinc-600" />
+          <span className="text-xs text-zinc-600">Typical hours: {section.time}</span>
+        </div>
+
+        {/* Venue grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {section.venues.map((v) => (
+            <div
+              key={v.name}
+              className="flex items-center gap-4 p-4 rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 cursor-pointer group"
+            >
+              <span className="text-2xl flex-shrink-0">{v.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white group-hover:text-violet-300 transition-colors truncate">{v.name}</p>
+                <p className="text-xs text-zinc-500 mt-0.5">{v.style}</p>
+                <p className="text-xs text-zinc-600">{v.area}</p>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <p className="text-[10px] text-zinc-600 uppercase tracking-wider">until</p>
+                <p className="text-xs font-semibold text-zinc-400">{v.until}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }

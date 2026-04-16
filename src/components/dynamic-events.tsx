@@ -1,274 +1,152 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MapPin, Clock, Euro, AlertCircle, RefreshCw, ImageIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { useLanguage } from "@/contexts/language-context" // Ensure this path is correct
-import { EventWeather } from "./event-weather" // Import the new component
+import { Calendar, Clock, MapPin, Euro, RefreshCw, ExternalLink } from "lucide-react"
 
-const fallbackEvents = [
-  {
-    id: "1",
-    title: "🌆 Rooftop Summer Sessions",
-    venue: "Skybar Mannheim",
-    date: "2025-07-15", // Ensure dates are in the future for forecast
-    time: "21:00",
-    city: "Mannheim",
-    category: "Nightlife",
-    price: "€15",
-    description: "Experience summer nights on our spectacular rooftop terrace with panoramic city views.",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop&auto=format",
-    sourceUrl: "https://example.com/rooftop-event",
-    lat: 49.4875, // Example coordinates for Mannheim
-    lon: 8.4661,
-  },
-  {
-    id: "2",
-    title: "🎵 Underground Electronic Night",
-    venue: "MS Connexion",
-    date: "2025-07-20",
-    time: "23:00",
-    city: "Mannheim",
-    category: "Music",
-    price: "€20",
-    description: "Deep electronic beats in Mannheim's premier underground venue.",
-    imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop&auto=format",
-    sourceUrl: "https://example.com/electronic-night",
-    lat: 49.4875,
-    lon: 8.4661,
-  },
-  {
-    id: "3",
-    title: "🎷 Jazz & Wine Evening",
-    venue: "Heidelberg Castle",
-    date: "2025-07-22",
-    time: "19:30",
-    city: "Heidelberg",
-    category: "Art",
-    price: "€25",
-    description: "Sophisticated evening with live jazz and premium wines.",
-    imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop&auto=format",
-    sourceUrl: "https://example.com/jazz-wine",
-    lat: 49.4123, // Example coordinates for Heidelberg
-    lon: 8.71,
-  },
+const FALLBACK = [
+  { id: "f1", title: "Rooftop Summer Sessions",       venue: "Skybar Mannheim",          date: "", time: "21:00", city: "Mannheim",   category: "Nightlife",  price: "€15", description: "Panoramic city views, craft cocktails, DJ sets.",                    sourceUrl: "https://www.google.com/search?q=Skybar+Mannheim",       imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop" },
+  { id: "f2", title: "Underground Electronic Night",  venue: "MS Connexion",             date: "", time: "23:00", city: "Mannheim",   category: "Music",      price: "€20", description: "Deep electronic beats in Mannheim's premier underground venue.",      sourceUrl: "https://www.msconnexion.de",                            imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop" },
+  { id: "f3", title: "Jazz & Wine Evening",           venue: "Heidelberg Castle Gardens", date: "", time: "19:30", city: "Heidelberg", category: "Culture",    price: "€25", description: "Live jazz trio and Rhine Valley wines in a historic setting.",         sourceUrl: "https://www.heidelberg-marketing.de",                  imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop" },
+  { id: "f4", title: "Techno Rave — Zeitraumexit",   venue: "Zeitraumexit",             date: "", time: "00:00", city: "Mannheim",   category: "Nightlife",  price: "€12", description: "All-night techno in Mannheim's iconic underground art space.",         sourceUrl: "https://www.zeitraumexit.de",                          imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop" },
+  { id: "f5", title: "Indie & Alternative Night",    venue: "Schwimmbad Club",          date: "", time: "22:00", city: "Heidelberg", category: "Music",      price: "€10", description: "Heidelberg's beloved weekly indie and post-punk night.",               sourceUrl: "https://www.schwimmbad-club.de",                       imageUrl: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&h=400&fit=crop" },
+  { id: "f6", title: "Kulturherbst: Art & Music",    venue: "Alte Feuerwache",          date: "", time: "18:00", city: "Mannheim",   category: "Culture",    price: "Free", description: "Local art installations, live performances, and community spirit.",  sourceUrl: "https://www.altefeuerwache.com",                       imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop" },
 ]
 
+const CATEGORY_COLORS: Record<string, string> = {
+  Nightlife: "text-violet-400 bg-violet-400/10",
+  Music:     "text-blue-400   bg-blue-400/10",
+  Culture:   "text-amber-400  bg-amber-400/10",
+  Food:      "text-emerald-400 bg-emerald-400/10",
+  Student:   "text-pink-400   bg-pink-400/10",
+  Social:    "text-teal-400   bg-teal-400/10",
+}
+
 export function DynamicEvents() {
-  const languageHook = useLanguage // Pass the hook itself
-  const { t } = languageHook()
-  const [events, setEvents] = useState<any[]>(fallbackEvents)
+  const [events, setEvents] = useState<any[]>(FALLBACK)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(new Set())
+  const [filter, setFilter] = useState("all")
 
-  useEffect(() => {
-    setMounted(true)
-    fetchEvents()
-  }, [])
+  useEffect(() => { load() }, [])
 
-  const fetchEvents = async () => {
+  async function load() {
     try {
-      setError(null)
       setRefreshing(true)
-      const response = await fetch("/api/events?status=approved&limit=9") // Or your preferred endpoint
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-      const data = await response.json()
-      if (data.events && data.events.length > 0) {
-        // Ensure events have a 'date' field in YYYY-MM-DD format for weather
-        // And ideally lat/lon
-        setEvents(data.events.map((e: any) => ({ ...e, date: e.eventDate || e.date })))
-      } else {
-        setEvents(fallbackEvents)
-      }
-    } catch (error) {
-      console.error("Failed to fetch events:", error)
-      setError(t("errorFetchingEventsDefault"))
-      setEvents(fallbackEvents)
+      const res = await fetch("/api/events?status=approved&limit=9")
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      if (data.events?.length > 0) setEvents(data.events)
+      else setEvents(FALLBACK)
+    } catch {
+      setEvents(FALLBACK)
     } finally {
       setLoading(false)
       setRefreshing(false)
     }
   }
 
-  const handleImageError = (eventId: string) => {
-    setImageLoadErrors((prev) => new Set(prev).add(eventId))
-  }
+  const cities = ["all", ...Array.from(new Set(events.map((e) => e.city)))]
+  const filtered = filter === "all" ? events : events.filter((e) => e.city === filter)
 
-  const getCategoryFallbackImage = (category: string) => {
-    const fallbackImages = {
-      Nightlife: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop&auto=format",
-      Music: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop&auto=format",
-      Food: "https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=800&h=600&fit=crop&auto=format",
-      Art: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=600&fit=crop&auto=format",
-      Culture: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop&auto=format",
-      Social: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&h=600&fit=crop&auto=format",
-    }
-    return fallbackImages[category as keyof typeof fallbackImages] || fallbackImages.Social
-  }
+  return (
+    <section className="py-20 bg-zinc-900/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-  const handleEventClick = (event: any) => {
-    const eventUrl =
-      event.sourceUrl ||
-      event.url ||
-      `https://www.google.com/search?q=${encodeURIComponent(event.title + " " + event.venue)}`
-    window.open(eventUrl, "_blank", "noopener,noreferrer")
-  }
-
-  if (!mounted) {
-    return (
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">{t("thisWeeksHighlights")}</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t("loading")}...</p>
+        {/* Header */}
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
+          <div>
+            <h2 className="text-2xl font-bold text-white tracking-tight">More events</h2>
+            <p className="text-zinc-500 text-sm mt-1">Updated regularly across the region</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-200 rounded-3xl h-96 animate-pulse" />
+
+          {/* City filter tabs */}
+          <div className="flex items-center gap-1 p-1 bg-white/[0.04] rounded-xl">
+            {cities.map((c) => (
+              <button
+                key={c}
+                onClick={() => setFilter(c)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
+                  filter === c ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white"
+                }`}
+              >
+                {c}
+              </button>
             ))}
           </div>
         </div>
-      </section>
-    )
-  }
 
-  return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl font-bold text-gray-900">{t("thisWeeksHighlights")}</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{error ? error : t("eventsDescription")}</p>
-          <div className="flex items-center justify-center gap-2">
-            <Badge variant="outline" className="text-xs">
-              {t("autoUpdated")}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {t("realVenueImages")}
-            </Badge>
-            {error && (
-              <Badge variant="destructive" className="text-xs">
-                <AlertCircle className="w-3 h-3 mr-1" />
-                {t("demoMode")}
-              </Badge>
-            )}
-          </div>
-        </div>
-
+        {/* Grid */}
         {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-200 rounded-3xl h-96 animate-pulse" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-72 bg-white/[0.03] rounded-2xl animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer"
-                onClick={() => handleEventClick(event)}
-              >
-                <div className="aspect-[4/3] overflow-hidden relative">
-                  {!imageLoadErrors.has(event.id) ? (
-                    <img
-                      src={event.imageUrl || getCategoryFallbackImage(event.category)}
-                      alt={`${event.title} at ${event.venue}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={() => handleImageError(event.id)}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                      <div className="text-center text-gray-600">
-                        <ImageIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                        <div className="text-sm font-medium">{event.category}</div>
-                        <div className="text-xs">{event.venue}</div>
-                      </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((event) => {
+              const catStyle = CATEGORY_COLORS[event.category] ?? "text-zinc-400 bg-zinc-400/10"
+              return (
+                <div
+                  key={event.id}
+                  onClick={() => event.sourceUrl && window.open(event.sourceUrl, "_blank", "noopener,noreferrer")}
+                  className="group cursor-pointer rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 overflow-hidden"
+                >
+                  {/* Image */}
+                  {event.imageUrl && (
+                    <div className="h-40 overflow-hidden relative">
+                      <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-75"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent" />
+                      <span className={`absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${catStyle}`}>
+                        {event.category}
+                      </span>
+                      {event.sourceUrl && (
+                        <ExternalLink className="absolute top-3 right-3 w-3.5 h-3.5 text-white/40 group-hover:text-white/80 transition-colors" />
+                      )}
                     </div>
                   )}
 
-                  <div className="absolute top-2 right-2">
-                    <Badge variant="secondary" className="text-xs bg-black/50 text-white border-0">
-                      {t("realImage")}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-2 left-2">
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-blue-500 text-white border-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      {t("clickToOpen")}
-                    </Badge>
-                  </div>
-                </div>
+                  {/* Content */}
+                  <div className="p-4">
+                    <h3 className="text-sm font-semibold text-white group-hover:text-violet-300 transition-colors leading-snug mb-0.5 line-clamp-1">
+                      {event.title}
+                    </h3>
+                    <p className="text-zinc-500 text-xs mb-3 truncate">{event.venue}</p>
+                    <p className="text-zinc-500 text-xs leading-relaxed line-clamp-2 mb-4">{event.description}</p>
 
-                <div className="p-6 space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                        {event.title}
-                      </h3>
-                      <p className="text-sm text-gray-600">{event.venue}</p>
-                    </div>
-                    <Badge variant="outline" className="text-xs whitespace-nowrap">
-                      {event.category}
-                    </Badge>
-                  </div>
-
-                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">{event.description}</p>
-
-                  {event.date && (event.city || (event.lat && event.lon)) && (
-                    <EventWeather
-                      city={event.city}
-                      date={event.date}
-                      lat={event.lat}
-                      lon={event.lon}
-                      languageHook={languageHook}
-                    />
-                  )}
-
-                  <div className="flex items-center justify-between text-sm text-gray-500 pt-3 border-t border-gray-100 mt-auto">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>{event.city}</span>
+                    <div className="flex items-center justify-between text-xs text-zinc-600">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{event.city}</span>
+                        {event.time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{event.time}</span>}
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{event.time}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Euro className="w-4 h-4" />
-                      <span>{event.price}</span>
+                      {event.price && (
+                        <span className={`font-semibold ${event.price === "Free" ? "text-emerald-400" : "text-zinc-400"}`}>
+                          {event.price}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
 
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="rounded-full px-8" onClick={fetchEvents} disabled={refreshing}>
-            {refreshing ? (
-              <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                {t("refreshingImages")}...
-              </>
-            ) : error ? (
-              t("retryLoadingEvents")
-            ) : (
-              t("loadMoreEvents")
-            )}
-          </Button>
+        {/* Refresh */}
+        <div className="flex justify-center mt-10">
+          <button
+            onClick={load}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 text-zinc-400 hover:text-white hover:border-white/20 text-sm transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            {refreshing ? "Refreshing…" : "Load more events"}
+          </button>
         </div>
       </div>
     </section>

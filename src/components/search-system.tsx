@@ -1,358 +1,174 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Search, MapPin, Star, Plus, ExternalLink, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useLanguage } from "@/contexts/language-context"
-import { MANNHEIM_HEIDELBERG_VENUES, type Venue } from "@/lib/venues-database"
+import { Search, MapPin, Calendar, Loader2, X } from "lucide-react"
 
-interface SearchResult extends Venue {
-  score: number
-  matchType: "name" | "category" | "description" | "address"
+interface VenueResult {
+  id: string; name: string; area: string; city: string; type: string; emoji: string; address: string; description: string
+}
+interface EventResult {
+  id: string; title: string; venue: string; date: string; dateLabel: string; time: string; city: string; category: string; price: string; description: string
+}
+interface SearchResponse {
+  venues: VenueResult[]
+  events: EventResult[]
+  summary: string
+  query: string
 }
 
-interface WebSearchResult {
-  title: string
-  url: string
-  description: string
-  category?: string
-  address?: string
-  rating?: number
-  hours?: string
-}
+const QUICK = [
+  { label: "Student parties", q: "student party unma" },
+  { label: "Techno tonight", q: "techno club tonight" },
+  { label: "Date night",     q: "romantic bar date" },
+  { label: "Free events",    q: "free events" },
+  { label: "Jungbusch",      q: "jungbusch bar" },
+  { label: "Live music",     q: "live music concert" },
+]
 
 export function SearchSystem() {
-  const { t } = useLanguage()
   const [query, setQuery] = useState("")
-  const [results, setResults] = useState<SearchResult[]>([])
-  const [webResults, setWebResults] = useState<WebSearchResult[]>([])
-  const [isSearching, setIsSearching] = useState(false)
-  const [showSuggestionForm, setShowSuggestionForm] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const searchRef = useRef<HTMLDivElement>(null)
+  const [results, setResults] = useState<SearchResponse | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const debounce = useRef<ReturnType<typeof setTimeout>>()
 
-  // Search through existing venues
-  const searchVenues = (searchQuery: string): SearchResult[] => {
-    if (!searchQuery.trim()) return []
-
-    const normalizedQuery = searchQuery.toLowerCase().trim()
-    const searchResults: SearchResult[] = []
-
-    MANNHEIM_HEIDELBERG_VENUES.forEach((venue) => {
-      let score = 0
-      let matchType: SearchResult["matchType"] = "description"
-
-      // Exact name match (highest priority)
-      if (venue.name.toLowerCase() === normalizedQuery) {
-        score += 100
-        matchType = "name"
-      }
-      // Partial name match
-      else if (venue.name.toLowerCase().includes(normalizedQuery)) {
-        score += 80
-        matchType = "name"
-      }
-
-      // Category exact match
-      if (venue.category.toLowerCase() === normalizedQuery) {
-        score += 70
-        matchType = "category"
-      }
-      // Category partial match
-      else if (venue.category.toLowerCase().includes(normalizedQuery)) {
-        score += 60
-        matchType = "category"
-      }
-
-      // City match
-      if (venue.city.toLowerCase().includes(normalizedQuery)) {
-        score += 50
-      }
-
-      // Address match
-      if (venue.address.toLowerCase().includes(normalizedQuery)) {
-        score += 40
-        matchType = "address"
-      }
-
-      // Description match
-      if (venue.description.toLowerCase().includes(normalizedQuery)) {
-        score += 30
-        matchType = "description"
-      }
-
-      // Search terms that should match multiple venues
-      const searchTerms = {
-        bar: ["Nightlife", "bar", "cocktail", "drink"],
-        restaurant: ["Food", "restaurant", "essen", "food"],
-        club: ["Nightlife", "club", "party", "dance"],
-        music: ["Music", "concert", "live", "band"],
-        culture: ["Culture", "art", "museum", "theater"],
-        mannheim: ["Mannheim"],
-        heidelberg: ["Heidelberg"],
-      }
-
-      Object.entries(searchTerms).forEach(([term, keywords]) => {
-        if (normalizedQuery.includes(term)) {
-          keywords.forEach((keyword) => {
-            if (
-              venue.category.toLowerCase().includes(keyword.toLowerCase()) ||
-              venue.name.toLowerCase().includes(keyword.toLowerCase()) ||
-              venue.description.toLowerCase().includes(keyword.toLowerCase()) ||
-              venue.city.toLowerCase().includes(keyword.toLowerCase())
-            ) {
-              score += 25
-            }
-          })
-        }
-      })
-
-      if (score > 0) {
-        searchResults.push({ ...venue, score, matchType })
-      }
-    })
-
-    return searchResults.sort((a, b) => b.score - a.score).slice(0, 12)
-  }
-
-  // Web search for venues not in our database
-  const searchWeb = async (searchQuery: string): Promise<WebSearchResult[]> => {
-    // More realistic web search results based on actual Mannheim/Heidelberg venues
-    const webSearchTemplates = [
-      {
-        title: `${searchQuery} - Mannheim Restaurant Guide`,
-        url: `https://tripadvisor.com/mannheim/${searchQuery.replace(/\s+/g, "-").toLowerCase()}`,
-        description: `Discover ${searchQuery} in Mannheim. Highly rated venue with excellent reviews and authentic atmosphere.`,
-        category: "Restaurant",
-        address: "Mannheim Innenstadt",
-        rating: 4.2 + Math.random() * 0.6,
-        hours: "11:00 - 23:00",
-      },
-      {
-        title: `${searchQuery} Heidelberg - Altstadt`,
-        url: `https://yelp.com/heidelberg/${searchQuery.replace(/\s+/g, "-").toLowerCase()}`,
-        description: `Popular ${searchQuery} location in Heidelberg's historic old town. Known for great service and unique ambiance.`,
-        category: "Bar & Restaurant",
-        address: "Heidelberg Altstadt",
-        rating: 4.0 + Math.random() * 0.8,
-        hours: "17:00 - 01:00",
-      },
-    ]
-
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    return webSearchTemplates
-  }
-
-  // Handle search
   useEffect(() => {
-    const performSearch = async () => {
-      if (!query.trim()) {
-        setResults([])
-        setWebResults([])
-        setShowSuggestionForm(false)
-        return
-      }
-
-      setIsSearching(true)
-
-      // Search existing venues
-      const venueResults = searchVenues(query)
-      setResults(venueResults)
-
-      // If no results found, search the web
-      if (venueResults.length === 0) {
-        const webSearchResults = await searchWeb(query)
-        setWebResults(webSearchResults)
-        setShowSuggestionForm(true)
-      } else {
-        setWebResults([])
-        setShowSuggestionForm(false)
-      }
-
-      setIsSearching(false)
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
-
-    const debounceTimer = setTimeout(performSearch, 300)
-    return () => clearTimeout(debounceTimer)
-  }, [query])
-
-  // Handle click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
   }, [])
 
-  const handleSubmitVenue = async (venueName: string) => {
-    // Here you would typically send to your backend
-    console.log(`Submitting venue suggestion: ${venueName}`)
+  function runSearch(q: string) {
+    setQuery(q)
+    setOpen(true)
+    clearTimeout(debounce.current)
+    if (!q.trim()) { setResults(null); return }
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    alert(t("venueSubmitted"))
-    setShowSuggestionForm(false)
-    setQuery("")
+    debounce.current = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: q }),
+        })
+        setResults(await res.json())
+      } catch {}
+      setLoading(false)
+    }, 350)
   }
 
+  const hasResults = results && (results.venues.length > 0 || results.events.length > 0)
+  const showDropdown = open && (query.trim() || hasResults)
+
   return (
-    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto">
-      {/* Search Input */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <Input
+    <div ref={ref} className="relative w-full">
+      {/* Input */}
+      <div className="relative flex items-center">
+        <Search className="absolute left-4 w-4 h-4 text-zinc-500 pointer-events-none" />
+        <input
           type="text"
-          placeholder={t("searchPlaceholder")}
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setIsOpen(true)
-          }}
-          onFocus={() => setIsOpen(true)}
-          className="pl-10 pr-4 py-3 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 transition-colors"
+          onChange={(e) => runSearch(e.target.value)}
+          onFocus={() => setOpen(true)}
+          placeholder="Search venues, events, vibes… try 'unma party' or 'techno tonight'"
+          className="w-full bg-transparent pl-10 pr-10 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none"
         />
-        {isSearching && (
-          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 animate-spin" />
+        {loading && <Loader2 className="absolute right-4 w-4 h-4 text-zinc-500 animate-spin" />}
+        {query && !loading && (
+          <button onClick={() => { setQuery(""); setResults(null) }} className="absolute right-4 text-zinc-600 hover:text-white">
+            <X className="w-4 h-4" />
+          </button>
         )}
       </div>
 
-      {/* Search Results Dropdown */}
-      {isOpen && (query.trim() || results.length > 0 || webResults.length > 0) && (
-        <Card className="absolute top-full left-0 right-0 mt-2 max-h-96 overflow-y-auto z-50 shadow-xl border-2">
-          <CardContent className="p-0">
-            {/* Existing Venue Results */}
-            {results.length > 0 && (
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-3">{t("foundVenues")}</h3>
-                <div className="space-y-3">
-                  {results.map((venue) => (
-                    <div
-                      key={venue.id}
-                      className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() => {
-                        setIsOpen(false)
-                        setQuery("")
-                        // Navigate to venue or show details
-                      }}
-                    >
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 truncate">{venue.name}</h4>
-                        <p className="text-sm text-gray-600 truncate">{venue.address}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="secondary" className="text-xs">
-                            {venue.category}
-                          </Badge>
-                          <span className="text-xs text-gray-500">{venue.city}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-sm text-gray-600">4.{Math.floor(Math.random() * 5) + 3}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+      {/* Dropdown */}
+      {showDropdown && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50 max-h-[480px] overflow-y-auto">
 
-            {/* Web Search Results */}
-            {webResults.length > 0 && (
-              <div className="p-4 border-t">
-                <h3 className="font-semibold text-gray-900 mb-3">{t("webSearchResults")}</h3>
-                <div className="space-y-3">
-                  {webResults.map((result, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
-                        <ExternalLink className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 truncate">{result.title}</h4>
-                        <p className="text-sm text-gray-600 line-clamp-2">{result.description}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {result.category && (
-                            <Badge variant="outline" className="text-xs">
-                              {result.category}
-                            </Badge>
-                          )}
-                          {result.rating && (
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                              <span className="text-xs text-gray-500">{result.rating}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* AI summary */}
+          {results?.summary && (
+            <div className="px-4 py-3 border-b border-white/6 text-xs text-zinc-500 italic">
+              {results.summary}
+            </div>
+          )}
 
-            {/* No Results - Suggestion Form */}
-            {showSuggestionForm && results.length === 0 && webResults.length === 0 && (
-              <div className="p-4">
-                <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Plus className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{t("venueNotFound")}</h3>
-                  <p className="text-gray-600 mb-4">{t("suggestVenue")}</p>
-                  <Button
-                    onClick={() => handleSubmitVenue(query)}
-                    className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+          {/* Quick filters — shown when no query */}
+          {!query.trim() && (
+            <div className="p-4">
+              <p className="text-xs text-zinc-600 uppercase tracking-wider mb-3">Quick search</p>
+              <div className="flex flex-wrap gap-2">
+                {QUICK.map((q) => (
+                  <button
+                    key={q.q}
+                    onClick={() => runSearch(q.q)}
+                    className="text-xs px-3 py-1.5 rounded-full border border-white/8 text-zinc-400 hover:border-violet-500/40 hover:text-white transition-colors"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t("addToSzene")}
-                  </Button>
-                </div>
+                    {q.label}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Quick Categories */}
-            {!query.trim() && (
-              <div className="p-4 border-t">
-                <h3 className="font-semibold text-gray-900 mb-3">{t("quickSearch")}</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { name: t("categoryNightlife"), query: "nightlife" },
-                    { name: t("categoryMusic"), query: "music" },
-                    { name: t("categoryFoodDrink"), query: "restaurant" },
-                    { name: t("categoryArtCulture"), query: "culture" },
-                  ].map((category) => (
-                    <Button
-                      key={category.query}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setQuery(category.query)
-                        setIsOpen(true)
-                      }}
-                      className="justify-start text-left"
-                    >
-                      {category.name}
-                    </Button>
-                  ))}
-                </div>
+          {/* No results */}
+          {query.trim() && !loading && results && !hasResults && (
+            <div className="p-6 text-center text-zinc-500 text-sm">
+              Nothing found for <span className="text-white">"{query}"</span> — try different keywords.
+            </div>
+          )}
+
+          {/* Venues */}
+          {results && results.venues.length > 0 && (
+            <div className="p-3">
+              <p className="text-xs text-zinc-600 uppercase tracking-wider px-2 mb-2">Venues</p>
+              <div className="space-y-1">
+                {results.venues.map((v) => (
+                  <div
+                    key={v.id}
+                    onClick={() => { setOpen(false); setQuery(v.name) }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.05] cursor-pointer transition-colors group"
+                  >
+                    <span className="text-xl flex-shrink-0">{v.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors truncate">{v.name}</p>
+                      <p className="text-xs text-zinc-500 truncate">{v.type} · {v.area}, {v.city}</p>
+                    </div>
+                    <MapPin className="w-3 h-3 text-zinc-700 flex-shrink-0" />
+                  </div>
+                ))}
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          )}
+
+          {/* Events */}
+          {results && results.events.length > 0 && (
+            <div className="p-3 border-t border-white/6">
+              <p className="text-xs text-zinc-600 uppercase tracking-wider px-2 mb-2">Events</p>
+              <div className="space-y-1">
+                {results.events.map((e) => (
+                  <div
+                    key={e.id}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.05] cursor-pointer transition-colors group"
+                  >
+                    <div className="w-9 h-9 flex-shrink-0 bg-violet-600/15 rounded-lg flex items-center justify-center">
+                      <Calendar className="w-4 h-4 text-violet-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white group-hover:text-violet-300 transition-colors truncate">{e.title}</p>
+                      <p className="text-xs text-zinc-500 truncate">{e.venue} · {e.dateLabel} {e.time}</p>
+                    </div>
+                    <span className="text-xs text-zinc-600 flex-shrink-0">{e.price}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

@@ -1,121 +1,67 @@
 "use client"
 
-import { Mail, Instagram, Twitter } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
+import Link from "next/link"
+import { Instagram, Twitter, Mail } from "lucide-react"
 
 export function Footer() {
-  const { t } = useLanguage()
-
   return (
-    <footer className="bg-gray-900 text-white py-16">
+    <footer className="bg-zinc-950 border-t border-white/6 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <span className="text-xl font-semibold">Szene</span>
-            </div>
-            <p className="text-gray-400 leading-relaxed">{t("footerDescription")}</p>
-            <div className="flex space-x-4">
-              <Instagram className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Twitter className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-              <Mail className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+
+          {/* Brand */}
+          <div>
+            <p className="text-xl font-bold text-white mb-3 tracking-tight">Szene</p>
+            <p className="text-zinc-500 text-sm leading-relaxed mb-5">
+              Your guide to nightlife, events, and venues in Mannheim, Heidelberg, and beyond.
+            </p>
+            <div className="flex gap-4">
+              <a href="#" aria-label="Instagram" className="text-zinc-600 hover:text-white transition-colors"><Instagram className="w-4 h-4" /></a>
+              <a href="#" aria-label="Twitter"   className="text-zinc-600 hover:text-white transition-colors"><Twitter   className="w-4 h-4" /></a>
+              <a href="#" aria-label="Email"     className="text-zinc-600 hover:text-white transition-colors"><Mail      className="w-4 h-4" /></a>
             </div>
           </div>
 
+          {/* Discover */}
           <div>
-            <h3 className="font-semibold mb-4">{t("discover")}</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("featuredEvents")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("thisWeekend")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("bestOf2024")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("hiddenGems")}
-                </a>
-              </li>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Discover</p>
+            <ul className="space-y-2.5">
+              {[
+                { label: "Events this week", href: "#events" },
+                { label: "Trending venues",  href: "#" },
+                { label: "Student nights",   href: "#" },
+                { label: "Map view",         href: "#" },
+              ].map((l) => (
+                <li key={l.label}><a href={l.href} className="text-sm text-zinc-500 hover:text-white transition-colors">{l.label}</a></li>
+              ))}
             </ul>
           </div>
 
+          {/* Cities */}
           <div>
-            <h3 className="font-semibold mb-4">{t("categories")}</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("nightlife")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("musicEvents")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("foodDrink")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("categoryArtCulture")}
-                </a>
-              </li>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Cities</p>
+            <ul className="space-y-2.5">
+              {["Mannheim", "Heidelberg", "Ludwigshafen", "Frankfurt"].map((c) => (
+                <li key={c}><a href="#" className="text-sm text-zinc-500 hover:text-white transition-colors">{c}</a></li>
+              ))}
             </ul>
           </div>
 
+          {/* Legal */}
           <div>
-            <h3 className="font-semibold mb-4">{t("about")}</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("ourStory")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("submitRestaurant")}
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  {t("contact")}
-                </a>
-              </li>
-              <li>
-                <a href="/agb" className="hover:text-white transition-colors">
-                  AGB
-                </a>
-              </li>
-              <li>
-                <a href="/datenschutz" className="hover:text-white transition-colors">
-                  {t("privacyPolicy")}
-                </a>
-              </li>
-              <li>
-                <a href="/impressum" className="hover:text-white transition-colors">
-                  {t("impressum")}
-                </a>
-              </li>
+            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Legal</p>
+            <ul className="space-y-2.5">
+              <li><Link href="/agb"         className="text-sm text-zinc-500 hover:text-white transition-colors">AGB</Link></li>
+              <li><Link href="/datenschutz" className="text-sm text-zinc-500 hover:text-white transition-colors">Datenschutz</Link></li>
+              <li><Link href="/impressum"   className="text-sm text-zinc-500 hover:text-white transition-colors">Impressum</Link></li>
+              <li><a href="#"               className="text-sm text-zinc-500 hover:text-white transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Szene Digital Solutions UG (haftungsbeschränkt). Alle Rechte vorbehalten.</p>
+        <div className="border-t border-white/6 pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-zinc-600">&copy; {new Date().getFullYear()} Szene Digital Solutions UG (haftungsbeschränkt) · Planken 7, 68161 Mannheim</p>
+          <p className="text-xs text-zinc-700">Made in Mannheim 🇩🇪</p>
         </div>
       </div>
     </footer>
