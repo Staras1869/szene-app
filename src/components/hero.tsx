@@ -22,7 +22,7 @@ export function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
               </span>
-              <span className="text-[10px] text-white/30 uppercase tracking-[0.2em]">Live · Mannheim</span>
+              <span className="text-[10px] text-white/55 uppercase tracking-[0.2em]">Live · Mannheim</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-[0.95]">
               <span className="text-white">Your city.</span>{" "}

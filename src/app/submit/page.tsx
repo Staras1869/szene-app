@@ -65,7 +65,7 @@ export default function SubmitPage() {
         </p>
         <div className="flex gap-3">
           <button onClick={() => { setDone(false); setVName(""); setETitle("") }}
-            className="px-5 py-2.5 border border-white/[0.12] text-white/60 hover:text-white rounded-full text-sm font-semibold transition-colors">
+            className="px-5 py-2.5 border border-white/20 text-white/60 hover:text-white rounded-full text-sm font-semibold transition-colors">
             Submit another
           </button>
           <Link href="/" className="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-full text-sm font-bold transition-colors">
@@ -79,7 +79,7 @@ export default function SubmitPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.06]">
+      <div className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.18]">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/" className="text-white/40 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
@@ -100,11 +100,11 @@ export default function SubmitPage() {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 p-1 bg-white/[0.05] border border-white/[0.08] rounded-xl mb-8 w-fit">
+        <div className="flex gap-1 p-1 bg-white/[0.10] border border-white/[0.15] rounded-xl mb-8 w-fit">
           {(["venue", "event"] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all ${
-                tab === t ? "bg-violet-600 text-white" : "text-white/30 hover:text-white"
+                tab === t ? "bg-violet-600 text-white" : "text-white/55 hover:text-white"
               }`}>
               {t === "venue" ? "📍 Venue" : "🎉 Event"}
             </button>
@@ -196,7 +196,7 @@ export default function SubmitPage() {
             {loading ? "Submitting…" : `Submit ${tab}`}
           </button>
 
-          <p className="text-white/20 text-xs text-center">
+          <p className="text-white/40 text-xs text-center">
             Reviewed within 24h · Free forever · No account needed
           </p>
         </form>
@@ -205,7 +205,7 @@ export default function SubmitPage() {
   )
 }
 
-const inputCls = "w-full bg-white/[0.05] border border-white/[0.09] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 transition-colors"
+const inputCls = "w-full bg-white/[0.10] border border-white/[0.15] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-violet-500/50 transition-colors"
 
 function Field({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
   return (

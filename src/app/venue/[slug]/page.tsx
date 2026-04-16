@@ -68,18 +68,18 @@ function ShareButton({ name, slug }: { name: string; slug: string }) {
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-4 py-2 border border-white/[0.12] text-white/60 hover:text-white hover:border-white/25 text-sm font-medium rounded-xl transition-colors">
+        className="flex items-center gap-2 px-4 py-2 border border-white/20 text-white/60 hover:text-white hover:border-white/25 text-sm font-medium rounded-xl transition-colors">
         <Share2 className="w-4 h-4" /> Share
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-2 bg-zinc-900 border border-white/[0.10] rounded-2xl overflow-hidden shadow-2xl z-50 min-w-[180px]">
-          <button onClick={shareWhatsApp} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors flex items-center gap-2">
+        <div className="absolute top-full left-0 mt-2 bg-zinc-900 border border-white/[0.18] rounded-2xl overflow-hidden shadow-2xl z-50 min-w-[180px]">
+          <button onClick={shareWhatsApp} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors flex items-center gap-2">
             <span>💬</span> WhatsApp
           </button>
-          <button onClick={shareInstagram} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors flex items-center gap-2">
+          <button onClick={shareInstagram} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors flex items-center gap-2">
             <span>📸</span> Instagram
           </button>
-          <button onClick={copyLink} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors flex items-center gap-2 border-t border-white/[0.06]">
+          <button onClick={copyLink} className="w-full text-left px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/[0.10] transition-colors flex items-center gap-2 border-t border-white/[0.18]">
             {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             {copied ? "Copied!" : "Copy link"}
           </button>
@@ -165,7 +165,7 @@ export default function VenuePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Top bar */}
-      <div className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.06]">
+      <div className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.18]">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm">
             <ArrowLeft className="w-4 h-4" /> Back
@@ -174,7 +174,7 @@ export default function VenuePage() {
             <ShareButton name={venue.name} slug={slug} />
             <button onClick={() => setSaved(s => !s)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-                saved ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : "border border-white/[0.10] text-white/40 hover:text-white hover:border-white/25"
+                saved ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : "border border-white/[0.18] text-white/40 hover:text-white hover:border-white/25"
               }`}>
               <Heart className={`w-4 h-4 ${saved ? "fill-current" : ""}`} />
               {saved ? "Saved" : "Save"}
@@ -185,7 +185,7 @@ export default function VenuePage() {
 
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Hero */}
-        <div className="rounded-2xl border border-white/[0.07] overflow-hidden">
+        <div className="rounded-2xl border border-white/[0.15] overflow-hidden">
           <div className="h-40 bg-gradient-to-br from-violet-900 via-purple-900 to-black flex items-center justify-center relative">
             <span className="text-7xl">{venue.emoji}</span>
             <div className="absolute top-3 right-3 flex items-center gap-1.5">
@@ -206,7 +206,7 @@ export default function VenuePage() {
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
                   <span className="text-white font-bold">{avgRating.toFixed(1)}</span>
-                  <span className="text-white/30 text-xs">({reviews.length})</span>
+                  <span className="text-white/55 text-xs">({reviews.length})</span>
                 </div>
               )}
             </div>
@@ -242,7 +242,7 @@ export default function VenuePage() {
               {user && (
                 <button onClick={handleCheckIn} disabled={userCheckedIn || checkInLoading}
                   className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition-colors ${
-                    userCheckedIn ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "border border-white/[0.12] text-white/60 hover:text-white hover:border-white/25"
+                    userCheckedIn ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "border border-white/20 text-white/60 hover:text-white hover:border-white/25"
                   }`}>
                   {checkInLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   {userCheckedIn ? `Checked in${checkInCount > 1 ? ` · ${checkInCount} here` : ""}` : "Check in"}
@@ -257,27 +257,27 @@ export default function VenuePage() {
           <h2 className="text-lg font-black text-white mb-4 tracking-tight">Reviews</h2>
 
           {user ? (
-            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 mb-4">
+            <div className="rounded-2xl border border-white/[0.15] bg-white/[0.10] p-5 mb-4">
               {reviewSubmitted ? (
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs text-white/30 uppercase tracking-widest mb-2">Your review</p>
+                    <p className="text-xs text-white/55 uppercase tracking-widest mb-2">Your review</p>
                     <StarRow value={myRating} size="sm" />
                     {myComment && <p className="text-sm text-white/50 mt-2">{myComment}</p>}
                   </div>
-                  <button onClick={handleDeleteReview} className="text-white/20 hover:text-rose-400 transition-colors">
+                  <button onClick={handleDeleteReview} className="text-white/40 hover:text-rose-400 transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleReviewSubmit} className="space-y-3">
-                  <p className="text-xs text-white/30 uppercase tracking-widest">Leave a review</p>
+                  <p className="text-xs text-white/55 uppercase tracking-widest">Leave a review</p>
                   <StarRow value={myRating} onChange={setMyRating} />
                   <textarea
                     value={myComment} onChange={e => setMyComment(e.target.value)}
                     placeholder="What did you think? (optional)"
                     rows={3}
-                    className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-violet-500/50 resize-none transition-colors"
+                    className="w-full bg-white/[0.10] border border-white/[0.15] rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-violet-500/50 resize-none transition-colors"
                   />
                   <button type="submit" disabled={myRating === 0 || reviewLoading}
                     className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-sm font-semibold rounded-xl transition-colors">
@@ -288,23 +288,23 @@ export default function VenuePage() {
               )}
             </div>
           ) : (
-            <div className="rounded-2xl border border-white/[0.07] p-5 mb-4 text-center">
-              <p className="text-sm text-white/30">
+            <div className="rounded-2xl border border-white/[0.15] p-5 mb-4 text-center">
+              <p className="text-sm text-white/55">
                 <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold">Sign in</Link> to leave a review
               </p>
             </div>
           )}
 
           {reviews.length === 0 ? (
-            <p className="text-white/20 text-sm text-center py-6">No reviews yet — be the first.</p>
+            <p className="text-white/40 text-sm text-center py-6">No reviews yet — be the first.</p>
           ) : (
             <div className="space-y-3">
               {reviews.map(r => (
-                <div key={r.id} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+                <div key={r.id} className="rounded-2xl border border-white/[0.15] bg-white/[0.02] p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
                       <p className="text-sm font-bold text-white">{r.user.name ?? r.user.email?.split("@")[0] ?? "Anonymous"}</p>
-                      <p className="text-xs text-white/20">{new Date(r.createdAt).toLocaleDateString("de-DE")}</p>
+                      <p className="text-xs text-white/40">{new Date(r.createdAt).toLocaleDateString("de-DE")}</p>
                     </div>
                     <StarRow value={r.rating} size="sm" />
                   </div>
@@ -316,8 +316,8 @@ export default function VenuePage() {
         </div>
 
         {/* Back to explore */}
-        <div className="rounded-2xl border border-white/[0.07] p-6 text-center">
-          <p className="text-white/30 text-sm mb-3">More in {venue.city}</p>
+        <div className="rounded-2xl border border-white/[0.15] p-6 text-center">
+          <p className="text-white/55 text-sm mb-3">More in {venue.city}</p>
           <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white text-sm font-bold rounded-full transition-colors">
             Explore {venue.city}
           </Link>
