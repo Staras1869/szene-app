@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String?
+  email          String?        @unique
+  hashedPassword String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  events         Event[]
+  reviews        Review[]
+  favorites      UserFavorite[]
+  checkIns       CheckIn[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  location    String
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  venues      Venue[]
+}
+
+model Venue {
+  id      String  @id @default(cuid())
+  name    String
+  address String
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+}
+
+// OSM venue id stored as string — no FK into Venue table (venues come from OpenStreetMap live)
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  rating    Int      // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, venueId])
+  @@map("reviews")
+}
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, venueId])
+  @@map("user_favorites")
+}
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  venueId   String
+  createdAt DateTime @default(now())
+
+  @@map("check_ins")
+}

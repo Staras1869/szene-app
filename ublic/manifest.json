@@ -1,0 +1,9 @@
+{
+  "name": "Szene - Discover Mannheim & Heidelberg",
+  "short_name": "Szene",
+  "description": "Curated events, parties, and experiences in the Rhein-Neckar region",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1"
+}
