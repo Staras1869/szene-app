@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ChevronDown } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ChevronDown, ExternalLink, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -236,12 +236,40 @@ function TonightTab({ city }: { city: string }) {
 
 // ─── Events tab ──────────────────────────────────────────────────────────────
 
+const GRAD_BY_CAT: Record<string, string> = {
+  Nightlife: "from-violet-800 to-purple-900",
+  Music:     "from-amber-800 to-orange-900",
+  Food:      "from-emerald-800 to-teal-900",
+  Student:   "from-blue-800 to-indigo-900",
+  Culture:   "from-rose-800 to-pink-900",
+  Event:     "from-zinc-800 to-neutral-900",
+}
+const EMOJI_BY_CAT: Record<string, string> = {
+  Nightlife: "🎧", Music: "🎷", Food: "🍜", Student: "🎓", Culture: "🎭", Event: "✦",
+}
+
 function EventsTab({ city }: { city: string }) {
   const { user } = useAuth()
   const [vibe, setVibe] = useState("all")
   const [going, setGoing] = useState<Set<string>>(new Set())
-  const cityEvents = EVENTS[city] ?? []
-  const filtered   = vibe === "all" ? cityEvents : cityEvents.filter(e => e.vibe === vibe)
+  const [liveEvents, setLiveEvents] = useState<any[]>([])
+  const [liveLoading, setLiveLoading] = useState(false)
+  const [sources, setSources] = useState<any>(null)
+
+  // Load live events when city or vibe changes
+  useEffect(() => {
+    setLiveLoading(true)
+    setLiveEvents([])
+    fetch(`/api/discover/live?city=${city}&vibe=${vibe}`)
+      .then(r => r.json())
+      .then(d => { setLiveEvents(d.events ?? []); setSources(d.sources) })
+      .catch(() => {})
+      .finally(() => setLiveLoading(false))
+  }, [city, vibe])
+
+  // Merge live + static, live events first
+  const staticEvents = (EVENTS[city] ?? []).filter(e => vibe === "all" || e.vibe === vibe)
+  const allEvents    = liveEvents.length > 0 ? liveEvents : staticEvents
 
   function toggle(id: string) {
     if (!user) return
@@ -252,46 +280,107 @@ function EventsTab({ city }: { city: string }) {
     <div className="space-y-5">
       <VibeBar vibe={vibe} setVibe={setVibe} />
 
-      {filtered.length === 0 ? (
-        <p className="text-white/20 text-sm py-10 text-center">No events in this category yet.</p>
+      {/* Source badges */}
+      {sources && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {sources.ticketmaster > 0 && (
+            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
+              Ticketmaster · {sources.ticketmaster}
+            </span>
+          )}
+          {sources.eventbrite > 0 && (
+            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
+              Eventbrite · {sources.eventbrite}
+            </span>
+          )}
+          {sources.web > 0 && (
+            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
+              Web · {sources.web}
+            </span>
+          )}
+          {liveEvents.length > 0 && (
+            <span className="text-[10px] text-emerald-400/60 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+              Live data
+            </span>
+          )}
+        </div>
+      )}
+
+      {liveLoading ? (
+        <div className="flex items-center justify-center py-16 gap-3">
+          <Loader2 className="w-5 h-5 text-violet-400 animate-spin" />
+          <span className="text-white/30 text-sm">Searching events across the web…</span>
+        </div>
+      ) : allEvents.length === 0 ? (
+        <p className="text-white/20 text-sm py-10 text-center">No events found — try another vibe.</p>
       ) : (
         <div className="space-y-3">
-          {filtered.map(e => (
-            <div key={e.id} className="flex gap-4 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] transition-colors group cursor-pointer">
-              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${e.grad} flex items-center justify-center flex-shrink-0 text-2xl`}>
-                {e.emoji}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-bold text-white group-hover:text-violet-300 transition-colors">{e.title}</p>
-                    <p className="text-xs text-white/30 mt-0.5">{e.venue}</p>
-                  </div>
-                  <span className="text-[10px] text-white/20 border border-white/[0.08] px-2 py-0.5 rounded-full flex-shrink-0">{e.cat}</span>
+          {allEvents.map((e: any) => {
+            // Handle both live API events and static events
+            const isLive   = !!e.source
+            const title    = e.title
+            const venue    = e.venue
+            const date     = e.date
+            const time     = e.time
+            const cat      = e.category ?? e.cat ?? "Event"
+            const grad     = e.grad ?? GRAD_BY_CAT[cat] ?? GRAD_BY_CAT.Event
+            const emoji    = e.emoji ?? EMOJI_BY_CAT[cat] ?? "✦"
+            const staticGoing = e.going ?? 0
+            const price    = e.price ?? null
+            const url      = e.url ?? null
+
+            return (
+              <div key={e.id}
+                className="flex gap-4 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] transition-colors group"
+              >
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center flex-shrink-0 text-2xl`}>
+                  {emoji}
                 </div>
-                <div className="flex items-center justify-between mt-3">
-                  <div className="flex items-center gap-3 text-xs text-white/25">
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{e.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.time}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white group-hover:text-violet-300 transition-colors truncate">{title}</p>
+                      <p className="text-xs text-white/30 mt-0.5 truncate">{venue}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <span className="text-[10px] text-white/20 border border-white/[0.08] px-2 py-0.5 rounded-full">{cat}</span>
+                      {url && (
+                        <a href={url} target="_blank" rel="noopener noreferrer"
+                          className="text-white/15 hover:text-violet-400 transition-colors"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  {user ? (
-                    <button
-                      onClick={() => toggle(e.id)}
-                      className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-semibold transition-all ${
-                        going.has(e.id) ? "bg-violet-600 text-white" : "border border-white/[0.12] text-white/40 hover:border-violet-400/50 hover:text-white"
-                      }`}
-                    >
-                      {going.has(e.id) ? <><Check className="w-3 h-3" /> Going</> : <><Users className="w-3 h-3" /> {e.going}</>}
-                    </button>
-                  ) : (
-                    <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors flex items-center gap-1">
-                      <Users className="w-3 h-3" /> {e.going} going
-                    </Link>
-                  )}
+                  <div className="flex items-center justify-between mt-3 gap-2">
+                    <div className="flex items-center gap-3 text-xs text-white/25 flex-wrap">
+                      {date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{date}</span>}
+                      {time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{time}</span>}
+                      {price && <span className="text-violet-400/60">{price}</span>}
+                    </div>
+                    {!isLive && (
+                      user ? (
+                        <button
+                          onClick={() => toggle(e.id)}
+                          className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-semibold transition-all flex-shrink-0 ${
+                            going.has(e.id) ? "bg-violet-600 text-white" : "border border-white/[0.12] text-white/40 hover:border-violet-400/50 hover:text-white"
+                          }`}
+                        >
+                          {going.has(e.id) ? <><Check className="w-3 h-3" /> Going</> : <><Users className="w-3 h-3" /> {staticGoing}</>}
+                        </button>
+                      ) : (
+                        <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors flex items-center gap-1 flex-shrink-0">
+                          <Users className="w-3 h-3" /> {staticGoing}
+                        </Link>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
