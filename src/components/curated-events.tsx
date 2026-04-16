@@ -1,53 +1,120 @@
 "use client"
 
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react"
+import { useState, useEffect, useCallback } from "react"
+import { Calendar, Clock, MapPin, ArrowRight, Check, Users } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
+import Link from "next/link"
 
 const EVENTS = [
   {
-    id: "1",
+    id: "event-1",
     title: "Rooftop Sessions",
     venue: "Sky Garden Mannheim",
     category: "Nightlife",
     date: "Fri 18 Apr",
     time: "20:00",
     location: "Quadrate, Mannheim",
-    image: "🏙️",
-    accent: "from-violet-900 to-violet-800",
+    emoji: "🏙️",
+    accent: "from-violet-900/80 to-violet-800/80",
+    seed: 24,
   },
   {
-    id: "2",
+    id: "event-2",
     title: "Jazz & Wine Evening",
     venue: "Weinkeller am Wasserturm",
     category: "Music",
     date: "Sat 19 Apr",
     time: "19:30",
     location: "Wasserturm, Mannheim",
-    image: "🎷",
-    accent: "from-amber-900 to-amber-800",
+    emoji: "🎷",
+    accent: "from-amber-900/80 to-amber-800/80",
+    seed: 18,
   },
   {
-    id: "3",
+    id: "event-3",
     title: "Electronic Sunday",
     venue: "BASE Club",
     category: "Nightlife",
     date: "Sun 20 Apr",
     time: "22:00",
     location: "Jungbusch, Mannheim",
-    image: "🎧",
-    accent: "from-zinc-800 to-zinc-700",
+    emoji: "🎧",
+    accent: "from-zinc-800/80 to-zinc-700/80",
+    seed: 41,
   },
   {
-    id: "4",
+    id: "event-4",
     title: "Street Food Market",
     venue: "Alter Messplatz",
     category: "Food & Drink",
     date: "Sat 19 Apr",
     time: "12:00",
     location: "Neckarstadt, Mannheim",
-    image: "🍜",
-    accent: "from-emerald-900 to-emerald-800",
+    emoji: "🍜",
+    accent: "from-emerald-900/80 to-emerald-800/80",
+    seed: 33,
   },
 ]
+
+function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
+  const { user } = useAuth()
+  const [going, setGoing] = useState(false)
+  const [count, setCount] = useState(seed)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetch(`/api/events/rsvp?eventId=${eventId}`)
+      .then((r) => r.json())
+      .then((d) => {
+        setGoing(d.going ?? false)
+        setCount((d.count ?? 0) + seed)
+      })
+      .catch(() => {})
+  }, [eventId, seed])
+
+  const toggle = useCallback(async () => {
+    if (!user) return
+    setLoading(true)
+    try {
+      const res = await fetch("/api/events/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId }),
+      })
+      const d = await res.json()
+      setGoing(d.going)
+      setCount((d.count ?? 0) + seed)
+    } catch {}
+    setLoading(false)
+  }, [user, eventId, seed])
+
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-violet-400 transition-colors"
+      >
+        <Users className="w-3 h-3" />
+        {count} going
+      </Link>
+    )
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={loading}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+        going
+          ? "bg-violet-600 text-white"
+          : "border border-white/10 text-zinc-400 hover:border-violet-500/50 hover:text-violet-300"
+      }`}
+    >
+      {going ? <Check className="w-3 h-3" /> : <Users className="w-3 h-3" />}
+      {going ? "Going" : `${count} going`}
+    </button>
+  )
+}
 
 export function CuratedEvents() {
   return (
@@ -70,25 +137,25 @@ export function CuratedEvents() {
               className="group cursor-pointer rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 overflow-hidden"
             >
               {/* Image area */}
-              <div className={`bg-gradient-to-br ${event.accent} h-40 flex items-center justify-center relative`}>
-                <span className="text-5xl">{event.image}</span>
-                <span className="absolute top-3 left-3 text-[10px] uppercase tracking-widest text-white/50 font-medium bg-black/30 px-2 py-0.5 rounded-full">
+              <div className={`bg-gradient-to-br ${event.accent} h-40 flex items-center justify-center relative backdrop-blur-sm`}>
+                <span className="text-5xl">{event.emoji}</span>
+                <span className="absolute top-3 left-3 text-[10px] uppercase tracking-widest text-white/60 font-medium bg-black/40 px-2 py-0.5 rounded-full">
                   {event.category}
                 </span>
               </div>
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="font-semibold text-white text-sm group-hover:text-violet-300 transition-colors leading-snug mb-1">
+                <h3 className="font-semibold text-white text-sm group-hover:text-violet-300 transition-colors leading-snug mb-0.5">
                   {event.title}
                 </h3>
                 <p className="text-zinc-500 text-xs mb-3">{event.venue}</p>
 
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 mb-4">
                   <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
                     <Calendar className="w-3 h-3 text-violet-400 flex-shrink-0" />
                     {event.date}
-                    <Clock className="w-3 h-3 text-violet-400 ml-2 flex-shrink-0" />
+                    <Clock className="w-3 h-3 text-violet-400 ml-1 flex-shrink-0" />
                     {event.time}
                   </div>
                   <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
@@ -96,6 +163,8 @@ export function CuratedEvents() {
                     {event.location}
                   </div>
                 </div>
+
+                <RSVPButton eventId={event.id} seed={event.seed} />
               </div>
             </div>
           ))}

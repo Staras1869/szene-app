@@ -21,6 +21,7 @@ model User {
   reviews        Review[]
   favorites      UserFavorite[]
   checkIns       CheckIn[]
+  rsvps          EventRSVP[]
 }
 
 model Event {
@@ -76,4 +77,24 @@ model CheckIn {
   createdAt DateTime @default(now())
 
   @@map("check_ins")
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("newsletter_subscribers")
+}
+
+model EventRSVP {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId String // local curated event id (string key)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, eventId])
+  @@map("event_rsvps")
 }
