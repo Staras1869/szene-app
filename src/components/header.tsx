@@ -40,7 +40,7 @@ export function Header() {
                   <div className="w-7 h-7 rounded-full bg-violet-600/30 border border-violet-500/40 flex items-center justify-center">
                     <User className="w-3.5 h-3.5 text-violet-400" />
                   </div>
-                  <span className="hidden sm:inline">{user.displayName || "Profile"}</span>
+                  <span className="hidden sm:inline">{user.displayName || user.email?.split("@")[0] || "Profile"}</span>
                 </Link>
               ) : (
                 <Link href="/login" className="text-sm font-semibold text-black bg-white hover:bg-white/90 px-4 py-1.5 rounded-full transition-colors">

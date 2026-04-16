@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 
-export type AuthUser = { id: string; email: string }
+export type AuthUser = { id: string; email: string; displayName?: string }
 
 export function useAuth() {
   const router = useRouter()
