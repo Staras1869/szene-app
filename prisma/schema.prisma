@@ -22,6 +22,20 @@ model User {
   favorites      UserFavorite[]
   checkIns       CheckIn[]
   rsvps          EventRSVP[]
+  following      UserFollow[] @relation("Follower")
+  followers      UserFollow[] @relation("Following")
+}
+
+model UserFollow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Follower",  fields: [followerId],  references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@map("user_follows")
 }
 
 model Event {

@@ -15,6 +15,7 @@
     "dev:android": "CAP_SERVER_URL=http://localhost:3000 npx cap run android"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.89.0",
     "@capacitor/android": "^8.3.0",
     "@capacitor/app": "^8.1.0",
     "@capacitor/cli": "latest",

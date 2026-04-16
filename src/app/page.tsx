@@ -5,12 +5,15 @@ import { SearchSystem } from "@/components/search-system";
 import { VibePicker } from "@/components/vibe-picker";
 import { TrendingVenues } from "@/components/trending-venues";
 import { CuratedEvents } from "@/components/curated-events";
+import { Leaderboard } from "@/components/leaderboard";
+import { FriendFeed } from "@/components/friend-feed";
 import { DynamicEvents } from "@/components/dynamic-events";
 import { TimeBasedSections } from "@/components/time-based-sections";
 import { Newsletter } from "@/components/newsletter";
 import { Footer } from "@/components/footer";
 import { NewsletterPopup } from "@/components/newsletter-popup";
 import { SignInPrompt } from "@/components/signin-prompt";
+import { AiChat } from "@/components/ai-chat";
 
 export default function HomePage() {
   return (
@@ -18,6 +21,9 @@ export default function HomePage() {
       {/* Timed popups */}
       <NewsletterPopup />
       <SignInPrompt />
+
+      {/* Floating AI concierge */}
+      <AiChat />
 
       <Header />
 
@@ -44,6 +50,12 @@ export default function HomePage() {
 
       {/* Curated event picks with RSVP */}
       <CuratedEvents />
+
+      {/* This week's leaderboard */}
+      <Leaderboard />
+
+      {/* Friend activity feed */}
+      <FriendFeed />
 
       {/* Live-scraped venue events */}
       <DynamicEvents />
