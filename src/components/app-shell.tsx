@@ -320,28 +320,13 @@ function EventsTab({ city }: { city: string }) {
       <VibeBar vibe={vibe} setVibe={setVibe} />
 
       {/* Source badges */}
-      {sources && (
+      {sources && liveEvents.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap">
-          {sources.ticketmaster > 0 && (
-            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
-              Ticketmaster · {sources.ticketmaster}
-            </span>
-          )}
-          {sources.eventbrite > 0 && (
-            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
-              Eventbrite · {sources.eventbrite}
-            </span>
-          )}
-          {sources.web > 0 && (
-            <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
-              Web · {sources.web}
-            </span>
-          )}
-          {liveEvents.length > 0 && (
-            <span className="text-[10px] text-emerald-400/60 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-              Live data
-            </span>
-          )}
+          {sources.ra > 0 && <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">RA · {sources.ra}</span>}
+          {sources.ticketmaster > 0 && <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">Ticketmaster · {sources.ticketmaster}</span>}
+          {sources.eventbrite > 0 && <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">Eventbrite · {sources.eventbrite}</span>}
+          {sources.web > 0 && <span className="text-[10px] text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">Web · {sources.web}</span>}
+          <span className="text-[10px] text-emerald-400/60 border border-emerald-500/20 px-2 py-0.5 rounded-full">Live</span>
         </div>
       )}
 
