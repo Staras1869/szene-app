@@ -24,10 +24,10 @@ export function Footer() {
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-4">Discover</p>
             <ul className="space-y-2.5">
               {[
-                { label: "Events this week", href: "#events" },
-                { label: "Trending venues", href: "#venues" },
-                { label: "Student nights", href: "#" },
-                { label: "Map view", href: "#" },
+                { label: "Events this week", href: "/#events" },
+                { label: "Trending venues",  href: "/#venues" },
+                { label: "Student nights",   href: "/#discover" },
+                { label: "Submit your venue", href: "/submit" },
               ].map(l => (
                 <li key={l.label}><a href={l.href} className="text-sm text-white/30 hover:text-white transition-colors">{l.label}</a></li>
               ))}

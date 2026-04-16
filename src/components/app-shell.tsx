@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ChevronDown, ExternalLink, Loader2 } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ChevronDown, ExternalLink, Loader2, Share2, Copy } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -146,6 +146,44 @@ const VENUES_BY_CITY: Record<string, { id: string; name: string; area: string; t
 
 function getH() { const h = new Date().getHours(); return h < 6 ? h + 24 : h }
 
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/[&]/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+}
+
+function ShareEvent({ title, url }: { title: string; url?: string }) {
+  const [copied, setCopied] = useState(false)
+  const [open, setOpen]     = useState(false)
+  const shareUrl = url ?? (typeof window !== "undefined" ? window.location.href : "")
+  const text     = `${title} — found on Szene 🎉`
+
+  function copyLink() {
+    navigator.clipboard.writeText(shareUrl)
+    setCopied(true); setTimeout(() => setCopied(false), 2000)
+    setOpen(false)
+  }
+  function wa()  { window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + shareUrl)}`, "_blank"); setOpen(false) }
+
+  return (
+    <div className="relative flex-shrink-0">
+      <button onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1 text-xs text-white/25 hover:text-white/60 transition-colors px-2 py-1 rounded-lg hover:bg-white/[0.05]">
+        <Share2 className="w-3 h-3" />
+      </button>
+      {open && (
+        <div className="absolute bottom-full right-0 mb-1 bg-zinc-900 border border-white/[0.10] rounded-xl shadow-2xl overflow-hidden z-50 min-w-[140px]">
+          <button onClick={wa} className="w-full text-left px-3 py-2.5 text-xs text-white/50 hover:text-white hover:bg-white/[0.05] flex items-center gap-2 transition-colors">
+            <span>💬</span> WhatsApp
+          </button>
+          <button onClick={copyLink} className="w-full text-left px-3 py-2.5 text-xs text-white/50 hover:text-white hover:bg-white/[0.05] flex items-center gap-2 border-t border-white/[0.06] transition-colors">
+            {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+            {copied ? "Copied!" : "Copy link"}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function VibeBar({ vibe, setVibe }: { vibe: string; setVibe: (v: string) => void }) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
@@ -197,7 +235,8 @@ function TonightTab({ city }: { city: string }) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {show.map(v => (
-            <div key={v.name} className="flex items-center gap-3 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] transition-colors cursor-pointer group">
+            <Link key={v.name} href={`/venue/${toSlug(v.name)}`}
+              className="flex items-center gap-3 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/25 transition-colors group">
               <span className="text-2xl flex-shrink-0">{v.emoji}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -209,7 +248,7 @@ function TonightTab({ city }: { city: string }) {
               <span className={`text-[10px] font-bold flex-shrink-0 ${open.includes(v) ? "text-emerald-400" : "text-white/20"}`}>
                 {open.includes(v) ? "Open" : `${v.opens}:00`}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -360,22 +399,25 @@ function EventsTab({ city }: { city: string }) {
                       {time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{time}</span>}
                       {price && <span className="text-violet-400/60">{price}</span>}
                     </div>
-                    {!isLive && (
-                      user ? (
-                        <button
-                          onClick={() => toggle(e.id)}
-                          className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-semibold transition-all flex-shrink-0 ${
-                            going.has(e.id) ? "bg-violet-600 text-white" : "border border-white/[0.12] text-white/40 hover:border-violet-400/50 hover:text-white"
-                          }`}
-                        >
-                          {going.has(e.id) ? <><Check className="w-3 h-3" /> Going</> : <><Users className="w-3 h-3" /> {staticGoing}</>}
-                        </button>
-                      ) : (
-                        <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors flex items-center gap-1 flex-shrink-0">
-                          <Users className="w-3 h-3" /> {staticGoing}
-                        </Link>
-                      )
-                    )}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <ShareEvent title={title} url={url ?? undefined} />
+                      {!isLive && (
+                        user ? (
+                          <button
+                            onClick={() => toggle(e.id)}
+                            className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-semibold transition-all flex-shrink-0 ${
+                              going.has(e.id) ? "bg-violet-600 text-white" : "border border-white/[0.12] text-white/40 hover:border-violet-400/50 hover:text-white"
+                            }`}
+                          >
+                            {going.has(e.id) ? <><Check className="w-3 h-3" /> Going</> : <><Users className="w-3 h-3" /> {staticGoing}</>}
+                          </button>
+                        ) : (
+                          <Link href="/login" className="text-xs text-white/20 hover:text-white/50 transition-colors flex items-center gap-1 flex-shrink-0">
+                            <Users className="w-3 h-3" /> {staticGoing}
+                          </Link>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -403,7 +445,8 @@ function VenuesTab({ city }: { city: string }) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {filtered.map(v => (
-            <div key={v.id} className="flex items-center gap-3 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/25 transition-all cursor-pointer group">
+            <Link key={v.id} href={`/venue/${toSlug(v.name)}`}
+              className="flex items-center gap-3 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/25 transition-all group">
               <span className="text-2xl flex-shrink-0">{v.emoji}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white group-hover:text-violet-300 transition-colors truncate">{v.name}</p>
@@ -411,7 +454,7 @@ function VenuesTab({ city }: { city: string }) {
               </div>
               <span className="text-[10px] text-violet-400/50 border border-violet-500/20 px-2 py-0.5 rounded-full flex-shrink-0">{v.tag}</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-violet-400 transition-colors flex-shrink-0" />
-            </div>
+            </Link>
           ))}
         </div>
       )}
