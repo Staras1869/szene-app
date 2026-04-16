@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ChevronDown, ExternalLink, Loader2, Share2, Copy } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Zap, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -489,10 +489,8 @@ export function AppShell({ tab, setTab }: { tab?: string; setTab?: (t: string) =
   const activeTab           = tab ?? _tab
   const switchTab           = setTab ?? _setTab
   const [city, setCity]     = useState("mannheim")
-  const [cityOpen, setCityOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
-  const currentCity = CITIES.find(c => c.id === city)!
   // scroll to app shell when nav triggers tab switch
   function handleTabSwitch(t: string) {
     switchTab(t)
@@ -502,83 +500,69 @@ export function AppShell({ tab, setTab }: { tab?: string; setTab?: (t: string) =
   return (
     <div id="app-shell-top" className="min-h-screen bg-black flex flex-col">
       {/* Sticky top bar */}
-      <div className="sticky top-14 z-40 bg-black/95 backdrop-blur-xl border-b border-white/[0.18]">
+      <div className="sticky top-14 z-40 bg-black/95 backdrop-blur-xl border-b border-white/[0.12]">
         <div className="max-w-3xl mx-auto px-4">
 
           {searchOpen ? (
             <div className="py-3 flex gap-3 items-center">
-              <div className="flex-1 bg-white/[0.10] border border-white/20 rounded-xl px-4">
+              <div className="flex-1 bg-white/[0.07] border border-white/[0.15] rounded-xl px-4">
                 <SearchSystem />
               </div>
-              <button onClick={() => setSearchOpen(false)} className="text-white/40 hover:text-white text-sm transition-colors">
+              <button onClick={() => setSearchOpen(false)} className="text-white/50 hover:text-white text-sm font-medium transition-colors">
                 Cancel
               </button>
             </div>
           ) : (
-            <div className="flex items-center justify-between py-3 gap-3">
-              {/* City switcher */}
-              <div className="relative">
-                <button
-                  onClick={() => setCityOpen(!cityOpen)}
-                  className="flex items-center gap-1.5 text-white font-black text-lg tracking-tight hover:text-violet-300 transition-colors"
-                >
-                  {currentCity.label}
-                  <ChevronDown className={`w-4 h-4 text-white/55 transition-transform ${cityOpen ? "rotate-180" : ""}`} />
-                </button>
-                {cityOpen && (
-                  <div className="absolute top-full left-0 mt-2 bg-zinc-900 border border-white/[0.18] rounded-2xl overflow-hidden shadow-2xl shadow-black/50 min-w-[160px] z-50">
-                    {CITIES.map(c => (
-                      <button
-                        key={c.id}
-                        onClick={() => { setCity(c.id); setCityOpen(false) }}
-                        className={`w-full text-left px-4 py-3 text-sm transition-colors ${
-                          city === c.id ? "text-violet-400 font-bold bg-violet-600/10" : "text-white/50 hover:text-white hover:bg-white/[0.10]"
-                        }`}
-                      >
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
-                </span>
-                <span className="text-[10px] text-white/40 uppercase tracking-widest hidden sm:inline">Live</span>
-              </div>
-
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="ml-auto w-9 h-9 rounded-xl bg-white/[0.09] border border-white/[0.15] flex items-center justify-center text-white/40 hover:text-white hover:bg-white/[0.10] transition-all"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-
-          {/* Tab bar */}
-          {!searchOpen && (
-            <div className="flex gap-1 pb-3">
-              {TABS.map(t => {
-                const Icon = t.icon
-                const active = activeTab === t.id
-                return (
+            <>
+              {/* City row */}
+              <div className="flex items-center gap-2 pt-3 pb-2 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+                {CITIES.map(c => (
                   <button
-                    key={t.id}
-                    onClick={() => handleTabSwitch(t.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                      active ? "bg-violet-600 text-white" : "text-white/50 hover:text-white hover:bg-white/[0.09]"
+                    key={c.id}
+                    onClick={() => setCity(c.id)}
+                    className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
+                      city === c.id
+                        ? "bg-white text-black"
+                        : "border border-white/[0.15] text-white/55 hover:border-white/40 hover:text-white"
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
-                    {t.label}
+                    {c.label}
                   </button>
-                )
-              })}
-            </div>
+                ))}
+                <div className="ml-auto flex-shrink-0 flex items-center gap-2 pl-2">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                  </span>
+                  <button
+                    onClick={() => setSearchOpen(true)}
+                    className="w-8 h-8 rounded-xl bg-white/[0.07] border border-white/[0.15] flex items-center justify-center text-white/50 hover:text-white hover:bg-white/[0.12] transition-all"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Tab bar */}
+              <div className="flex gap-1 pb-3">
+                {TABS.map(t => {
+                  const Icon = t.icon
+                  const active = activeTab === t.id
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => handleTabSwitch(t.id)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                        active ? "bg-violet-600 text-white" : "text-white/50 hover:text-white hover:bg-white/[0.07]"
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {t.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </>
           )}
         </div>
       </div>
