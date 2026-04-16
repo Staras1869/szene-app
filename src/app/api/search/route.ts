@@ -7,7 +7,7 @@ const client = new Anthropic()
 
 // ── Comprehensive local venue + event database ───────────────────────────────
 
-export const VENUES = [
+const VENUES = [
   { id: "tiffany",        name: "Tiffany Club",                    area: "C-Quadrat",   city: "Mannheim",   type: "Club",         emoji: "💜", tags: ["nightlife","club","party","dance","premium"], address: "C4 9-10, Mannheim", description: "Premium nightclub in the Quadrate" },
   { id: "ms-connexion",   name: "MS Connexion Complex",            area: "Hafen",       city: "Mannheim",   type: "Music venue",  emoji: "🎧", tags: ["electronic","music","club","techno","rave","multi-floor"], address: "Hafenstraße 25-27, Mannheim", description: "Multi-floor electronic music complex at the harbour" },
   { id: "zeitraumexit",   name: "Zeitraumexit",                    area: "Jungbusch",   city: "Mannheim",   type: "Club",         emoji: "🖤", tags: ["nightlife","techno","underground","art","rave"], address: "Hafenstraße 68, Mannheim", description: "Underground art and techno space in Jungbusch" },
@@ -35,7 +35,7 @@ export const VENUES = [
 const dd = (n: number) => { const x = new Date(); x.setDate(x.getDate() + n); return x.toISOString().split("T")[0] }
 const fd = (iso: string) => { const d = new Date(iso + "T00:00:00"); return d.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) }
 
-export const EVENTS_DB = [
+const EVENTS_DB = [
   { id: "ev-1",  title: "UNMA Campus Party",            venue: "Mensabar / Schneckenhof", date: dd(3),  time: "22:00", city: "Mannheim",   category: "Student",   price: "€5",   tags: ["student","unma","university","party","campus","mannheim uni","thursday"], description: "Mannheim's biggest student night — the Schneckenhof courtyard opens up." },
   { id: "ev-2",  title: "AStA Semester Opening Party",  venue: "Schloss Mannheim",        date: dd(7),  time: "20:00", city: "Mannheim",   category: "Student",   price: "Free", tags: ["student","unma","university","events","campus","academic","free"],       description: "Official AStA opening party for the new semester. Free with student ID." },
   { id: "ev-3",  title: "Mensabar Thursday Special",    venue: "Mensabar, Schloss",       date: dd(4),  time: "21:00", city: "Mannheim",   category: "Student",   price: "€3",   tags: ["student","unma","cheap","bar","thursday","campus","social"],            description: "Cheapest drinks in Mannheim — student card gets you in for €3." },
