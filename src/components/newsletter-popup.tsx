@@ -11,10 +11,8 @@ export function NewsletterPopup() {
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    // Don't show if already dismissed or subscribed
     if (sessionStorage.getItem(STORAGE_KEY)) return
-
-    const timer = setTimeout(() => setVisible(true), 12_000) // 12 s
+    const timer = setTimeout(() => setVisible(true), 12_000)
     return () => clearTimeout(timer)
   }, [])
 
@@ -26,7 +24,6 @@ export function NewsletterPopup() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email) return
-    // Fire-and-forget — wire to your real endpoint later
     try {
       await fetch("/api/newsletter", {
         method: "POST",
@@ -42,17 +39,12 @@ export function NewsletterPopup() {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-        onClick={dismiss}
-      />
+      <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={dismiss} />
 
-      {/* Panel */}
-      <div className="fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[70] w-full sm:w-[440px] bg-zinc-900 border border-white/10 sm:rounded-2xl shadow-2xl p-8 animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in duration-300">
+      <div className="fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[70] w-full sm:w-[440px] bg-white border-2 border-gray-200 sm:rounded-2xl shadow-2xl p-8 animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in duration-300">
         <button
           onClick={dismiss}
-          className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"
           aria-label="Close"
         >
           <X className="w-5 h-5" />
@@ -61,16 +53,16 @@ export function NewsletterPopup() {
         {submitted ? (
           <div className="text-center py-4">
             <div className="text-3xl mb-3">✓</div>
-            <p className="text-white font-semibold">You're on the list.</p>
-            <p className="text-zinc-400 text-sm mt-1">We'll let you know when something good is happening.</p>
+            <p className="text-gray-900 font-semibold">You're on the list.</p>
+            <p className="text-gray-500 text-sm mt-1">We'll let you know when something good is happening.</p>
           </div>
         ) : (
           <>
-            <p className="text-xs uppercase tracking-widest text-violet-400 mb-3">Stay in the loop</p>
-            <h2 className="text-2xl font-bold text-white mb-2">
+            <p className="text-xs uppercase tracking-widest text-violet-600 mb-3 font-semibold">Stay in the loop</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Never miss a night out.
             </h2>
-            <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+            <p className="text-gray-500 text-sm leading-relaxed mb-6">
               Get weekly picks — the best events, new venues, and local highlights delivered to your inbox.
             </p>
 
@@ -81,7 +73,7 @@ export function NewsletterPopup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                className="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-violet-400 transition-colors"
               />
               <button
                 type="submit"
@@ -91,7 +83,7 @@ export function NewsletterPopup() {
               </button>
             </form>
 
-            <p className="text-zinc-600 text-xs mt-4">No spam. Unsubscribe anytime.</p>
+            <p className="text-gray-400 text-xs mt-4">No spam. Unsubscribe anytime.</p>
           </>
         )}
       </div>

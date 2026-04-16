@@ -92,7 +92,7 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
     return (
       <Link
         href="/login"
-        className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-violet-400 transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-violet-600 transition-colors"
       >
         <Users className="w-3 h-3" />
         {count} going
@@ -107,7 +107,7 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
         going
           ? "bg-violet-600 text-white"
-          : "border border-white/10 text-zinc-400 hover:border-violet-500/50 hover:text-violet-300"
+          : "border-2 border-gray-200 text-gray-600 hover:border-violet-400 hover:text-violet-600 hover:bg-violet-50"
       }`}
     >
       {going ? <Check className="w-3 h-3" /> : <Users className="w-3 h-3" />}
@@ -118,14 +118,14 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
 
 export function CuratedEvents() {
   return (
-    <section className="py-20 bg-zinc-950" id="events">
+    <section className="py-20 bg-white" id="events">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Happening this week</h2>
-            <p className="text-zinc-500 mt-1 text-sm">Hand-picked by the Szene team</p>
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Happening this week</h2>
+            <p className="text-gray-500 mt-1 text-sm">Hand-picked by the Szene team</p>
           </div>
-          <button className="hidden sm:inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-white transition-colors">
+          <button className="hidden sm:inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
             See all <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -134,7 +134,7 @@ export function CuratedEvents() {
           {EVENTS.map((event) => (
             <div
               key={event.id}
-              className="group cursor-pointer rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 overflow-hidden"
+              className="group cursor-pointer rounded-2xl border-2 border-gray-100 bg-white hover:border-violet-200 hover:bg-violet-50 transition-all duration-200 overflow-hidden shadow-sm"
             >
               {/* Image area */}
               <div className={`bg-gradient-to-br ${event.accent} h-40 flex items-center justify-center relative backdrop-blur-sm`}>
@@ -146,20 +146,20 @@ export function CuratedEvents() {
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="font-semibold text-white text-sm group-hover:text-violet-300 transition-colors leading-snug mb-0.5">
+                <h3 className="font-semibold text-gray-900 text-sm group-hover:text-violet-600 transition-colors leading-snug mb-0.5">
                   {event.title}
                 </h3>
-                <p className="text-zinc-500 text-xs mb-3">{event.venue}</p>
+                <p className="text-gray-500 text-xs mb-3">{event.venue}</p>
 
                 <div className="space-y-1.5 mb-4">
-                  <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                    <Calendar className="w-3 h-3 text-violet-400 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                    <Calendar className="w-3 h-3 text-violet-500 flex-shrink-0" />
                     {event.date}
-                    <Clock className="w-3 h-3 text-violet-400 ml-1 flex-shrink-0" />
+                    <Clock className="w-3 h-3 text-violet-500 ml-1 flex-shrink-0" />
                     {event.time}
                   </div>
-                  <div className="flex items-center gap-1.5 text-zinc-500 text-xs">
-                    <MapPin className="w-3 h-3 text-violet-400 flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                    <MapPin className="w-3 h-3 text-violet-500 flex-shrink-0" />
                     {event.location}
                   </div>
                 </div>
