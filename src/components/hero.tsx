@@ -62,7 +62,6 @@ export function Hero() {
           {[
             { value: "200+", label: "Venues" },
             { value: "Live", label: "Updates" },
-            { value: "Free", label: "Always" },
           ].map((s) => (
             <div key={s.label}>
               <div className="text-2xl font-bold text-white">{s.value}</div>
