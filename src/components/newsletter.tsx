@@ -21,34 +21,29 @@ export function Newsletter() {
   }
 
   return (
-    <section className="py-24 bg-zinc-950 border-t border-white/6">
+    <section className="py-24 bg-zinc-950 border-t border-white/[0.06]">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-xs uppercase tracking-widest text-violet-400 mb-4">Stay in the loop</p>
-        <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">
-          Never miss a night out.
-        </h2>
-        <p className="text-zinc-500 mb-10 text-sm leading-relaxed">
-          Weekly picks — best events, new venues, and local highlights. No spam.
+        <p className="text-[11px] uppercase tracking-[0.2em] text-violet-400 mb-4 font-semibold">Stay in the loop</p>
+        <h2 className="text-4xl font-black text-white mb-3 tracking-tight">Never miss a night out.</h2>
+        <p className="text-white/30 mb-10 text-sm leading-relaxed">
+          Weekly picks — best events, new venues, local highlights. No spam.
         </p>
 
         {state === "done" ? (
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm">
-            <span className="text-emerald-400">✓</span> You're on the list.
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm font-semibold">
+            ✓ You're on the list
           </div>
         ) : (
           <form onSubmit={submit} className="flex gap-2 max-w-sm mx-auto">
             <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="email" required value={email}
+              onChange={e => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+              className="flex-1 bg-white/[0.06] border border-white/[0.10] rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-violet-500/60 transition-colors"
             />
             <button
-              type="submit"
-              disabled={state === "loading"}
-              className="bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors whitespace-nowrap"
+              type="submit" disabled={state === "loading"}
+              className="bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors whitespace-nowrap"
             >
               {state === "loading" ? "…" : "Subscribe"}
             </button>

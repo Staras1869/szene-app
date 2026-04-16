@@ -1,71 +1,76 @@
 "use client"
 
-import { ArrowRight, MapPin } from "lucide-react"
+import { ArrowRight, MapPin, Zap } from "lucide-react"
 import Link from "next/link"
-import { useLanguage } from "@/contexts/language-context"
+import { SearchSystem } from "./search-system"
 
 export function Hero() {
-  const { t } = useLanguage()
-
   return (
-    <section className="relative bg-zinc-950 text-white overflow-hidden">
-      {/* Subtle grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
+    <section className="relative bg-black text-white overflow-hidden min-h-[92vh] flex flex-col justify-center">
+      {/* Gradient mesh background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-violet-700/25 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] rounded-full bg-fuchsia-700/20 blur-[100px]" />
+        <div className="absolute top-[40%] left-[60%] w-[30vw] h-[30vw] rounded-full bg-indigo-700/15 blur-[80px]" />
+      </div>
+
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")" }}
       />
 
-      {/* Purple glow — single, restrained */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/20 blur-[120px] pointer-events-none" />
-
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-28 lg:py-40">
-        {/* Location pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 text-xs text-white/50 mb-10 tracking-widest uppercase">
-          <MapPin className="w-3 h-3 text-violet-400" />
-          Mannheim &amp; Rhine-Neckar
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 w-full">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 mb-10">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+          </span>
+          <span className="text-[11px] text-white/40 uppercase tracking-[0.18em] font-medium">Live · Mannheim &amp; Rhine-Neckar</span>
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-8 max-w-3xl">
-          Your city.{" "}
-          <span className="text-violet-400">Tonight.</span>
+        <h1 className="text-[clamp(3rem,10vw,8rem)] font-black tracking-tight leading-[0.9] mb-8">
+          <span className="block text-white">Your city.</span>
+          <span className="block bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
+            Tonight.
+          </span>
         </h1>
 
-        <p className="text-white/50 text-lg max-w-xl leading-relaxed mb-12">
-          Bars, clubs, rooftops, events — curated and updated in real time so you
-          always know where the night is going.
+        <p className="text-white/40 text-lg max-w-md leading-relaxed mb-12 font-light">
+          Bars, clubs, rooftops, events — curated and live so you always know where the night is.
         </p>
 
+        {/* Search bar */}
+        <div className="max-w-xl mb-12">
+          <div className="bg-white/[0.07] border border-white/[0.12] rounded-2xl px-4 backdrop-blur-sm hover:bg-white/[0.10] transition-colors">
+            <SearchSystem />
+          </div>
+        </div>
+
         {/* CTAs */}
-        <div className="flex flex-wrap items-center gap-4">
-          <Link
-            href="#events"
-            className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white px-7 py-3.5 rounded-full text-sm font-semibold transition-colors"
-          >
+        <div className="flex flex-wrap items-center gap-4 mb-20">
+          <Link href="#events"
+            className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full text-sm font-bold hover:bg-white/90 transition-colors">
             Explore tonight
             <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 text-white/70 hover:text-white px-7 py-3.5 rounded-full text-sm font-semibold transition-colors"
-          >
-            Sign in
+          <Link href="/register"
+            className="inline-flex items-center gap-2 border border-white/15 text-white/70 hover:text-white hover:border-white/30 px-6 py-3 rounded-full text-sm font-medium transition-colors">
+            Join free
           </Link>
         </div>
 
         {/* Stats row */}
-        <div className="mt-20 pt-10 border-t border-white/8 grid grid-cols-3 gap-8 max-w-sm">
+        <div className="flex flex-wrap gap-10 pt-8 border-t border-white/[0.07]">
           {[
-            { value: "200+", label: "Venues" },
-            { value: "Live", label: "Updates" },
+            { value: "200+", label: "Venues", icon: MapPin },
+            { value: "Live", label: "Updates", icon: Zap },
+            { value: "Free", label: "Always", icon: null },
           ].map((s) => (
             <div key={s.label}>
-              <div className="text-2xl font-bold text-white">{s.value}</div>
-              <div className="text-xs text-white/40 mt-0.5 uppercase tracking-wider">{s.label}</div>
+              <div className="text-2xl font-black text-white">{s.value}</div>
+              <div className="text-[11px] text-white/30 mt-0.5 uppercase tracking-widest">{s.label}</div>
             </div>
           ))}
         </div>
