@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { TrendingUp, Users } from "lucide-react"
+import Link from "next/link"
 
 interface TrendingVenue {
   venueId: string
@@ -47,8 +48,9 @@ export function TrendingVenues() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {venues.map((venue, rank) => (
-              <div
+              <Link
                 key={venue.venueId}
+                href={`/venue/${venue.venueId}`}
                 className="group flex items-center gap-4 p-4 rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 cursor-pointer"
               >
                 {/* Rank */}
@@ -79,7 +81,7 @@ export function TrendingVenues() {
                     Live
                   </span>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         )}

@@ -8,6 +8,7 @@ import { CuratedEvents } from "@/components/curated-events";
 import { Leaderboard } from "@/components/leaderboard";
 import { FriendFeed } from "@/components/friend-feed";
 import { DynamicEvents } from "@/components/dynamic-events";
+import { Tonight } from "@/components/tonight";
 import { TimeBasedSections } from "@/components/time-based-sections";
 import { Newsletter } from "@/components/newsletter";
 import { Footer } from "@/components/footer";
@@ -56,6 +57,9 @@ export default function HomePage() {
 
       {/* Friend activity feed */}
       <FriendFeed />
+
+      {/* Open right now — time-aware */}
+      <Tonight />
 
       {/* Live-scraped venue events */}
       <DynamicEvents />
