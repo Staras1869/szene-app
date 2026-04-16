@@ -17,6 +17,17 @@ model User {
   hashedPassword String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+
+  // Profile customisation
+  displayName    String?
+  bio            String?
+  avatarEmoji    String?        @default("🎭")
+  avatarColor    String?        @default("#7c3aed")
+  neighborhood   String?
+  musicTaste     String[]
+  vibes          String[]
+  instagram      String?
+  onboarded      Boolean        @default(false)
   events         Event[]
   reviews        Review[]
   favorites      UserFavorite[]

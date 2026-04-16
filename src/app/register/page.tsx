@@ -30,7 +30,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       })
-      router.push(loginRes.ok ? "/" : "/login")
+      router.push(loginRes.ok ? "/onboarding" : "/login")
       router.refresh()
     } catch {
       setError("Something went wrong. Try again.")
