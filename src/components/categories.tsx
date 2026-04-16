@@ -1,46 +1,44 @@
 "use client"
 
-import { Music, Utensils, Palette, Users, TreePine, Sparkles } from "lucide-react"
+import { Music, Utensils, Palette, Users, TreePine, Zap, Calendar, MapPin } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
+const CATEGORIES = [
+  { key: "events",      label: "Events",        icon: Calendar,  accent: "bg-violet-600" },
+  { key: "nightlife",   label: "Nightlife",      icon: Zap,       accent: "bg-zinc-800"  },
+  { key: "music",       label: "Music",          icon: Music,     accent: "bg-zinc-800"  },
+  { key: "food",        label: "Food & Drink",   icon: Utensils,  accent: "bg-zinc-800"  },
+  { key: "art",         label: "Art & Culture",  icon: Palette,   accent: "bg-zinc-800"  },
+  { key: "social",      label: "Social",         icon: Users,     accent: "bg-zinc-800"  },
+  { key: "outdoor",     label: "Outdoor",        icon: TreePine,  accent: "bg-zinc-800"  },
+  { key: "locations",   label: "Near Me",        icon: MapPin,    accent: "bg-zinc-800"  },
+]
+
 export function Categories() {
-  const { t } = useLanguage()
-
-  const categories = [
-    { name: t("categoryNightlife"),  icon: Sparkles, color: "from-purple-400 to-purple-600" },
-    { name: t("categoryMusic"),      icon: Music,    color: "from-pink-400 to-pink-600"   },
-    { name: t("categoryFoodDrink"),  icon: Utensils, color: "from-amber-400 to-amber-600" },
-    { name: t("categoryArtCulture"), icon: Palette,  color: "from-blue-400 to-blue-600"   },
-    { name: t("categorySocial"),     icon: Users,    color: "from-emerald-400 to-emerald-600" },
-    { name: t("categoryOutdoor"),    icon: TreePine, color: "from-green-400 to-green-600" },
-  ]
-
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-20 bg-zinc-950" id="categories">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center space-y-4 mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">{t("browseCategoriesTitle")}</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">{t("browseCategoriesDescription")}</p>
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Browse by category</h2>
+          <p className="text-zinc-500 mt-2 text-sm">What are you in the mood for?</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {categories.map((category) => {
-            const Icon = category.icon
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon
             return (
               <button
-                key={category.name}
-                className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-2xl"
+                key={cat.key}
+                className="group flex flex-col items-center gap-3 p-4 rounded-2xl border border-white/6 hover:border-violet-500/40 bg-white/[0.02] hover:bg-white/[0.05] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
               >
-                <div className="text-center space-y-3">
-                  <div
-                    className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${category.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-200 shadow-md`}
-                  >
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-medium text-gray-900 group-hover:text-gray-600 transition-colors text-sm">
-                    {category.name}
-                  </h3>
+                <div
+                  className={`w-10 h-10 rounded-xl ${cat.accent} flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}
+                >
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
+                <span className="text-xs font-medium text-zinc-400 group-hover:text-white transition-colors text-center leading-tight">
+                  {cat.label}
+                </span>
               </button>
             )
           })}

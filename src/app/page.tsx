@@ -1,47 +1,49 @@
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { SearchSystem } from "@/components/search-system";
-import { DynamicEvents } from "@/components/dynamic-events";
+import { CuratedEvents } from "@/components/curated-events";
 import { Categories } from "@/components/categories";
+import { DynamicEvents } from "@/components/dynamic-events";
 import { TimeBasedSections } from "@/components/time-based-sections";
-import { FunAutomationStatus } from "@/components/fun-automation-status";
 import { Newsletter } from "@/components/newsletter";
 import { Footer } from "@/components/footer";
+import { NewsletterPopup } from "@/components/newsletter-popup";
+import { SignInPrompt } from "@/components/signin-prompt";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-zinc-950">
+      {/* Timed popups (client-side only) */}
+      <NewsletterPopup />
+      <SignInPrompt />
+
       <Header />
 
-      {/* Hero with gradient background */}
+      {/* Hero — dark, minimal */}
       <Hero />
 
-      {/* Search bar centred below hero */}
-      <section className="relative z-10 -mt-8 pb-4">
+      {/* Search bar */}
+      <section className="bg-zinc-950 pb-4 -mt-2">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100">
+          <div className="bg-zinc-900 rounded-2xl shadow-2xl p-3 border border-white/8">
             <SearchSystem />
           </div>
         </div>
       </section>
 
-      {/* This week's events */}
-      <DynamicEvents />
-
-      {/* Category grid */}
+      {/* Category tabs */}
       <Categories />
 
-      {/* Time-aware venue sections (Clubs / Bars / Wine / Cafés / Brunch) */}
+      {/* Curated event picks */}
+      <CuratedEvents />
+
+      {/* Live-scraped venue events */}
+      <DynamicEvents />
+
+      {/* Time-aware venue sections */}
       <TimeBasedSections />
 
-      {/* Automation bot status — shows real-time discovery stats */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FunAutomationStatus />
-        </div>
-      </section>
-
-      {/* Newsletter sign-up */}
+      {/* Newsletter section */}
       <Newsletter />
 
       <Footer />

@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Menu, X, User, LogIn } from "lucide-react"
+import { Menu, X, User, LogIn } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { LanguageSelector } from "./language-selector"
 import { WeatherWidget } from "./weather-widget"
 import { useLanguage } from "@/contexts/language-context"
@@ -16,37 +15,29 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur-sm border-b border-white/8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-white tracking-tight">
               Szene
             </h1>
-            <span className="ml-2 text-sm text-gray-500 hidden sm:inline">{t("location")}</span>
+            <span className="ml-2 text-xs text-zinc-500 hidden sm:inline uppercase tracking-widest">{t("location")}</span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">
-              {t("events")}
+            <a href="#events" className="text-zinc-400 hover:text-white transition-colors text-sm">
+              Events
             </a>
-            <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">
-              {t("venues")}
+            <a href="#categories" className="text-zinc-400 hover:text-white transition-colors text-sm">
+              Discover
             </a>
-            <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">
-              {t("about")}
+            <a href="#" className="text-zinc-400 hover:text-white transition-colors text-sm">
+              Map
             </a>
           </nav>
-
-          {/* Search Bar */}
-          <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input type="text" placeholder={t("searchPlaceholder")} className="pl-10 pr-4 py-2 w-full" />
-            </div>
-          </div>
 
           {/* Right side items */}
           <div className="flex items-center space-x-4">
@@ -61,7 +52,7 @@ export function Header() {
               user ? (
                 <Link
                   href="/profile"
-                  className="hidden md:flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors"
+                  className="hidden md:flex items-center gap-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
                 >
                   <User className="w-4 h-4" />
                   Profile
@@ -69,9 +60,8 @@ export function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors"
+                  className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-full transition-colors"
                 >
-                  <LogIn className="w-4 h-4" />
                   Sign in
                 </Link>
               )
@@ -86,38 +76,23 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4">
-              {/* Mobile Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input type="text" placeholder={t("searchPlaceholder")} className="pl-10 pr-4 py-2 w-full" />
-              </div>
-
-              {/* Mobile Navigation Links */}
-              <nav className="flex flex-col space-y-2">
-                <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors py-2">
-                  {t("events")}
-                </a>
-                <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors py-2">
-                  {t("venues")}
-                </a>
-                <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors py-2">
-                  {t("about")}
-                </a>
-                {!authLoading && (
-                  user ? (
-                    <Link href="/profile" className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors py-2">
-                      <User className="w-4 h-4" /> Profile
-                    </Link>
-                  ) : (
-                    <Link href="/login" className="flex items-center gap-2 text-gray-700 hover:text-purple-600 transition-colors py-2">
-                      <LogIn className="w-4 h-4" /> Sign in
-                    </Link>
-                  )
-                )}
-              </nav>
-            </div>
+          <div className="md:hidden py-4 border-t border-white/8">
+            <nav className="flex flex-col space-y-1">
+              <a href="#events" onClick={() => setIsMenuOpen(false)} className="text-zinc-400 hover:text-white transition-colors py-2 text-sm">Events</a>
+              <a href="#categories" onClick={() => setIsMenuOpen(false)} className="text-zinc-400 hover:text-white transition-colors py-2 text-sm">Discover</a>
+              <a href="#" className="text-zinc-400 hover:text-white transition-colors py-2 text-sm">Map</a>
+              {!authLoading && (
+                user ? (
+                  <Link href="/profile" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors py-2 text-sm">
+                    <User className="w-4 h-4" /> Profile
+                  </Link>
+                ) : (
+                  <Link href="/login" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors py-2 text-sm">
+                    <LogIn className="w-4 h-4" /> Sign in
+                  </Link>
+                )
+              )}
+            </nav>
           </div>
         )}
       </div>
