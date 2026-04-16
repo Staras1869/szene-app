@@ -1,15 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { getUserFromRequest } from "@/lib/auth"
 
-// GET /api/checkins?venueId=xxx — returns tonight's check-in count + whether current user checked in
+const CheckInSchema = z.object({
+  venueId: z.string().min(1).max(100),
+})
+
+// GET /api/checkins?venueId=xxx
 export async function GET(request: NextRequest) {
   const venueId = request.nextUrl.searchParams.get("venueId")
-  if (!venueId) {
+  if (!venueId || venueId.length > 100) {
     return NextResponse.json({ error: "venueId required" }, { status: 400 })
   }
 
-  // "Tonight" = past 8 hours (covers evening + night)
   const since = new Date(Date.now() - 8 * 60 * 60 * 1000)
 
   const count = await db.checkIn.count({
@@ -28,19 +32,22 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ count, userCheckedIn })
 }
 
-// POST /api/checkins — check in (once per 8h per venue per user)
+// POST /api/checkins
 export async function POST(request: NextRequest) {
   const auth = getUserFromRequest(request)
   if (!auth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "Unauthorised" }, { status: 401 })
   }
 
-  const { venueId } = await request.json()
-  if (!venueId) {
-    return NextResponse.json({ error: "venueId required" }, { status: 400 })
+  const body = await request.json()
+  const parsed = CheckInSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid venueId" }, { status: 400 })
   }
 
+  const { venueId } = parsed.data
   const since = new Date(Date.now() - 8 * 60 * 60 * 1000)
+
   const existing = await db.checkIn.findFirst({
     where: { userId: auth.userId, venueId, createdAt: { gte: since } },
   })

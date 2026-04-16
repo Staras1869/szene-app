@@ -96,8 +96,8 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/impressum" className="hover:text-white transition-colors">
-                  {t("impressum")}
+                <a href="/agb" className="hover:text-white transition-colors">
+                  AGB
                 </a>
               </li>
               <li>
@@ -105,12 +105,17 @@ export function Footer() {
                   {t("privacyPolicy")}
                 </a>
               </li>
+              <li>
+                <a href="/impressum" className="hover:text-white transition-colors">
+                  {t("impressum")}
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Szene. {t("footerMadeWithLove")}</p>
+          <p>&copy; {new Date().getFullYear()} Szene Digital Solutions UG (haftungsbeschränkt). Alle Rechte vorbehalten.</p>
         </div>
       </div>
     </footer>

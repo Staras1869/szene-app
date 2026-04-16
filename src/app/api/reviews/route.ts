@@ -1,11 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
 import { db } from "@/lib/db"
 import { getUserFromRequest } from "@/lib/auth"
+
+const ReviewSchema = z.object({
+  venueId: z.string().min(1).max(100),
+  rating:  z.number().int().min(1).max(5),
+  comment: z.string().max(1000).trim().optional().nullable(),
+})
 
 // GET /api/reviews?venueId=xxx
 export async function GET(request: NextRequest) {
   const venueId = request.nextUrl.searchParams.get("venueId")
-  if (!venueId) {
+  if (!venueId || venueId.length > 100) {
     return NextResponse.json({ error: "venueId required" }, { status: 400 })
   }
 
@@ -13,6 +20,7 @@ export async function GET(request: NextRequest) {
     where: { venueId },
     include: { user: { select: { name: true, email: true } } },
     orderBy: { createdAt: "desc" },
+    take: 100,
   })
 
   const avg =
@@ -23,18 +31,20 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ reviews, avg, count: reviews.length })
 }
 
-// POST /api/reviews  — create or update the caller's review for a venue
+// POST /api/reviews
 export async function POST(request: NextRequest) {
   const auth = getUserFromRequest(request)
   if (!auth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "Unauthorised" }, { status: 401 })
   }
 
-  const { venueId, rating, comment } = await request.json()
-
-  if (!venueId || typeof rating !== "number" || rating < 1 || rating > 5) {
-    return NextResponse.json({ error: "venueId and rating (1–5) required" }, { status: 400 })
+  const body = await request.json()
+  const parsed = ReviewSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid input" }, { status: 400 })
   }
+
+  const { venueId, rating, comment } = parsed.data
 
   const review = await db.review.upsert({
     where: { userId_venueId: { userId: auth.userId, venueId } },
@@ -49,11 +59,11 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const auth = getUserFromRequest(request)
   if (!auth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json({ error: "Unauthorised" }, { status: 401 })
   }
 
   const venueId = request.nextUrl.searchParams.get("venueId")
-  if (!venueId) {
+  if (!venueId || venueId.length > 100) {
     return NextResponse.json({ error: "venueId required" }, { status: 400 })
   }
 
