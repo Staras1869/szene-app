@@ -1,17 +1,98 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-export const runtime = "nodejs"
+export const runtime  = "nodejs"
 export const revalidate = 1800
 
 const CITY_LABEL: Record<string, string> = {
-  mannheim:     "Mannheim",
-  heidelberg:   "Heidelberg",
-  frankfurt:    "Frankfurt",
-  ludwigshafen: "Ludwigshafen",
-  karlsruhe:    "Karlsruhe",
+  mannheim: "Mannheim", heidelberg: "Heidelberg",
+  frankfurt: "Frankfurt", ludwigshafen: "Ludwigshafen", karlsruhe: "Karlsruhe",
 }
 
-// German days/months for date parsing
+// ─── Known local venues & party brands per city ───────────────────────────────
+// These are the real spots that generic searches miss.
+
+const LOCAL_SPOTS: Record<string, { venues: string[]; brands: string[]; accounts: string[] }> = {
+  mannheim: {
+    venues: [
+      "Kaizen Mannheim", "MS Connexion Mannheim", "BASE Club Mannheim",
+      "Zeitraumexit Mannheim", "Tiffany Club Mannheim", "Alte Feuerwache Mannheim",
+      "Ella und Louis Mannheim", "7Grad Mannheim", "ZEPHYR Bar Mannheim",
+      "Strandbar Rennwiese Mannheim", "Hafen Mannheim Club",
+      "Kulturhaus G7 Mannheim", "Capitol Mannheim", "Galerie Kurzzeit Mannheim",
+      "Plan B Mannheim", "Café Central Mannheim", "Nachtflug Mannheim",
+    ],
+    brands: [
+      "UNME Party Mannheim", "Alma Party Mannheim", "AStA Mannheim Party",
+      "FSMB Mannheim", "Uni Mannheim Semesterparty", "Jungbusch Festival",
+      "Afrobeats Mannheim", "Latin Night Mannheim", "Reggaeton Mannheim",
+      "Hip Hop Mannheim Club", "Techno Mannheim Underground",
+    ],
+    accounts: [
+      "site:instagram.com/kaizen.mannheim",
+      "site:instagram.com jungbusch mannheim nightlife",
+      "site:instagram.com mannheim party afro",
+      "site:instagram.com base.club.mannheim",
+      "site:facebook.com UNME Mannheim party",
+      "site:facebook.com Alma Mannheim event",
+    ],
+  },
+  heidelberg: {
+    venues: [
+      "Cave 54 Heidelberg", "halle02 Heidelberg", "Nachtschicht Heidelberg",
+      "Destille Heidelberg", "Goldener Engel Heidelberg", "Billy Blues Heidelberg",
+      "Green Apple Heidelberg", "Tangente Heidelberg", "O'Brien's Heidelberg",
+      "Harmoniegarten Heidelberg", "Schwimmbad Club Heidelberg",
+    ],
+    brands: [
+      "Uni Heidelberg Party", "Heidelberg Student Night", "Afro Night Heidelberg",
+      "Latin Heidelberg", "Heidelberg Open Air",
+    ],
+    accounts: [
+      "site:instagram.com heidelberg nightlife party",
+      "site:instagram.com cave54 heidelberg",
+      "site:facebook.com halle02 Heidelberg event",
+    ],
+  },
+  frankfurt: {
+    venues: [
+      "Robert Johnson Frankfurt", "Cocoon Club Frankfurt", "King Kamehameha Frankfurt",
+      "Metropol Frankfurt", "Zoom Frankfurt", "Batschkapp Frankfurt",
+      "Musikclub Dreikönigskeller", "Club Voltaire Frankfurt",
+      "Brotfabrik Frankfurt", "Tanzhaus West Frankfurt",
+    ],
+    brands: [
+      "Goethe Uni Party Frankfurt", "Afrohouse Frankfurt", "Reggaeton Frankfurt",
+      "Hip Hop Frankfurt Club", "Latin Night Frankfurt", "Techno Frankfurt",
+    ],
+    accounts: [
+      "site:instagram.com frankfurt nightlife afro",
+      "site:instagram.com robertjohnsonclub",
+      "site:facebook.com Frankfurt Latin party event",
+    ],
+  },
+  ludwigshafen: {
+    venues: [
+      "Das Haus Ludwigshafen", "Rheinufer Ludwigshafen", "Ernst-Bloch-Zentrum Ludwigshafen",
+    ],
+    brands: ["Party Ludwigshafen", "Afro Night Ludwigshafen", "Open Air Rhein"],
+    accounts: ["site:instagram.com ludwigshafen party event", "site:facebook.com Ludwigshafen event"],
+  },
+  karlsruhe: {
+    venues: [
+      "Substage Karlsruhe", "Tollhaus Karlsruhe", "Gotec Club Karlsruhe",
+      "Hemingway Karlsruhe", "Jubez Karlsruhe",
+    ],
+    brands: [
+      "KIT Party Karlsruhe", "Uni Karlsruhe Semesterparty", "Afrobeats Karlsruhe",
+      "Latin Night Karlsruhe",
+    ],
+    accounts: [
+      "site:instagram.com karlsruhe nightlife",
+      "site:facebook.com Karlsruhe party student",
+    ],
+  },
+}
+
 const DE_MONTHS: Record<string, string> = {
   januar:"01",februar:"02",märz:"03",april:"04",mai:"05",juni:"06",
   juli:"07",august:"08",september:"09",oktober:"10",november:"11",dezember:"12",
@@ -20,10 +101,8 @@ const DE_MONTHS: Record<string, string> = {
 
 function parseDate(raw: string): string {
   if (!raw) return ""
-  // Already ISO
   if (/^\d{4}-\d{2}-\d{2}/.test(raw)) return raw.slice(0, 10)
   const s = raw.toLowerCase()
-  // "15. april 2025" or "15 apr"
   const m = s.match(/(\d{1,2})\.?\s+([a-zä]+)\.?\s*(\d{4})?/)
   if (m) {
     const day   = m[1].padStart(2, "0")
@@ -33,8 +112,6 @@ function parseDate(raw: string): string {
   }
   return raw
 }
-
-// ── Serper core ───────────────────────────────────────────────────────────────
 
 async function serperQuery(q: string, key: string, type: "events"|"search"|"news" = "events"): Promise<any[]> {
   try {
@@ -51,7 +128,7 @@ async function serperQuery(q: string, key: string, type: "events"|"search"|"news
   } catch { return [] }
 }
 
-function mapSerperEvent(e: any, city: string, category: string, idx: number): any {
+function mapEvent(e: any, city: string, category: string, idx: number): any {
   return {
     id:       `sr-${city}-${idx}-${Math.random().toString(36).slice(2,6)}`,
     source:   "web",
@@ -61,7 +138,6 @@ function mapSerperEvent(e: any, city: string, category: string, idx: number): an
     date:     parseDate(e.date ?? e.dateText ?? ""),
     time:     e.time ?? "",
     url:      e.link ?? e.url ?? "",
-    image:    e.thumbnail ?? e.imageUrl ?? "",
     price:    e.price ?? null,
     category,
     city,
@@ -78,121 +154,145 @@ function mapOrganic(e: any, city: string, category: string, idx: number): any {
     date:     parseDate(e.date ?? ""),
     time:     "",
     url:      e.link ?? "",
-    image:    e.imageUrl ?? "",
     price:    null,
     category,
     city,
   }
 }
 
-// ── Social platform search via Google ────────────────────────────────────────
-// Instagram, Facebook, TikTok, YouTube don't allow direct API event search,
-// but Google indexes their public pages — we search them directly.
+// ─── 1. Hyper-local search: specific venues + party brands by name ────────────
+async function fetchLocal(city: string, vibe: string): Promise<any[]> {
+  const key = process.env.SERPER_API_KEY
+  if (!key) return []
 
+  const spots   = LOCAL_SPOTS[city]
+  if (!spots) return []
+  const cat     = vibeToCategory(vibe)
+  const year    = new Date().getFullYear()
+
+  // Search each known venue/brand for upcoming events
+  const venueSearches = spots.venues.map(v => ({
+    q:    `"${v}" Event Party ${year}`,
+    type: "events" as const,
+  }))
+  const brandSearches = spots.brands.map(b => ({
+    q:    `"${b}" ${year}`,
+    type: "events" as const,
+  }))
+
+  const all = [...venueSearches, ...brandSearches].slice(0, 20) // cap at 20 queries
+
+  const results = await Promise.allSettled(
+    all.map(s => serperQuery(s.q, key, s.type))
+  )
+
+  const out: any[] = []
+  results.forEach((r, i) => {
+    if (r.status !== "fulfilled") return
+    r.value.forEach((e: any, j: number) => out.push(mapEvent(e, city, cat, i * 100 + j)))
+  })
+  return out
+}
+
+// ─── 2. Social search: Instagram, Facebook, TikTok for local nightlife ────────
 async function fetchSocials(city: string, vibe: string): Promise<any[]> {
   const key = process.env.SERPER_API_KEY
   if (!key) return []
 
-  const label = CITY_LABEL[city] ?? city
-  const cat   = vibeToCategory(vibe)
+  const label   = CITY_LABEL[city]
+  const spots   = LOCAL_SPOTS[city]
+  const cat     = vibeToCategory(vibe)
+  const year    = new Date().getFullYear()
 
-  // Map vibe to German + English keywords
-  const kw: Record<string, { de: string; en: string; tags: string }> = {
-    party:   { de: "Party Clubnacht Rave",      en: "club night party rave",     tags: "#party #clubnight #rave" },
-    music:   { de: "Konzert Festival Live",      en: "concert festival live",     tags: "#concert #livemusic #festival" },
-    culture: { de: "Ausstellung Kunst Theater",  en: "exhibition art theatre",    tags: "#art #exhibition #culture" },
-    food:    { de: "Street Food Markt Pop-Up",   en: "street food market popup",  tags: "#streetfood #foodmarket" },
-    student: { de: "Studentenparty Uni Campus",  en: "student party university",  tags: "#studentenparty #uniparty" },
-    outside: { de: "Open Air Festival Stadtfest",en: "open air festival outdoor", tags: "#openair #festival #outdoor" },
-    chill:   { de: "Bar Lounge Weinbar Abend",   en: "bar lounge evening chill",  tags: "#bar #lounge" },
-    all:     { de: "Event Party Konzert",        en: "event party concert",       tags: "#event #party #concert" },
+  // Vibe-specific keywords
+  const vibeKw: Record<string, string> = {
+    afro:    `Afrobeats Afrohouse Amapiano Dancehall`,
+    latin:   `Reggaeton Latin Salsa Dembow`,
+    hiphop:  `"Hip Hop" "Hip-Hop" RnB Trap`,
+    student: `Studentenparty Uniparty AStA Semesterparty`,
+    party:   `Clubnacht Party Rave Techno House`,
+    music:   `Konzert "Live Music" Festival`,
+    outside: `"Open Air" Stadtfest Outdoor Sommerfest`,
+    chill:   `Bar Lounge Cocktail Weinbar`,
+    all:     `Party Event Konzert Nightlife`,
   }
-  const k = kw[vibe] ?? kw.all
+  const kw = vibeKw[vibe] ?? vibeKw.all
 
   const searches: { q: string; type: "events"|"search"|"news" }[] = [
-    // Instagram — public posts indexed by Google
-    { q: `site:instagram.com "${label}" ${k.de} 2025`,           type: "search" },
-    { q: `site:instagram.com "${label}" ${k.tags}`,              type: "search" },
-    // Facebook Events — publicly indexed
-    { q: `site:facebook.com/events "${label}" ${k.en} 2025`,     type: "events" },
-    { q: `site:facebook.com "${label}" ${k.de} Veranstaltung`,   type: "search" },
-    // TikTok — promoters post events as videos
-    { q: `site:tiktok.com "${label}" ${k.de} ${k.tags}`,         type: "search" },
-    // YouTube — event promos, aftermovies, announcements
-    { q: `site:youtube.com "${label}" ${k.en} 2025 official`,    type: "search" },
-    // WhatsApp channel events (public groups indexed)
-    { q: `"${label}" ${k.de} Event Einladung 2025 -site:eventim.de -site:ra.co`, type: "events" },
-    // Local German event portals
-    { q: `site:eventim.de "${label}" ${k.de}`,                   type: "search" },
-    { q: `site:ticketmaster.de "${label}" ${k.en}`,              type: "search" },
-    { q: `site:reservix.de "${label}" ${k.de}`,                  type: "search" },
-    // Nightlife-specific German platforms
-    { q: `site:berghain.de OR site:clubbase.de "${label}" ${k.de}`, type: "search" },
-    // Local city event pages
-    { q: `"${label}" Veranstaltungen ${k.de} ${new Date().getFullYear()}`, type: "events" },
-    // News about upcoming events
-    { q: `"${label}" ${k.de} Event Ankündigung`,                 type: "news" },
+    // Instagram — nightlife accounts for this city
+    ...( spots?.accounts.map(q => ({ q: `${q} ${year}`, type: "search" as const })) ?? [] ),
+    // Facebook Events — local specific
+    { q: `site:facebook.com/events "${label}" ${kw} ${year}`,             type: "events" },
+    { q: `site:facebook.com "${label}" Veranstaltung ${kw}`,              type: "search" },
+    // Targeted Instagram for vibe
+    { q: `site:instagram.com "${label}" ${kw} ${year}`,                   type: "search" },
+    // Hidden gems / Geheimtipps
+    { q: `"${label}" Geheimtipp Bar Lounge underground ${year}`,          type: "search" },
+    { q: `"${label}" hidden bar insider tip nightlife ${year}`,           type: "search" },
+    // Specific genre nights
+    { q: `"${label}" Afrobeats Afrohouse ${year} Party`,                  type: "events" },
+    { q: `"${label}" Reggaeton Latin Night ${year}`,                      type: "events" },
+    { q: `"${label}" Hip-Hop RnB ${year} Club`,                           type: "events" },
+    { q: `"${label}" Studentenparty AStA Uni ${year}`,                    type: "events" },
+    // Local portals
+    { q: `site:eventim.de "${label}" ${kw}`,                              type: "search" },
+    { q: `site:reservix.de "${label}"`,                                   type: "search" },
+    // WhatsApp / Telegram public channels
+    { q: `"${label}" Party WhatsApp Gruppe ${year} Einladung`,            type: "search" },
+    // News / announcements
+    { q: `"${label}" ${kw} Ankündigung ${year}`,                          type: "news"   },
   ]
 
   const results = await Promise.allSettled(
     searches.map(s => serperQuery(s.q, key, s.type))
   )
 
-  const all: any[] = []
+  const out: any[] = []
   results.forEach((r, i) => {
     if (r.status !== "fulfilled") return
-    const isEvents  = searches[i].type === "events"
-    const isOrganic = searches[i].type === "search"
+    const t = searches[i].type
     r.value.forEach((e: any, j: number) => {
-      if (isEvents)  all.push(mapSerperEvent(e, city, cat, i * 100 + j))
-      if (isOrganic) all.push(mapOrganic(e, city, cat, i * 100 + j))
-      // News: treat as organic
-      if (!isEvents && !isOrganic) all.push(mapOrganic(e, city, cat, i * 100 + j))
+      if (t === "events") out.push(mapEvent(e, city, cat, i * 100 + j))
+      else                out.push(mapOrganic(e, city, cat, i * 100 + j))
     })
   })
-
-  return all
+  return out
 }
 
-// ── General Serper event search ───────────────────────────────────────────────
-
+// ─── 3. General event search ──────────────────────────────────────────────────
 async function fetchSerper(city: string, vibe: string): Promise<any[]> {
   const key = process.env.SERPER_API_KEY
   if (!key) return []
-
-  const label = CITY_LABEL[city] ?? city
+  const label = CITY_LABEL[city]
   const cat   = vibeToCategory(vibe)
+  const year  = new Date().getFullYear()
 
-  const vibeTerms: Record<string, string[]> = {
-    party:   ["Clubnacht Techno House Rave Party", "club rave party night"],
-    music:   ["Konzert Live Musik Festival", "concert live music festival"],
-    culture: ["Ausstellung Theater Kunst Kultur", "exhibition art theatre culture"],
-    food:    ["Street Food Markt Pop-Up Foodfestival", "street food market popup"],
-    student: ["Studentenparty Uni Hochschulparty AStA", "student party university campus"],
-    outside: ["Open Air Festival Stadtfest Sommerfest", "outdoor open air festival"],
-    chill:   ["Bar Lounge Weinbar Cocktailbar", "bar lounge wine cocktail"],
-    all:     ["Event Party Konzert Festival Veranstaltung", "event party concert festival"],
+  const terms: Record<string, string[]> = {
+    afro:    [`Afrobeats Afrohouse Amapiano ${label} ${year}`, `Afro Night ${label}`],
+    latin:   [`Reggaeton Latin Night ${label} ${year}`, `Salsa ${label} Party`],
+    hiphop:  [`Hip Hop RnB ${label} Club ${year}`, `"Hip-Hop" Night ${label}`],
+    student: [`Studentenparty Uni ${label} ${year}`, `AStA Semesterparty ${label}`],
+    party:   [`Clubnacht Party ${label} ${year}`, `Rave Techno ${label} Underground`],
+    music:   [`Konzert Live ${label} ${year}`, `Festival ${label}`],
+    outside: [`Open Air ${label} ${year}`, `Stadtfest ${label} Outdoor`],
+    chill:   [`Bar Lounge ${label} ${year}`, `Cocktailbar ${label} Geheimtipp`],
+    all:     [`Event Party ${label} ${year}`, `Nightlife ${label} Tonight`],
   }
 
-  const queries = vibeTerms[vibe] ?? vibeTerms.all
-  const searches = queries.map(q => `${q} ${label} ${new Date().getFullYear()}`)
-
+  const queries = terms[vibe] ?? terms.all
   const results = await Promise.allSettled(
-    searches.map(q => serperQuery(q, key, "events"))
+    queries.map(q => serperQuery(q, key, "events"))
   )
-
-  const all: any[] = []
+  const out: any[] = []
   results.forEach((r, i) => {
     if (r.status !== "fulfilled") return
-    r.value.forEach((e: any, j: number) => all.push(mapSerperEvent(e, city, cat, i * 100 + j)))
+    r.value.forEach((e: any, j: number) => out.push(mapEvent(e, city, cat, i * 100 + j)))
   })
-  return all
+  return out
 }
 
-// ── Resident Advisor ──────────────────────────────────────────────────────────
-
+// ─── 4. Resident Advisor ──────────────────────────────────────────────────────
 async function fetchRA(city: string, vibe: string): Promise<any[]> {
-  if (!["party", "music", "all"].includes(vibe)) return []
   const RA_AREAS: Record<string, string> = {
     mannheim: "mannheim", heidelberg: "heidelberg",
     frankfurt: "frankfurt", karlsruhe: "karlsruhe",
@@ -211,7 +311,7 @@ async function fetchRA(city: string, vibe: string): Promise<any[]> {
         variables: { filters: { areas: { slug: area }, startDate: today, endDate: end }, pageSize: 20, page: 1 },
         query: `query GET_EVENT_LISTINGS($filters: FilterInputDtoInput, $pageSize: Int, $page: Int) {
           eventListings(filters: $filters, pageSize: $pageSize, page: $page) {
-            data { id event { id title date startTime contentUrl venue { name } images { filename } } }
+            data { id event { id title date startTime contentUrl venue { name } } }
           }
         }`,
       }),
@@ -220,24 +320,16 @@ async function fetchRA(city: string, vibe: string): Promise<any[]> {
     if (!res.ok) return []
     const data = await res.json()
     return (data?.data?.eventListings?.data ?? []).map((l: any) => ({
-      id:       `ra-${l.event.id}`,
-      source:   "ra",
-      title:    l.event.title,
-      venue:    l.event.venue?.name ?? city,
-      area:     city,
-      date:     l.event.date?.split("T")[0] ?? "",
-      time:     l.event.startTime ?? "",
-      url:      l.event.contentUrl ? `https://ra.co${l.event.contentUrl}` : "",
-      image:    l.event.images?.[0]?.filename ? `https://ra.co${l.event.images[0].filename}` : "",
-      price:    null,
-      category: "Nightlife",
-      city,
+      id: `ra-${l.event.id}`, source: "ra",
+      title: l.event.title, venue: l.event.venue?.name ?? city, area: city,
+      date: l.event.date?.split("T")[0] ?? "", time: l.event.startTime ?? "",
+      url: l.event.contentUrl ? `https://ra.co${l.event.contentUrl}` : "",
+      price: null, category: "Nightlife", city,
     }))
   } catch { return [] }
 }
 
-// ── Ticketmaster ──────────────────────────────────────────────────────────────
-
+// ─── 5. Ticketmaster ──────────────────────────────────────────────────────────
 async function fetchTicketmaster(city: string, vibe: string): Promise<any[]> {
   const key = process.env.TICKETMASTER_API_KEY
   if (!key) return []
@@ -255,50 +347,18 @@ async function fetchTicketmaster(city: string, vibe: string): Promise<any[]> {
       title: e.name, venue: e._embedded?.venues?.[0]?.name ?? city,
       area: e._embedded?.venues?.[0]?.city?.name ?? city,
       date: e.dates?.start?.localDate ?? "", time: e.dates?.start?.localTime?.slice(0,5) ?? "",
-      url: e.url ?? "", image: e.images?.[0]?.url ?? "",
-      price: e.priceRanges ? `€${Math.round(e.priceRanges[0].min)}` : null,
+      url: e.url ?? "", price: e.priceRanges ? `€${Math.round(e.priceRanges[0].min)}` : null,
       category: e.classifications?.[0]?.genre?.name ?? "Event", city,
     }))
   } catch { return [] }
 }
 
-// ── Eventbrite ────────────────────────────────────────────────────────────────
-
-async function fetchEventbrite(city: string, vibe: string): Promise<any[]> {
-  const key = process.env.EVENTBRITE_API_KEY
-  if (!key) return []
-  const catMap: Record<string, string> = { music: "103", culture: "105", food: "110", party: "103" }
-  const params = new URLSearchParams({
-    "location.address": `${CITY_LABEL[city]}, Germany`,
-    "location.within": "25km", expand: "venue", sort_by: "date",
-    "start_date.range_start": new Date().toISOString(),
-    "start_date.range_end": new Date(Date.now() + 30 * 24 * 3600_000).toISOString(),
-    ...(catMap[vibe] ? { categories: catMap[vibe] } : {}),
-  })
-  try {
-    const res = await fetch(`https://www.eventbriteapi.com/v3/events/search/?${params}`, {
-      headers: { Authorization: `Bearer ${key}` }, next: { revalidate: 1800 },
-    })
-    if (!res.ok) return []
-    const data = await res.json()
-    return (data.events ?? []).map((e: any) => ({
-      id: `eb-${e.id}`, source: "eventbrite",
-      title: e.name?.text ?? "Event", venue: e.venue?.name ?? city,
-      area: e.venue?.address?.city ?? city,
-      date: e.start?.local?.split("T")[0] ?? "", time: e.start?.local?.split("T")[1]?.slice(0,5) ?? "",
-      url: e.url ?? "", image: e.logo?.url ?? "",
-      price: e.is_free ? "Free" : null,
-      category: catMap[vibe] === "110" ? "Food" : catMap[vibe] === "105" ? "Culture" : "Event", city,
-    }))
-  } catch { return [] }
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function vibeToCategory(vibe: string): string {
   const map: Record<string,string> = {
+    afro: "Afro", latin: "Latin", hiphop: "Hip-Hop",
     party: "Nightlife", music: "Music", culture: "Culture",
-    food: "Food", student: "Student", outside: "Outdoor", chill: "Bar",
+    food: "Food", student: "Uni", outside: "Outdoor", chill: "Bar",
   }
   return map[vibe] ?? "Event"
 }
@@ -306,37 +366,36 @@ function vibeToCategory(vibe: string): string {
 function dedupe(events: any[]): any[] {
   const seen = new Set<string>()
   return events.filter(e => {
-    if (!e.title) return false
-    const key = e.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 25)
+    if (!e.title || e.title.length < 4) return false
+    const key = e.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 30)
     if (seen.has(key)) return false
     seen.add(key)
     return true
   })
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
-
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   const city = req.nextUrl.searchParams.get("city") ?? "mannheim"
   const vibe = req.nextUrl.searchParams.get("vibe") ?? "all"
 
-  const [ra, tm, eb, sr, social] = await Promise.allSettled([
-    fetchRA(city, vibe),
-    fetchTicketmaster(city, vibe),
-    fetchEventbrite(city, vibe),
-    fetchSerper(city, vibe),
-    fetchSocials(city, vibe),   // Instagram, Facebook, TikTok, YouTube, local portals
+  // Run all sources in parallel — local + social first for relevance
+  const [local, social, ra, tm, sr] = await Promise.allSettled([
+    fetchLocal(city, vibe),        // Specific venues + party brands by name
+    fetchSocials(city, vibe),      // Instagram, Facebook, hidden gems
+    fetchRA(city, vibe),           // Resident Advisor (club/electronic)
+    fetchTicketmaster(city, vibe), // Ticketmaster
+    fetchSerper(city, vibe),       // General event search
   ])
 
   const get = (r: PromiseSettledResult<any[]>) => r.status === "fulfilled" ? r.value : []
 
-  // Priority order: RA (most reliable) → TM → EB → Serper → Social
   const merged = [
-    ...get(ra),
+    ...get(local),   // local knowledge first
+    ...get(ra),      // RA is high quality
     ...get(tm),
-    ...get(eb),
-    ...get(sr),
     ...get(social),
+    ...get(sr),
   ]
 
   const deduped = dedupe(merged)
@@ -348,14 +407,14 @@ export async function GET(req: NextRequest) {
   })
 
   return NextResponse.json({
-    events: deduped,
-    total:  deduped.length,
+    events:  deduped,
+    total:   deduped.length,
     sources: {
+      local:        get(local).length,
       ra:           get(ra).length,
       ticketmaster: get(tm).length,
-      eventbrite:   get(eb).length,
-      web:          get(sr).length,
       social:       get(social).length,
+      web:          get(sr).length,
     },
   })
 }
