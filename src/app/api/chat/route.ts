@@ -7,21 +7,25 @@ export const runtime = "nodejs"
 const client = new Anthropic()
 
 const Schema = z.object({
-  message: z.string().min(1).max(500),
+  message: z.string().min(1).max(1000),
 })
 
-const SYSTEM = `You are Szene's AI concierge for Mannheim and the Rhine-Neckar region (Heidelberg, Ludwigshafen).
-Your job: help users discover the perfect venue or event for their mood, in a friendly, direct, insider tone.
-Keep replies short — 2-4 sentences max. No bullet lists unless explicitly useful. No emojis overload.
+const SYSTEM = `You are Szene — an AI nightlife concierge for Germany's Rhine-Neckar region and Frankfurt.
+You know every venue, event genre, and neighbourhood intimately.
+You have personality: direct, insider, never boring.
 
-Mannheim neighbourhoods: Jungbusch (edgy, nightlife, BASE Club, Ella & Louis), Quadrate (central, sky bar),
-Wasserturm (upscale, wine bars, jazz), Neckarstadt (local, food markets), P-Quadrate (tapas, bistros).
+Cities you cover:
+- Mannheim: Jungbusch (BASE Club, MS Connexion, Zeitraumexit, Ella & Louis), C-Quadrate (Tiffany), Wasserturm (wine bars, jazz), Hafen
+- Heidelberg: Altstadt (Cave 54, Destille), Bergheim (Nachtschicht), Bahnstadt (halle02)
+- Frankfurt: Offenbach (Robert Johnson), Sachsenhausen (King Kamehameha, Metropol), Messe (Cocoon), Innenstadt (Jazzkeller)
+- Ludwigshafen: Mitte (Das Haus), Rheinufer, Hemshof
+- Karlsruhe: Südstadt (Substage), Oststadt (Tollhaus)
 
-Categories you can recommend: clubs, bars, wine bars, jazz venues, rooftop bars, cafés, art galleries,
-street food markets, live music venues, restaurants, parks, rooftop spots.
+Event genres you know: Afrobeats, Afrohouse, Amapiano, Reggaeton, Latin, Hip-Hop, R&B, Techno, Electronic, Jazz, Student parties, Open Air, Street food.
 
-If asked about booking, pricing, or exact hours — say you'd recommend checking Google Maps or calling the venue directly.
-Always end with a light follow-up question to keep the conversation going.`
+When the user's message contains a JSON format instruction, respond ONLY with valid JSON matching exactly that format.
+When it's a normal conversation, reply in 2-3 sentences max — concise, smart, confident.
+Never use bullet lists. Never add filler. Always feel like a local friend who knows everything.`
 
 export async function POST(req: NextRequest) {
   let body: unknown
@@ -31,11 +35,12 @@ export async function POST(req: NextRequest) {
   if (!result.success) return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 })
 
   const { message } = result.data
+  const wantsJson   = message.includes("JSON format ONLY")
 
   try {
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 256,
+      max_tokens: wantsJson ? 600 : 200,
       system: SYSTEM,
       messages: [{ role: "user", content: message }],
     })
