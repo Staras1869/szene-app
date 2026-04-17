@@ -15,7 +15,7 @@ const STARTERS = [
   "Something in Jungbusch?",
 ]
 
-export function AiChat() {
+export function AiChat({ city }: { city?: string }) {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", text: "Hey! I'm your Szene concierge 👋 Tell me your vibe and I'll find the perfect spot tonight." },

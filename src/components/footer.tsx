@@ -3,9 +3,13 @@
 import Link from "next/link"
 import { Instagram, Twitter, Mail } from "lucide-react"
 
-export function Footer() {
+export function Footer({ setCity }: { setCity?: (c: string) => void }) {
   function scrollToApp() {
     document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" })
+  }
+  function pickCity(c: string) {
+    setCity?.(c)
+    setTimeout(() => document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" }), 60)
   }
 
   return (
@@ -40,10 +44,16 @@ export function Footer() {
           <div>
             <p className="text-[10px] font-bold text-white/35 uppercase tracking-[0.2em] mb-4">Cities</p>
             <ul className="space-y-2.5">
-              {["Mannheim", "Heidelberg", "Frankfurt", "Ludwigshafen", "Karlsruhe"].map(c => (
-                <li key={c}>
-                  <button onClick={scrollToApp} className="text-sm text-white/45 hover:text-white transition-colors text-left">
-                    {c}
+              {[
+                { label: "Mannheim",     id: "mannheim" },
+                { label: "Heidelberg",   id: "heidelberg" },
+                { label: "Frankfurt",    id: "frankfurt" },
+                { label: "Ludwigshafen",id: "ludwigshafen" },
+                { label: "Karlsruhe",   id: "karlsruhe" },
+              ].map(c => (
+                <li key={c.id}>
+                  <button onClick={() => pickCity(c.id)} className="text-sm text-white/45 hover:text-white transition-colors text-left">
+                    {c.label}
                   </button>
                 </li>
               ))}
