@@ -6,6 +6,8 @@ import { InstallPrompt } from "@/components/install-prompt"
 import { MobileInit } from "@/components/mobile-init"
 import { PushPrompt } from "@/components/push-prompt"
 import { EventToastManager } from "@/components/event-toast"
+import { GuestCTA } from "@/components/guest-cta"
+import { BrowseGate } from "@/components/browse-gate"
 
 export const metadata: Metadata = {
   title: {
@@ -63,6 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
             <PushPrompt />
             <EventToastManager />
+            <GuestCTA />
+            <BrowseGate />
             <InstallPrompt />
           </LanguageProvider>
         </SzeneThemeProvider>

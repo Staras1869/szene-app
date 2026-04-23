@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle } from "lucide-react"
 import { triggerEventToast } from "./event-toast"
+import { trackEventView } from "./browse-gate"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -295,11 +296,16 @@ function EventCard({ e, going, onToggle, user, city }: {
 }) {
   const [expanded, setExpanded] = useState(false)
   const mapQuery     = encodeURIComponent(`${e.venue}${city ? `, ${city}` : ""}`)
+
+  function handleExpand() {
+    if (!expanded) trackEventView()
+    setExpanded(x => !x)
+  }
   const parkingQuery = encodeURIComponent(`parking near ${e.venue}${city ? `, ${city}` : ""}`)
   return (
     <div className="szene-card group overflow-hidden">
       {/* Main row */}
-      <button className="w-full text-left" onClick={() => setExpanded(x => !x)}>
+      <button className="w-full text-left" onClick={handleExpand}>
         {/* Photo hero or gradient thumbnail */}
         {e.image ? (
           <div className="relative w-full h-40 overflow-hidden">
@@ -713,29 +719,64 @@ function TonightTab({ city }: { city: string }) {
 
 // ─── Venues tab ───────────────────────────────────────────────────────────────
 function VenuesTab({ city }: { city: string }) {
+  const { user } = useAuth()
   const [vibe, setVibe] = useState("all")
   const cityVenues  = VENUES_BY_CITY[city] ?? []
   const filtered    = vibe === "all" ? cityVenues : cityVenues.filter(v => v.vibe === vibe)
 
+  const isHidden = (tag: string) => tag.includes("🔒 Hidden")
+
   return (
     <div className="space-y-5">
       <VibeBar vibe={vibe} setVibe={setVibe} />
+
+      {/* Hidden venues teaser for guests */}
+      {!user && filtered.some(v => isHidden(v.tag)) && (
+        <Link href="/register" className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-violet-500/30 bg-violet-500/8 group transition-all hover:border-violet-400/50">
+          <span className="text-xl">🔒</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold" style={{ color: "var(--text-primary)" }}>
+              {filtered.filter(v => isHidden(v.tag)).length} hidden venues in {city.charAt(0).toUpperCase() + city.slice(1)}
+            </p>
+            <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>Geheimtipps only locals know — free to unlock</p>
+          </div>
+          <span className="text-[10px] font-bold text-violet-400 group-hover:text-violet-300 flex-shrink-0">Unlock →</span>
+        </Link>
+      )}
+
       {filtered.length === 0 ? (
         <p className="text-faint text-sm py-10 text-center">No venues in this category yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {filtered.map(v => (
-            <Link key={v.id} href={`/venue/${toSlug(v.name)}`}
-              className="szene-card flex items-center gap-3 p-4 group">
-              <span className="text-2xl flex-shrink-0">{v.emoji}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-szene group-hover:text-violet-400 transition-colors truncate">{v.name}</p>
-                <p className="text-xs text-muted mt-0.5">{v.area}</p>
-              </div>
-              <span className="text-[10px] text-violet-400/70 border border-violet-500/25 px-2 py-0.5 rounded-full flex-shrink-0 text-right leading-tight">{v.tag}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-faint group-hover:text-violet-400 transition-colors flex-shrink-0" />
-            </Link>
-          ))}
+          {filtered.map(v => {
+            const hidden = isHidden(v.tag) && !user
+            return hidden ? (
+              // Locked card for guests
+              <Link key={v.id} href="/register" className="szene-card flex items-center gap-3 p-4 group relative overflow-hidden">
+                <span className="text-2xl flex-shrink-0 grayscale opacity-50">{v.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>{v.name}</p>
+                  <p className="text-xs mt-0.5 blur-sm select-none" style={{ color: "var(--text-muted)" }}>
+                    ████████, {v.area}
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-violet-400 border border-violet-500/30 bg-violet-500/10 px-2 py-1 rounded-full flex-shrink-0">
+                  🔒 Unlock
+                </span>
+              </Link>
+            ) : (
+              <Link key={v.id} href={`/venue/${toSlug(v.name)}`}
+                className="szene-card flex items-center gap-3 p-4 group">
+                <span className="text-2xl flex-shrink-0">{v.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-szene group-hover:text-violet-400 transition-colors truncate">{v.name}</p>
+                  <p className="text-xs text-muted mt-0.5">{v.area}</p>
+                </div>
+                <span className="text-[10px] text-violet-400/70 border border-violet-500/25 px-2 py-0.5 rounded-full flex-shrink-0 text-right leading-tight">{v.tag}</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-faint group-hover:text-violet-400 transition-colors flex-shrink-0" />
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>
