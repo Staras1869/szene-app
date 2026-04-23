@@ -5,6 +5,7 @@ import { SzeneThemeProvider } from "@/components/szene-theme-provider"
 import { InstallPrompt } from "@/components/install-prompt"
 import { MobileInit } from "@/components/mobile-init"
 import { PushPrompt } from "@/components/push-prompt"
+import { EventToastManager } from "@/components/event-toast"
 
 export const metadata: Metadata = {
   title: {
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <MobileInit />
             {children}
             <PushPrompt />
+            <EventToastManager />
             <InstallPrompt />
           </LanguageProvider>
         </SzeneThemeProvider>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle } from "lucide-react"
+import { triggerEventToast } from "./event-toast"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -520,7 +521,28 @@ function EventsTab({ city }: { city: string }) {
     setLiveEvents([])
     fetch(`/api/discover/live?city=${city}&vibe=${vibe}`)
       .then(r => r.json())
-      .then(d => { setLiveEvents(d.events ?? []); setSources(d.sources) })
+      .then(d => {
+        const events = d.events ?? []
+        setLiveEvents(events)
+        setSources(d.sources)
+        // Show in-app banner for the top new event
+        const top = events[0]
+        if (top) {
+          const VIBE_EMOJI: Record<string, string> = {
+            Afro: "🌍", Latin: "🔥", "Hip-Hop": "🎤", Uni: "🎓",
+            Nightlife: "🎉", Music: "🎷", Outdoor: "🌿", Bar: "🍸", Event: "✦",
+          }
+          triggerEventToast({
+            id:       top.id,
+            title:    top.title,
+            venue:    top.venue ?? city,
+            city:     city.charAt(0).toUpperCase() + city.slice(1),
+            category: top.category ?? "Event",
+            emoji:    VIBE_EMOJI[top.category ?? ""] ?? "✦",
+            url:      top.url || undefined,
+          })
+        }
+      })
       .catch(() => {})
       .finally(() => setLiveLoading(false))
   }, [city, vibe])
