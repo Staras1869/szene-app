@@ -32,7 +32,7 @@ const VENUE_DATA: Record<string, {
     description: "Three floors, 2,000 capacity, right on the harbour. Germany's top Afrobeats and electronic venue outside Berlin. The Connexion stage has hosted international DJs for over two decades.",
     address: "Hafenstraße 25-27, 68159 Mannheim", opens: "22:00", closes: "06:00",
     tags: ["Afrobeats", "Electronic", "Multi-floor", "Harbour"],
-    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&h=500&fit=crop&auto=format",
+    image: "https://www.msconnexion.com/assets/images/8/MSCC_Aussen_Highlight-7c0aff06.jpg",
     instagram: "msconnexion", website: "https://www.msconnexion.de",
   },
   "zeitraumexit":   {
@@ -85,7 +85,7 @@ const VENUE_DATA: Record<string, {
     description: "A former fire station turned Mannheim's most beloved cultural hub. Concerts, theatre, Afro nights, comedy — the full spectrum. Community-run and proud of it.",
     address: "Alten Feuerwache 1, 68159 Mannheim", opens: "18:00", closes: "00:00",
     tags: ["Culture", "Afro", "Live music", "Community"],
-    image: "https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=900&h=500&fit=crop&auto=format",
+    image: "https://altefeuerwache.com/wp-content/uploads/2026/02/jean-philippe-kindler-2025_-10.jpg",
     instagram: "altefeuerwache.mannheim", website: "https://www.altefeuerwache.com",
   },
   "cave-54":        {
@@ -93,7 +93,7 @@ const VENUE_DATA: Record<string, {
     description: "Heidelberg's oldest club, open since 1969 in a medieval cellar beneath the Altstadt. Jazz, funk, soul and student nights. A bucket-list venue for any music lover.",
     address: "Krämergasse 2, 69117 Heidelberg", opens: "22:00", closes: "05:00",
     tags: ["Jazz", "Rock", "Student", "Historic", "1969"],
-    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=900&h=500&fit=crop&auto=format",
+    image: "https://static.wixstatic.com/media/11062b_1bca6513d1444afca6a2a1c0aae87b6df000.png/v1/fill/w_1920,h_1080,al_c,q_95,enc_avif,quality_auto/11062b_1bca6513d1444afca6a2a1c0aae87b6df000.png",
     instagram: "cave54heidelberg", website: "https://www.cave54.de",
   },
   "nachtschicht":   {
@@ -109,7 +109,7 @@ const VENUE_DATA: Record<string, {
     description: "A converted industrial hall that hosts everything from Afro nights to techno raves to sold-out concerts. Biggest capacity in Heidelberg — 2,500 people.",
     address: "Güteramtstraße 4, 69115 Heidelberg", opens: "21:00", closes: "06:00",
     tags: ["Afro", "Electronic", "Concerts", "Large format"],
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&h=500&fit=crop&auto=format",
+    image: "https://b3310012.smushcdn.com/3310012/wp-content/uploads/2026/03/halle02_3000_felix-aspect-ratio-1920-1080.jpeg?lossy=2&strip=1&webp=1",
     instagram: "halle02.heidelberg", website: "https://www.halle02.de",
   },
   "robert-johnson": {
@@ -133,7 +133,7 @@ const VENUE_DATA: Record<string, {
     description: "Karlsruhe's best-kept secret — live concerts, KIT student nights, and underground electronic in a raw basement venue. The university crowd keeps it unpretentious.",
     address: "Südweststraße 13, 76135 Karlsruhe", opens: "21:00", closes: "05:00",
     tags: ["Live music", "Student", "Indie", "Electronic"],
-    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&h=500&fit=crop&auto=format",
+    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=900&h=500&fit=crop&auto=format",
     instagram: "substage_ka", website: "https://www.substage.de",
   },
 }

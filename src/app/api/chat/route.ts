@@ -6,8 +6,15 @@ export const runtime = "nodejs"
 
 const client = new Anthropic()
 
+const MessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string(),
+})
+
 const Schema = z.object({
   message: z.string().min(1).max(1000),
+  city: z.string().optional(),
+  history: z.array(MessageSchema).max(20).optional(),
 })
 
 const SYSTEM = `You are Szene — an AI nightlife concierge for Germany's Rhine-Neckar region and Frankfurt.
@@ -24,6 +31,7 @@ Cities you cover:
 Event genres you know: Afrobeats, Afrohouse, Amapiano, Reggaeton, Latin, Hip-Hop, R&B, Techno, Electronic, Jazz, Student parties, Open Air, Street food.
 
 When the user's message contains a JSON format instruction, respond ONLY with valid JSON matching exactly that format.
+CRITICAL: Always reply in the same language the user writes in. If they write German, reply in German. If they write Spanish, reply in Spanish. If they write English, reply in English. Never switch languages.
 When it's a normal conversation, reply in 2-3 sentences max — concise, smart, confident.
 Never use bullet lists. Never add filler. Always feel like a local friend who knows everything.`
 
@@ -34,21 +42,33 @@ export async function POST(req: NextRequest) {
   const result = Schema.safeParse(body)
   if (!result.success) return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 })
 
-  const { message } = result.data
-  const wantsJson   = message.includes("JSON format ONLY")
+  const { message, city, history = [] } = result.data
+  const wantsJson = message.includes("JSON format ONLY")
+
+  // Build system prompt — inject city if provided
+  const system = city
+    ? `${SYSTEM}\n\nThe user is currently browsing ${city.charAt(0).toUpperCase() + city.slice(1)}. Prioritise ${city} recommendations unless they ask about another city.`
+    : SYSTEM
+
+  // Build messages array (history + new user message)
+  const messages: Anthropic.MessageParam[] = [
+    ...history.map(h => ({ role: h.role, content: h.content } as Anthropic.MessageParam)),
+    { role: "user", content: message },
+  ]
 
   try {
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: wantsJson ? 600 : 200,
-      system: SYSTEM,
-      messages: [{ role: "user", content: message }],
+      system,
+      messages,
     })
 
     const text = response.content[0].type === "text" ? response.content[0].text : ""
     return NextResponse.json({ reply: text })
-  } catch (err) {
-    console.error("Chat API error:", err)
-    return NextResponse.json({ error: "AI unavailable" }, { status: 503 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error("Chat API error:", msg)
+    return NextResponse.json({ error: "AI unavailable", detail: msg }, { status: 503 })
   }
 }
