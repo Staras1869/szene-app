@@ -12,10 +12,10 @@ const config: CapacitorConfig = {
   server: {
     // Production: loads the deployed Vercel site so API routes work.
     // Swap to undefined + use webDir for a fully offline build.
-    url: DEV_URL ?? "https://szene-app.vercel.app",  // ← live production URL
+    url: DEV_URL ?? "https://www.szene.app",  // ← live production URL
     androidScheme: "https",
     cleartext: false,
-    allowNavigation: ["szene-app.vercel.app"],
+    allowNavigation: ["www.szene.app", "szene.app"],
   },
 
   plugins: {
