@@ -10,7 +10,7 @@ const Schema = z.object({
   promoterInstagram: z.string().max(60).optional(),
   title:             z.string().min(3).max(120),
   venue:             z.string().min(2).max(120),
-  city:              z.enum(["mannheim", "heidelberg", "frankfurt", "ludwigshafen", "karlsruhe"]),
+  city:              z.enum(["mannheim", "heidelberg", "frankfurt", "stuttgart", "karlsruhe"]),
   date:              z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time:              z.string().regex(/^\d{2}:\d{2}$/),
   genre:             z.string().min(2).max(60),

@@ -11,7 +11,7 @@ import { LanguagePicker } from "@/components/language-picker"
 
 const CITY_LABELS: Record<string, string> = {
   mannheim: "Mannheim", heidelberg: "Heidelberg", frankfurt: "Frankfurt",
-  ludwigshafen: "Ludwigshafen", karlsruhe: "Karlsruhe",
+  stuttgart: "Stuttgart", karlsruhe: "Karlsruhe",
 }
 const VIBE_LABELS: Record<string, { label: string; emoji: string }> = {
   afro:    { label: "Afrobeats",  emoji: "🌍" },

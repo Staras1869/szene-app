@@ -5,7 +5,7 @@ export const revalidate = 1800
 
 const CITY_LABEL: Record<string, string> = {
   mannheim: "Mannheim", heidelberg: "Heidelberg",
-  frankfurt: "Frankfurt", ludwigshafen: "Ludwigshafen", karlsruhe: "Karlsruhe",
+  frankfurt: "Frankfurt", stuttgart: "Stuttgart", karlsruhe: "Karlsruhe",
 }
 
 // ─── Known local venues & party brands per city ───────────────────────────────
@@ -70,12 +70,24 @@ const LOCAL_SPOTS: Record<string, { venues: string[]; brands: string[]; accounts
       "site:facebook.com Frankfurt Latin party event",
     ],
   },
-  ludwigshafen: {
+  stuttgart: {
     venues: [
-      "Das Haus Ludwigshafen", "Rheinufer Ludwigshafen", "Ernst-Bloch-Zentrum Ludwigshafen",
+      "Climax Institutes Stuttgart", "Perkins Park Stuttgart", "Im Wizemann Stuttgart",
+      "7GradX Stuttgart", "MICA Club Stuttgart", "Fridas Pier Stuttgart",
+      "Kowalski Stuttgart", "Romantica Stuttgart", "Club Schocken Stuttgart",
+      "Lerche 22 Stuttgart", "LKA Longhorn Stuttgart", "BIX Jazzclub Stuttgart",
     ],
-    brands: ["Party Ludwigshafen", "Afro Night Ludwigshafen", "Open Air Rhein"],
-    accounts: ["site:instagram.com ludwigshafen party event", "site:facebook.com Ludwigshafen event"],
+    brands: [
+      "Perreo Stuttgart", "Lange Nacht der Clubs Stuttgart", "I Love Reggaeton Stuttgart",
+      "Afrobeats Stuttgart", "Latin Night Stuttgart", "Techno Stuttgart",
+      "KI-Party Stuttgart", "Uni Stuttgart Party", "HdBA Party Stuttgart",
+    ],
+    accounts: [
+      "site:instagram.com stuttgart nightlife club",
+      "site:instagram.com climax_stuttgart perkins park",
+      "site:facebook.com Stuttgart party club event",
+      "rausgegangen.de/en/stuttgart/category/party",
+    ],
   },
   karlsruhe: {
     venues: [

@@ -8,7 +8,7 @@ const CITIES = [
   { id: "mannheim",     label: "Mannheim",     going: 1847 },
   { id: "heidelberg",   label: "Heidelberg",   going: 934  },
   { id: "frankfurt",    label: "Frankfurt",    going: 3210 },
-  { id: "ludwigshafen", label: "Ludwigshafen", going: 412  },
+  { id: "stuttgart",    label: "Stuttgart",    going: 2130 },
   { id: "karlsruhe",    label: "Karlsruhe",    going: 621  },
 ]
 
@@ -24,7 +24,7 @@ const CITY_LINES: Record<string, string> = {
   mannheim:     "Jungbusch is calling.",
   heidelberg:   "Altstadt never sleeps.",
   frankfurt:    "The Main runs late.",
-  ludwigshafen: "Rhein vibes only.",
+  stuttgart:    "Perkins Park or Climax?",
   karlsruhe:    "Substage or Tollhaus?",
 }
 

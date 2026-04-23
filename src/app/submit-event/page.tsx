@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Check, Loader2, Sparkles } from "lucide-react"
 
-const CITIES = ["mannheim", "heidelberg", "frankfurt", "ludwigshafen", "karlsruhe"]
+const CITIES = ["mannheim", "heidelberg", "frankfurt", "stuttgart", "karlsruhe"]
 const GENRES = ["Afrobeats", "Afrohouse", "Amapiano", "Reggaeton", "Latin", "Hip-Hop", "R&B", "Techno", "Electronic", "House", "Jazz", "Student Party", "Live Music", "Open Air", "Other"]
 
 export default function SubmitEventPage() {

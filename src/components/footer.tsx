@@ -43,7 +43,7 @@ export function Footer({ go }: { go?: Go }) {
                 { label: "Mannheim",     id: "mannheim" },
                 { label: "Heidelberg",   id: "heidelberg" },
                 { label: "Frankfurt",    id: "frankfurt" },
-                { label: "Ludwigshafen", id: "ludwigshafen" },
+                { label: "Stuttgart",    id: "stuttgart" },
                 { label: "Karlsruhe",    id: "karlsruhe" },
               ].map(c => (
                 <li key={c.id}>

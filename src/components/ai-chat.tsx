@@ -12,7 +12,7 @@ const STARTERS: Record<string, string[]> = {
   mannheim: ["Where should I go tonight?", "Best spot for a date in Jungbusch?", "Hidden bar nobody knows?", "Afrobeats tonight?"],
   heidelberg: ["What's open in Altstadt tonight?", "Best student bar in HD?", "Something at halle02?", "Chill spot with views?"],
   frankfurt: ["Best techno club tonight?", "Latin night in FFM?", "Something at Robert Johnson?", "Chill cocktail bar downtown?"],
-  ludwigshafen: ["What's on tonight in LU?", "Best outdoor spot by the Rhine?", "Anything for Afro lovers?", "Chill bar near Hemshof?"],
+  stuttgart:    ["Best techno club tonight?", "Reggaeton in Stuttgart?", "Perkins Park or Climax?", "Hidden bar in Bohnenviertel?"],
   karlsruhe: ["Best club night at Substage?", "Student party this week?", "Afrobeats in KA?", "Outdoor spot in Karlsruhe?"],
 }
 
