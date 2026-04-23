@@ -14,21 +14,128 @@ interface Review {
   user: { name: string | null; email: string | null }
 }
 
-const VENUE_DATA: Record<string, { name: string; area: string; type: string; emoji: string; city: string; description: string; address: string; opens: string; closes: string; tags: string[] }> = {
-  "base-club":      { name: "BASE Club",           area: "Jungbusch",    type: "Club",      emoji: "🔊", city: "Mannheim",   description: "Bass music and club nights deep in Jungbusch. Known for its raw sound system and underground atmosphere.", address: "Jungbuschstraße, Mannheim", opens: "22:00", closes: "06:00", tags: ["Techno", "Bass", "Underground"] },
-  "ms-connexion":   { name: "MS Connexion",         area: "Hafen",        type: "Club",      emoji: "🎧", city: "Mannheim",   description: "Multi-floor electronic music complex at the harbour. One of Germany's top electronic music venues.", address: "Hafenstraße 25-27, Mannheim", opens: "22:00", closes: "06:00", tags: ["Electronic", "Techno", "Multi-floor"] },
-  "zeitraumexit":   { name: "Zeitraumexit",          area: "Jungbusch",    type: "Club",      emoji: "🖤", city: "Mannheim",   description: "Underground art and techno space. Where Mannheim's experimental scene lives.", address: "Hafenstraße 68, Mannheim", opens: "23:00", closes: "07:00", tags: ["Experimental", "Art", "Techno"] },
-  "tiffany-club":   { name: "Tiffany Club",          area: "C-Quadrat",    type: "Club",      emoji: "💜", city: "Mannheim",   description: "Premium nightclub in the heart of the Quadrate. Dress code applies.", address: "C4 9-10, Mannheim", opens: "22:00", closes: "05:00", tags: ["Premium", "Party", "Dance"] },
-  "ella-louis":     { name: "Ella & Louis",           area: "Jungbusch",    type: "Jazz bar",  emoji: "🎷", city: "Mannheim",   description: "Intimate jazz bar with live music. Named after the legends. Great cocktails, real soul.", address: "Jungbuschstraße 14, Mannheim", opens: "19:00", closes: "01:00", tags: ["Jazz", "Live music", "Cocktails"] },
-  "hemingway-bar":  { name: "Hemingway Bar",          area: "Innenstadt",   type: "Bar",       emoji: "🍸", city: "Mannheim",   description: "Classic cocktail bar, great for dates. Curated spirits, dark wood, no nonsense.", address: "N7, Mannheim", opens: "18:00", closes: "02:00", tags: ["Cocktails", "Date", "Classic"] },
-  "skybar-mannheim":{ name: "Skybar Mannheim",        area: "Quadrate",     type: "Rooftop",   emoji: "🏙️", city: "Mannheim",   description: "Rooftop bar with panoramic city views. Best spot for sunset drinks in Mannheim.", address: "Quadrate, Mannheim", opens: "18:00", closes: "01:00", tags: ["Rooftop", "Views", "Summer"] },
-  "weinkeller":     { name: "Weinkeller Wasserturm",  area: "Wasserturm",   type: "Wine bar",  emoji: "🍷", city: "Mannheim",   description: "Upscale wine bar near the Wasserturm. Rhine Valley wines, candlelight, perfect for dates.", address: "Wasserturm, Mannheim", opens: "18:00", closes: "00:00", tags: ["Wine", "Romantic", "Date"] },
-  "alte-feuerwache":{ name: "Alte Feuerwache",        area: "Jungbusch",    type: "Culture",   emoji: "🎭", city: "Mannheim",   description: "Cultural centre with concerts, theatre, and community events. The heart of Jungbusch culture.", address: "Alten Feuerwache 1, Mannheim", opens: "18:00", closes: "00:00", tags: ["Culture", "Music", "Art"] },
-  "cave-54":        { name: "Cave 54",                area: "Altstadt",     type: "Club",      emoji: "🎸", city: "Heidelberg", description: "Heidelberg's legendary jazz and rock cellar. Been running since 1969.", address: "Krämergasse 2, Heidelberg", opens: "22:00", closes: "05:00", tags: ["Rock", "Jazz", "Student"] },
-  "nachtschicht":   { name: "Nachtschicht",            area: "Bergheim",     type: "Club",      emoji: "🎶", city: "Heidelberg", description: "Heidelberg's biggest club. Electronic, house, and commercial nights across multiple floors.", address: "Bergheim, Heidelberg", opens: "22:00", closes: "06:00", tags: ["Electronic", "House", "Party"] },
-  "robert-johnson": { name: "Robert Johnson",          area: "Offenbach",    type: "Club",      emoji: "🎛️", city: "Frankfurt",  description: "World-famous techno club. Pilgrimage destination for electronic music lovers globally.", address: "Nordring 131, Offenbach", opens: "23:00", closes: "12:00", tags: ["Techno", "World-class", "Electronic"] },
-  "jazzkeller":     { name: "Jazzkeller Frankfurt",    area: "Innenstadt",   type: "Jazz",      emoji: "🎺", city: "Frankfurt",  description: "Frankfurt's oldest jazz club, running since 1952. Intimate and legendary.", address: "Kleine Bockenheimer Str. 18a, Frankfurt", opens: "20:00", closes: "02:00", tags: ["Jazz", "Live music", "Historic"] },
-  "substage":       { name: "Substage",                area: "Südstadt",     type: "Club",      emoji: "🎸", city: "Karlsruhe",  description: "Karlsruhe's best live music and club venue. Indie, punk, electronic — it all happens here.", address: "Südweststraße 13, Karlsruhe", opens: "21:00", closes: "05:00", tags: ["Live music", "Indie", "Electronic"] },
+const VENUE_DATA: Record<string, {
+  name: string; area: string; type: string; emoji: string; city: string
+  description: string; address: string; opens: string; closes: string; tags: string[]
+  image?: string; instagram?: string; website?: string; phone?: string
+}> = {
+  "base-club":      {
+    name: "BASE Club", area: "Jungbusch", type: "Club", emoji: "🔊", city: "Mannheim",
+    description: "Jungbusch's grittiest bass music floor. Raw concrete walls, a Funktion-One sound system and a crowd that knows their music. Latin on Fridays, underground on Saturdays.",
+    address: "Jungbuschstraße 16, 68159 Mannheim", opens: "23:00", closes: "06:00",
+    tags: ["Latin", "Bass", "Underground", "Funktion-One"],
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&h=500&fit=crop&auto=format",
+    instagram: "baseclub_mannheim", website: "https://www.base-club.de",
+  },
+  "ms-connexion":   {
+    name: "MS Connexion", area: "Hafen", type: "Club", emoji: "🎧", city: "Mannheim",
+    description: "Three floors, 2,000 capacity, right on the harbour. Germany's top Afrobeats and electronic venue outside Berlin. The Connexion stage has hosted international DJs for over two decades.",
+    address: "Hafenstraße 25-27, 68159 Mannheim", opens: "22:00", closes: "06:00",
+    tags: ["Afrobeats", "Electronic", "Multi-floor", "Harbour"],
+    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&h=500&fit=crop&auto=format",
+    instagram: "msconnexion", website: "https://www.msconnexion.de",
+  },
+  "zeitraumexit":   {
+    name: "Zeitraumexit", area: "Jungbusch", type: "Club", emoji: "🖤", city: "Mannheim",
+    description: "Mannheim's underground art-meets-techno bunker since 2001. Gallery by day, club by night. The experimental scene's home — expect the unexpected.",
+    address: "Hafenstraße 68, 68159 Mannheim", opens: "23:00", closes: "07:00",
+    tags: ["Experimental", "Art", "Techno", "Hip-Hop"],
+    image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=900&h=500&fit=crop&auto=format",
+    instagram: "zeitraumexit", website: "https://www.zeitraumexit.de",
+  },
+  "tiffany-club":   {
+    name: "Tiffany Club", area: "C4-Quadrat", type: "Club", emoji: "💜", city: "Mannheim",
+    description: "Mannheim's most central premium club in the Quadrate grid. Dress code strictly enforced. Known for R&B, Hip-Hop and themed nights that sell out weeks in advance.",
+    address: "C4, 9-10, 68159 Mannheim", opens: "22:00", closes: "05:00",
+    tags: ["R&B", "Hip-Hop", "Premium", "Dress code"],
+    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&h=500&fit=crop&auto=format",
+    instagram: "tiffany.mannheim",
+  },
+  "ella-louis":     {
+    name: "Ella & Louis", area: "Jungbusch", type: "Jazz bar", emoji: "🎷", city: "Mannheim",
+    description: "Named after the legends. Intimate 60-seat jazz bar with live sessions every Thursday–Saturday. Best rum selection in Mannheim, a crowd that actually listens.",
+    address: "Jungbuschstraße 14, 68159 Mannheim", opens: "19:00", closes: "01:00",
+    tags: ["Jazz", "Live music", "Cocktails", "Intimate"],
+    image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=900&h=500&fit=crop&auto=format",
+    instagram: "ellaandlouis.mannheim",
+  },
+  "hemingway-bar":  {
+    name: "Hemingway Bar", area: "Innenstadt", type: "Bar", emoji: "🍸", city: "Mannheim",
+    description: "Dark wood, brass fixtures, and a bartender who takes classics seriously. The best Old Fashioned in Mannheim. No cocktail menu on the wall — just ask.",
+    address: "N7 13, 68161 Mannheim", opens: "18:00", closes: "02:00",
+    tags: ["Cocktails", "Classic", "Date night", "Whisky"],
+    image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=900&h=500&fit=crop&auto=format",
+  },
+  "skybar-mannheim": {
+    name: "Skybar Mannheim", area: "Quadrate", type: "Rooftop bar", emoji: "🏙️", city: "Mannheim",
+    description: "Ten floors up with a 360° view over the Quadrate grid and Rhine valley. Best spot to watch the sun go down before the night begins.",
+    address: "Collinistraße 1, 68161 Mannheim", opens: "18:00", closes: "01:00",
+    tags: ["Rooftop", "Views", "Cocktails", "Sunset"],
+    image: "https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?w=900&h=500&fit=crop&auto=format",
+  },
+  "weinkeller":     {
+    name: "Weinkeller Wasserturm", area: "Wasserturm", type: "Wine bar", emoji: "🍷", city: "Mannheim",
+    description: "Candlelit cellar wine bar a stone's throw from the Wasserturm. 200+ Rhine Valley and German labels, knowledgeable staff, and a date atmosphere that rarely fails.",
+    address: "Augustaanlage 4, 68165 Mannheim", opens: "18:00", closes: "00:00",
+    tags: ["Wine", "Rhine Valley", "Romantic", "Date"],
+    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&h=500&fit=crop&auto=format",
+  },
+  "alte-feuerwache": {
+    name: "Alte Feuerwache", area: "Jungbusch", type: "Culture venue", emoji: "🎭", city: "Mannheim",
+    description: "A former fire station turned Mannheim's most beloved cultural hub. Concerts, theatre, Afro nights, comedy — the full spectrum. Community-run and proud of it.",
+    address: "Alten Feuerwache 1, 68159 Mannheim", opens: "18:00", closes: "00:00",
+    tags: ["Culture", "Afro", "Live music", "Community"],
+    image: "https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=900&h=500&fit=crop&auto=format",
+    instagram: "altefeuerwache.mannheim", website: "https://www.altefeuerwache.com",
+  },
+  "cave-54":        {
+    name: "Cave 54", area: "Altstadt", type: "Club", emoji: "🎸", city: "Heidelberg",
+    description: "Heidelberg's oldest club, open since 1969 in a medieval cellar beneath the Altstadt. Jazz, funk, soul and student nights. A bucket-list venue for any music lover.",
+    address: "Krämergasse 2, 69117 Heidelberg", opens: "22:00", closes: "05:00",
+    tags: ["Jazz", "Rock", "Student", "Historic", "1969"],
+    image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=900&h=500&fit=crop&auto=format",
+    instagram: "cave54heidelberg", website: "https://www.cave54.de",
+  },
+  "nachtschicht":   {
+    name: "Nachtschicht", area: "Bergheim", type: "Club", emoji: "🎶", city: "Heidelberg",
+    description: "Heidelberg's biggest and longest-running club. Three rooms, 1,200 capacity — electronic and house in the main room, commercial on the second floor, hip-hop in the basement.",
+    address: "Bergheimer Straße 147, 69115 Heidelberg", opens: "22:00", closes: "06:00",
+    tags: ["Electronic", "House", "Hip-Hop", "Multi-room"],
+    image: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?w=900&h=500&fit=crop&auto=format",
+    instagram: "nachtschicht.hd", website: "https://www.nachtschicht.com",
+  },
+  "halle02":        {
+    name: "halle02", area: "Bahnstadt", type: "Event hall", emoji: "🏭", city: "Heidelberg",
+    description: "A converted industrial hall that hosts everything from Afro nights to techno raves to sold-out concerts. Biggest capacity in Heidelberg — 2,500 people.",
+    address: "Güteramtstraße 4, 69115 Heidelberg", opens: "21:00", closes: "06:00",
+    tags: ["Afro", "Electronic", "Concerts", "Large format"],
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&h=500&fit=crop&auto=format",
+    instagram: "halle02.heidelberg", website: "https://www.halle02.de",
+  },
+  "robert-johnson": {
+    name: "Robert Johnson", area: "Offenbach", type: "Club", emoji: "🎛️", city: "Frankfurt",
+    description: "Consistently ranked one of the world's best clubs by Resident Advisor. No photos, no hype — just world-class selectors and a sound system that hits you in the chest. Arrive after 02:00.",
+    address: "Nordring 131, 63067 Offenbach am Main", opens: "23:00", closes: "12:00",
+    tags: ["Techno", "World top 10", "Afrohouse", "No cameras"],
+    image: "https://images.unsplash.com/photo-1598387181032-a3103d8f5797?w=900&h=500&fit=crop&auto=format",
+    instagram: "robertjohnsonclub", website: "https://www.robert-johnson.de",
+  },
+  "jazzkeller":     {
+    name: "Jazzkeller Frankfurt", area: "Innenstadt", type: "Jazz club", emoji: "🎺", city: "Frankfurt",
+    description: "Frankfurt's oldest jazz club — underground since 1952. Intimate brick cellar, live acts every week, a crowd that ranges from 20 to 80. A real institution.",
+    address: "Kleine Bockenheimer Str. 18a, 60313 Frankfurt", opens: "20:00", closes: "02:00",
+    tags: ["Jazz", "Live music", "Historic", "Since 1952"],
+    image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=900&h=500&fit=crop&auto=format",
+    instagram: "jazzkeller_frankfurt", website: "https://www.jazzkeller.com",
+  },
+  "substage":       {
+    name: "Substage", area: "Südstadt", type: "Club / Live", emoji: "🎸", city: "Karlsruhe",
+    description: "Karlsruhe's best-kept secret — live concerts, KIT student nights, and underground electronic in a raw basement venue. The university crowd keeps it unpretentious.",
+    address: "Südweststraße 13, 76135 Karlsruhe", opens: "21:00", closes: "05:00",
+    tags: ["Live music", "Student", "Indie", "Electronic"],
+    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=900&h=500&fit=crop&auto=format",
+    instagram: "substage_ka", website: "https://www.substage.de",
+  },
 }
 
 function StarRow({ value, onChange, size = "md" }: { value: number; onChange?: (v: number) => void; size?: "sm" | "md" }) {
@@ -186,14 +293,25 @@ export default function VenuePage() {
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Hero */}
         <div className="rounded-2xl border border-white/[0.15] overflow-hidden">
-          <div className="h-40 bg-gradient-to-br from-violet-900 via-purple-900 to-black flex items-center justify-center relative">
-            <span className="text-7xl">{venue.emoji}</span>
-            <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          <div className="h-48 relative overflow-hidden flex items-center justify-center"
+            style={venue.image
+              ? { backgroundImage: `url(${venue.image})`, backgroundSize: "cover", backgroundPosition: "center" }
+              : { background: "linear-gradient(135deg, #4c1d95, #6d28d9, #000)" }}>
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/40" />
+            {!venue.image && <span className="relative text-7xl z-10">{venue.emoji}</span>}
+            {venue.image && (
+              <div className="absolute bottom-3 left-4 z-10 flex items-center gap-2">
+                <span className="text-2xl">{venue.emoji}</span>
+                <span className="text-white font-black text-lg tracking-tight drop-shadow">{venue.name}</span>
+              </div>
+            )}
+            <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
               </span>
-              <span className="text-[10px] text-white/40 uppercase tracking-widest">Open</span>
+              <span className="text-[10px] text-white/70 uppercase tracking-widest drop-shadow">Open</span>
             </div>
           </div>
           <div className="p-5">
@@ -230,6 +348,30 @@ export default function VenuePage() {
                 <Clock className="w-3.5 h-3.5 flex-shrink-0" />
                 {venue.opens} — {venue.closes}
               </div>
+              {venue.website && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Globe className="w-3.5 h-3.5 flex-shrink-0 text-white/35" />
+                  <a href={venue.website} target="_blank" rel="noopener noreferrer"
+                    className="text-violet-400 hover:text-violet-300 transition-colors truncate">
+                    {venue.website.replace(/^https?:\/\//, "")}
+                  </a>
+                </div>
+              )}
+              {venue.instagram && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-white/35 text-xs">📸</span>
+                  <a href={`https://instagram.com/${venue.instagram}`} target="_blank" rel="noopener noreferrer"
+                    className="text-pink-400 hover:text-pink-300 transition-colors">
+                    @{venue.instagram}
+                  </a>
+                </div>
+              )}
+              {venue.phone && (
+                <div className="flex items-center gap-2 text-sm text-white/35">
+                  <Phone className="w-3.5 h-3.5 flex-shrink-0" />
+                  <a href={`tel:${venue.phone}`} className="hover:text-white/60 transition-colors">{venue.phone}</a>
+                </div>
+              )}
             </div>
 
             {/* Actions */}
