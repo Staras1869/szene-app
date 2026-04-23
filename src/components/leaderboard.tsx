@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { CalendarCheck, Users } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 interface LeaderboardData {
   events: { rank: number; eventId: string; name: string; rsvps: number }[]
@@ -11,6 +12,7 @@ interface LeaderboardData {
 const RANK_COLORS = ["text-amber-400", "text-zinc-400", "text-amber-700"]
 
 export function Leaderboard() {
+  const { t } = useLanguage()
   const [data, setData] = useState<LeaderboardData | null>(null)
   const [tab, setTab] = useState<"events" | "venues">("events")
 
@@ -55,7 +57,7 @@ export function Leaderboard() {
                   <span className="flex-1 text-sm font-semibold truncate" style={{ color: "var(--text-secondary)" }}>{item.name}</span>
                   <div className="flex items-center gap-1 text-xs" style={{ color: "var(--text-faint)" }}>
                     {tab === "events"
-                      ? <><CalendarCheck className="w-3 h-3" /> {"rsvps" in item ? item.rsvps : 0} going</>
+                      ? <><CalendarCheck className="w-3 h-3" /> {"rsvps" in item ? item.rsvps : 0} {t("going")}</>
                       : <><Users className="w-3 h-3" /> {"checkIns" in item ? item.checkIns : 0} check-ins</>}
                   </div>
                 </div>

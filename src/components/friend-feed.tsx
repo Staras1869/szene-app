@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { MapPin, UserPlus } from "lucide-react"
 import Link from "next/link"
+import { useLanguage } from "@/contexts/language-context"
 
 interface FeedItem { id: string; type: "checkin"; userId: string; userName: string; venueName: string; venueId: string; createdAt: string }
 
@@ -16,6 +17,7 @@ function timeAgo(iso: string) {
 }
 
 export function FriendFeed() {
+  const { t } = useLanguage()
   const { user, loading } = useAuth()
   const [items, setItems] = useState<FeedItem[]>([])
   const [fetched, setFetched] = useState(false)
@@ -34,7 +36,7 @@ export function FriendFeed() {
             <h3 className="font-bold mb-1" style={{ color: "var(--text-primary)" }}>See where your friends are</h3>
             <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>Sign in to follow friends and see their check-ins live.</p>
             <Link href="/login" className="inline-flex items-center gap-2 text-white px-6 py-2.5 rounded-full text-sm font-bold transition-colors" style={{ backgroundColor: "var(--accent)" }}>
-              Sign in
+              {t("signIn")}
             </Link>
           </div>
         </div>

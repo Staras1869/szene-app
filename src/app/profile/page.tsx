@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { LogOut, User, MapPin, Music2, Bell, ChevronRight, ExternalLink, Sparkles } from "lucide-react"
+import { LogOut, User, MapPin, Music2, Bell, ChevronRight, ExternalLink, Sparkles, Globe } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { Header } from "@/components/header"
+import { useLanguage } from "@/contexts/language-context"
+import { LanguagePicker } from "@/components/language-picker"
 
 const CITY_LABELS: Record<string, string> = {
   mannheim: "Mannheim", heidelberg: "Heidelberg", frankfurt: "Frankfurt",
@@ -24,6 +26,7 @@ const VIBE_LABELS: Record<string, { label: string; emoji: string }> = {
 
 export default function ProfilePage() {
   const { user, loading, logout } = useAuth()
+  const { t } = useLanguage()
   const router = useRouter()
   const [city, setCity]   = useState<string>("")
   const [vibes, setVibes] = useState<string[]>([])
@@ -46,7 +49,7 @@ export default function ProfilePage() {
 
   if (loading || !user) return (
     <div className="min-h-screen bg-szene flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
     </div>
   )
 
@@ -70,17 +73,17 @@ export default function ProfilePage() {
 
         {/* Preferences card */}
         <div className="szene-card p-5 mb-4 space-y-4">
-          <h2 className="text-xs font-bold text-faint uppercase tracking-widest">Deine Einstellungen</h2>
+          <h2 className="text-xs font-bold text-faint uppercase tracking-widest">{t("city")}</h2>
 
           {/* City */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-surface border border-szene flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-violet-400" />
+                <MapPin className="w-4 h-4" style={{ color: "var(--accent)" }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-szene">Stadt</p>
-                <p className="text-xs text-muted">{city ? CITY_LABELS[city] ?? city : "Nicht gesetzt"}</p>
+                <p className="text-sm font-semibold text-szene">{t("city")}</p>
+                <p className="text-xs text-muted">{city ? CITY_LABELS[city] ?? city : "—"}</p>
               </div>
             </div>
             <button onClick={() => {
@@ -89,8 +92,8 @@ export default function ProfilePage() {
               const next = cities[(idx + 1) % cities.length]
               setCity(next)
               localStorage.setItem("szene_city", next)
-            }} className="text-xs text-violet-400 font-semibold hover:text-violet-300 transition-colors">
-              Ändern
+            }} className="text-xs font-semibold hover:opacity-70 transition-opacity" style={{ color: "var(--accent)" }}>
+              {t("city_change") || "Ändern"}
             </button>
           </div>
 
@@ -98,9 +101,9 @@ export default function ProfilePage() {
           <div>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-surface border border-szene flex items-center justify-center">
-                <Music2 className="w-4 h-4 text-violet-400" />
+                <Music2 className="w-4 h-4" style={{ color: "var(--accent)" }} />
               </div>
-              <p className="text-sm font-semibold text-szene">Vibes</p>
+              <p className="text-sm font-semibold text-szene">{t("categories") || "Vibes"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {Object.entries(VIBE_LABELS).map(([id, { label, emoji }]) => {
@@ -124,29 +127,40 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-surface border border-szene flex items-center justify-center">
-                <Bell className="w-4 h-4 text-violet-400" />
+                <Bell className="w-4 h-4" style={{ color: "var(--accent)" }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-szene">Tonight-Alerts</p>
-                <p className="text-xs text-muted">{pushOn ? "Aktiv — täglich um 18 Uhr" : "Noch nicht aktiviert"}</p>
+                <p className="text-sm font-semibold text-szene">{t("venueStatus") || "Alerts"}</p>
+                <p className="text-xs text-muted">{pushOn ? t("online") : t("offline")}</p>
               </div>
             </div>
             {!pushOn && (
               <button onClick={() => {
                 localStorage.removeItem("szene_push_asked")
                 window.location.reload()
-              }} className="text-xs text-violet-400 font-semibold hover:text-violet-300 transition-colors">
-                Aktivieren
+              }} className="text-xs font-semibold hover:opacity-70 transition-opacity" style={{ color: "var(--accent)" }}>
+                {t("install") || "Aktivieren"}
               </button>
             )}
           </div>
         </div>
 
+        {/* Language picker */}
+        <div className="szene-card p-5 mb-4">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-surface border border-szene flex items-center justify-center">
+              <Globe className="w-4 h-4" style={{ color: "var(--accent)" }} />
+            </div>
+            <p className="text-sm font-semibold text-szene">{t("about") || "Sprache"}</p>
+          </div>
+          <LanguagePicker compact />
+        </div>
+
         {/* Links */}
         <div className="szene-card mb-4 divide-szene overflow-hidden">
           {[
-            { href: "/submit-event", icon: Sparkles, label: "Event einreichen" },
-            { href: "/partner",      icon: ExternalLink, label: "Partner werden" },
+            { href: "/submit-event", icon: Sparkles,     label: t("submitRestaurant") || "Event einreichen" },
+            { href: "/partner",      icon: ExternalLink,  label: t("ourStory") || "Partner werden" },
           ].map(({ href, icon: Icon, label }) => (
             <Link key={href} href={href}
               className="flex items-center gap-3 px-5 py-4 hover:bg-surface transition-colors">
@@ -160,8 +174,8 @@ export default function ProfilePage() {
         {/* Legal */}
         <div className="szene-card mb-6 divide-szene overflow-hidden">
           {[
-            { href: "/impressum",   label: "Impressum" },
-            { href: "/datenschutz", label: "Datenschutz" },
+            { href: "/impressum",   label: t("impressum") },
+            { href: "/datenschutz", label: t("privacyPolicy") },
             { href: "/agb",         label: "AGB" },
           ].map(({ href, label }) => (
             <Link key={href} href={href}
@@ -176,7 +190,7 @@ export default function ProfilePage() {
         <button onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-red-500/20 text-red-400 hover:bg-red-500/8 transition-colors text-sm font-semibold">
           <LogOut className="w-4 h-4" />
-          Abmelden
+          {t("cancel") === "Abbrechen" ? "Abmelden" : t("cancel")}
         </button>
 
         <p className="text-center text-xs text-whisper mt-6">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Sparkles, Loader2, ArrowRight, MapPin, Clock } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 const CITIES = [
   { id: "mannheim",     label: "Mannheim",     going: 1847 },
@@ -32,15 +33,15 @@ interface Pick {
   time?: string; price?: string; area?: string
 }
 
-function useGreeting() {
+function useGreeting(t: (k: string) => string) {
   const [greeting, setGreeting] = useState("")
   useEffect(() => {
     const h = new Date().getHours()
-    if (h >= 5 && h < 12)  setGreeting("Good morning")
-    else if (h < 18)       setGreeting("Good afternoon")
-    else if (h < 22)       setGreeting("Good evening")
-    else                   setGreeting("Still up?")
-  }, [])
+    if (h >= 5 && h < 12)  setGreeting(t("goodMorning"))
+    else if (h < 18)       setGreeting(t("goodAfternoon"))
+    else if (h < 22)       setGreeting(t("goodEvening"))
+    else                   setGreeting(t("stillUp"))
+  }, [t])
   return greeting
 }
 
@@ -61,12 +62,13 @@ function getGrad(vibe: string) {
 }
 
 export function Hero({ city, onCityPick }: { city: string | null; onCityPick: (c: string) => void }) {
+  const { t } = useLanguage()
   const [asked, setAsked]       = useState(false)
   const [loading, setLoading]   = useState(false)
   const [question, setQuestion] = useState("")
   const [answer, setAnswer]     = useState("")
   const [picks, setPicks]       = useState<Pick[]>([])
-  const greeting                = useGreeting()
+  const greeting                = useGreeting(t)
 
   const activeCity  = CITIES.find(c => c.id === (city ?? "mannheim")) ?? CITIES[0]
   const cityLine    = CITY_LINES[activeCity.id] ?? ""
@@ -131,7 +133,7 @@ Give exactly 3 picks.`,
             color: "var(--accent)",
             fontSize: "clamp(1.5rem, 6vw, 3rem)",
           }}>
-            TONIGHT
+            {t("tonight")}
           </p>
         </div>
 
@@ -164,12 +166,12 @@ Give exactly 3 picks.`,
         {/* AI interaction */}
         {!asked ? (
           <div className="space-y-3">
-            <button onClick={() => ask("Where should I go tonight?")}
+            <button onClick={() => ask(t("whereToGo"))}
               className="w-full flex items-center justify-between gap-3 px-6 py-5 rounded-2xl font-black text-lg transition-all duration-150 active:scale-[0.98] shadow-lg group text-white"
               style={{ backgroundColor: "var(--accent)", boxShadow: "0 8px 32px rgba(0,0,0,0.25)" }}>
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 flex-shrink-0" />
-                Where should I go tonight?
+                {t("whereToGo")}
               </div>
               <ArrowRight className="w-5 h-5 flex-shrink-0 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -197,7 +199,7 @@ Give exactly 3 picks.`,
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
-                <p className="text-sm text-muted">Finding your perfect night…</p>
+                <p className="text-sm text-muted">{t("findingNight")}</p>
               </div>
             ) : (
               <>
@@ -228,10 +230,10 @@ Give exactly 3 picks.`,
                 )}
 
                 <div className="space-y-3 pt-1">
-                  <button onClick={() => ask("Where should I go tonight?")}
+                  <button onClick={() => ask(t("whereToGo"))}
                     className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-white font-bold text-sm transition-all"
                     style={{ backgroundColor: "var(--accent)" }}>
-                    <Sparkles className="w-4 h-4" /> Ask again
+                    <Sparkles className="w-4 h-4" /> {t("whereToGo")}
                   </button>
                   <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
                     {QUICK_ASKS.filter(q => q !== question).map(q => (

@@ -2,10 +2,12 @@
 
 import Link from "next/link"
 import { Instagram, Mail } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 type Go = (opts: { city?: string; tab?: string }) => void
 
 export function Footer({ go }: { go?: Go }) {
+  const { t } = useLanguage()
   return (
     <footer className="bg-szene border-t border-szene text-szene py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,7 +16,7 @@ export function Footer({ go }: { go?: Go }) {
           <div>
             <p className="text-xl font-black tracking-tight mb-3">SZENE</p>
             <p className="text-muted text-sm leading-relaxed mb-5">
-              Nightlife, events and hidden venues in Mannheim, Heidelberg, Frankfurt and beyond.
+              {t("footerDescription")}
             </p>
             <div className="flex gap-4">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-faint hover:text-szene transition-colors"><Instagram className="w-4 h-4" /></a>

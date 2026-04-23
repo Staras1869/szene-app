@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Bell, X } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
@@ -11,6 +12,7 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export function PushPrompt() {
+  const { t } = useLanguage()
   const [show, setShow]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [done, setDone]       = useState(false)
@@ -83,12 +85,12 @@ export function PushPrompt() {
               <p className="text-sm font-bold text-emerald-400">You&apos;re in ✓</p>
             ) : (
               <>
-                <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Tonight&apos;s alerts</p>
-                <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Get notified when doors open — once a day, no spam.</p>
+                <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{t("pushTitle")}</p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{t("pushBody")}</p>
                 <button onClick={subscribe} disabled={loading}
                   className="mt-3 w-full py-2.5 rounded-xl text-white text-xs font-bold transition-colors disabled:opacity-60"
                   style={{ backgroundColor: "var(--accent)" }}>
-                  {loading ? "Setting up…" : "Notify me tonight 🔔"}
+                  {loading ? t("pushLoading") : t("pushCta")}
                 </button>
               </>
             )}

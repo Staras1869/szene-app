@@ -3,9 +3,11 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -46,13 +48,13 @@ export default function RegisterPage() {
       <div className="relative w-full max-w-sm">
         <div className="text-center mb-10">
           <Link href="/" className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>Szene</Link>
-          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Create your account — it&apos;s free</p>
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{t("heroTitle")}</p>
         </div>
 
         <div className="rounded-2xl p-8" style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--card-border)" }}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Name</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("venueName")}</label>
               <input
                 type="text" required value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -62,7 +64,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Email</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("email")}</label>
               <input
                 type="email" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +74,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Password</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>{t("password")}</label>
               <input
                 type="password" required minLength={8} value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +82,7 @@ export default function RegisterPage() {
                 className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors"
                 style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               />
-              <p className="text-[11px] mt-1.5" style={{ color: "var(--text-faint)" }}>Must include a number and uppercase letter</p>
+              <p className="text-[11px] mt-1.5" style={{ color: "var(--text-faint)" }}>{t("passwordHint")}</p>
             </div>
 
             {error && <p className="text-sm text-red-400">{error}</p>}
@@ -90,15 +92,15 @@ export default function RegisterPage() {
               className="w-full py-2.5 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors mt-2"
               style={{ backgroundColor: "var(--accent)" }}
             >
-              {loading ? "Creating account…" : "Create account"}
+              {loading ? t("creatingAccount") : t("createAccount")}
             </button>
           </form>
         </div>
 
         <p className="mt-6 text-center text-sm" style={{ color: "var(--text-faint)" }}>
-          Already have an account?{" "}
+          {t("alreadyAccount")}{" "}
           <Link href="/login" className="font-medium transition-colors" style={{ color: "var(--accent)" }}>
-            Sign in
+            {t("signIn")}
           </Link>
         </p>
       </div>
