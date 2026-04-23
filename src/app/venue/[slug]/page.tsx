@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useParams } from "next/navigation"
-import { ArrowLeft, MapPin, Clock, Globe, Phone, Heart, Star, CheckCircle2, Loader2, Send, Trash2, Share2, Copy, Check } from "lucide-react"
+import { ArrowLeft, MapPin, Clock, Globe, Phone, Heart, Star, CheckCircle2, Loader2, Send, Trash2, Share2, Copy, Check, Navigation, ParkingCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 
@@ -237,7 +237,12 @@ export default function VenuePage() {
               <a href={`https://maps.google.com/?q=${encodeURIComponent(venue.address)}`}
                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold rounded-xl transition-colors">
-                <MapPin className="w-4 h-4" /> Maps
+                <Navigation className="w-4 h-4" /> Directions
+              </a>
+              <a href={`https://maps.google.com/maps?q=${encodeURIComponent(`parking near ${venue.address}`)}`}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 hover:text-blue-300 border border-blue-500/30 text-sm font-semibold rounded-xl transition-colors">
+                <ParkingCircle className="w-4 h-4" /> Parking
               </a>
               {user && (
                 <button onClick={handleCheckIn} disabled={userCheckedIn || checkInLoading}
@@ -250,6 +255,18 @@ export default function VenuePage() {
               )}
             </div>
           </div>
+
+          {/* Embedded map */}
+          <div className="rounded-2xl overflow-hidden border border-white/[0.12]" style={{ height: 220 }}>
+            <iframe
+              title={`Map — ${venue.name}`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=15`}
+              className="w-full h-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
         </div>
 
         {/* Reviews */}

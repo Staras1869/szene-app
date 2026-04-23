@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
@@ -281,10 +281,12 @@ function VibeBar({ vibe, setVibe }: { vibe: string; setVibe: (v: string) => void
 }
 
 // ─── Event card ───────────────────────────────────────────────────────────────
-function EventCard({ e, going, onToggle, user }: {
-  e: EventItem; going: boolean; onToggle: () => void; user: any
+function EventCard({ e, going, onToggle, user, city }: {
+  e: EventItem; going: boolean; onToggle: () => void; user: any; city?: string
 }) {
   const [expanded, setExpanded] = useState(false)
+  const mapQuery     = encodeURIComponent(`${e.venue}${city ? `, ${city}` : ""}`)
+  const parkingQuery = encodeURIComponent(`parking near ${e.venue}${city ? `, ${city}` : ""}`)
   return (
     <div className="szene-card group overflow-hidden">
       {/* Main row */}
@@ -357,6 +359,31 @@ function EventCard({ e, going, onToggle, user }: {
                 🕙 Doors {e.time}
               </span>
             )}
+          </div>
+
+          {/* Map embed */}
+          <div className="rounded-xl overflow-hidden border border-white/[0.10]" style={{ height: 160 }}>
+            <iframe
+              title={`Map — ${e.venue}`}
+              src={`https://maps.google.com/maps?q=${mapQuery}&output=embed&z=15`}
+              className="w-full h-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
+          {/* Map / Parking / Action links */}
+          <div className="flex flex-wrap gap-2">
+            <a href={`https://maps.google.com/?q=${mapQuery}`} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl bg-violet-600/20 border border-violet-500/30 text-violet-400 hover:text-violet-300 hover:border-violet-400/50 transition-all font-semibold">
+              <Navigation className="w-3 h-3" />
+              Directions
+            </a>
+            <a href={`https://maps.google.com/maps?q=${parkingQuery}`} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl bg-blue-600/15 border border-blue-500/25 text-blue-400 hover:text-blue-300 hover:border-blue-400/40 transition-all font-semibold">
+              <ParkingCircle className="w-3 h-3" />
+              Parking
+            </a>
           </div>
 
           {/* Action links */}
@@ -436,7 +463,7 @@ function ForYouTab({ city }: { city: string }) {
         </div>
         <div className="space-y-2">
           {items.slice(0, 3).map(e => (
-            <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} />
+            <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} />
           ))}
         </div>
       </div>
@@ -456,7 +483,7 @@ function ForYouTab({ city }: { city: string }) {
           </div>
           <div className="space-y-2">
             {hot.map(e => (
-              <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} />
+              <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} />
             ))}
           </div>
         </div>
