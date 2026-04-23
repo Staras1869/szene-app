@@ -11,18 +11,19 @@ export default function HomePage() {
   const [city, setCity] = useState<string | null>(null)
   const [tab, setTab]   = useState("foryou")
 
-  function pickCity(c: string) {
-    setCity(c)
-    setTimeout(() => document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" }), 80)
+  function go(opts: { city?: string; tab?: string }) {
+    if (opts.city) setCity(opts.city)
+    if (opts.tab)  setTab(opts.tab)
+    setTimeout(() => document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" }), 60)
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-szene">
       <AiChat city={city ?? "mannheim"} />
-      <Header onNavClick={(t) => { setTab(t); document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" }) }} />
-      <Hero city={city} onCityPick={pickCity} />
-      <AppShell city={city ?? "mannheim"} setCity={pickCity} tab={tab} setTab={setTab} />
-      <Footer setCity={pickCity} />
+      <Header go={go} />
+      <Hero city={city} onCityPick={(c) => go({ city: c, tab: "foryou" })} />
+      <AppShell city={city ?? "mannheim"} go={go} tab={tab} setTab={setTab} />
+      <Footer go={go} />
     </div>
   )
 }

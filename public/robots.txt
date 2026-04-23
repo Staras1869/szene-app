@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.szene.app/sitemap.xml
+
+# Don't index admin or API routes
+Disallow: /admin/
+Disallow: /api/

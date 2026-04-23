@@ -70,7 +70,10 @@ export function SearchSystem() {
       <div className="relative flex items-center">
         <Search className="absolute left-4 w-4 h-4 text-gray-400 pointer-events-none" />
         <input
+          id="szene-search"
+          name="search"
           type="text"
+          autoComplete="off"
           value={query}
           onChange={(e) => runSearch(e.target.value)}
           onFocus={() => setOpen(true)}

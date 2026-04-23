@@ -33,35 +33,37 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "var(--bg-primary)" }}>
       {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-violet-600/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] pointer-events-none" style={{ backgroundColor: "var(--accent)", opacity: 0.06, filter: "blur(120px)" }} />
 
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-10">
-          <Link href="/" className="text-3xl font-bold text-white tracking-tight">Szene</Link>
-          <p className="mt-2 text-zinc-500 text-sm">Welcome back</p>
+          <Link href="/" className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>Szene</Link>
+          <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>Welcome back</p>
         </div>
 
-        <div className="bg-zinc-900 border border-white/8 rounded-2xl p-8">
+        <div className="rounded-2xl p-8" style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--card-border)" }}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Email</label>
               <input
                 type="email" required value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors"
+                style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Password</label>
+              <label className="block text-xs font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>Password</label>
               <input
                 type="password" required value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors"
+                style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
               />
             </div>
 
@@ -69,16 +71,17 @@ export default function LoginPage() {
 
             <button
               type="submit" disabled={loading}
-              className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors mt-2"
+              className="w-full py-2.5 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-colors mt-2"
+              style={{ backgroundColor: "var(--accent)" }}
             >
               {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
         </div>
 
-        <p className="mt-6 text-center text-sm text-zinc-600">
+        <p className="mt-6 text-center text-sm" style={{ color: "var(--text-faint)" }}>
           No account?{" "}
-          <Link href="/register" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
+          <Link href="/register" className="font-medium transition-colors" style={{ color: "var(--accent)" }}>
             Create one free
           </Link>
         </p>

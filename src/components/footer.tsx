@@ -1,58 +1,52 @@
 "use client"
 
 import Link from "next/link"
-import { Instagram, Twitter, Mail } from "lucide-react"
+import { Instagram, Mail } from "lucide-react"
 
-export function Footer({ setCity }: { setCity?: (c: string) => void }) {
-  function scrollToApp() {
-    document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" })
-  }
-  function pickCity(c: string) {
-    setCity?.(c)
-    setTimeout(() => document.getElementById("app-shell-top")?.scrollIntoView({ behavior: "smooth" }), 60)
-  }
+type Go = (opts: { city?: string; tab?: string }) => void
 
+export function Footer({ go }: { go?: Go }) {
   return (
-    <footer className="bg-black border-t border-white/[0.10] text-white py-16">
+    <footer className="bg-szene border-t border-szene text-szene py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
+
           <div>
             <p className="text-xl font-black tracking-tight mb-3">SZENE</p>
-            <p className="text-white/45 text-sm leading-relaxed mb-5">
-              Your guide to nightlife, events, and venues in Mannheim, Heidelberg, Frankfurt and beyond.
+            <p className="text-muted text-sm leading-relaxed mb-5">
+              Nightlife, events and hidden venues in Mannheim, Heidelberg, Frankfurt and beyond.
             </p>
             <div className="flex gap-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                className="text-white/40 hover:text-white transition-colors"><Instagram className="w-4 h-4" /></a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-                className="text-white/40 hover:text-white transition-colors"><Twitter className="w-4 h-4" /></a>
-              <a href="mailto:hallo@szene-app.de"
-                className="text-white/40 hover:text-white transition-colors"><Mail className="w-4 h-4" /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-faint hover:text-szene transition-colors"><Instagram className="w-4 h-4" /></a>
+              <a href="mailto:hallo@szene-app.de" className="text-faint hover:text-szene transition-colors"><Mail className="w-4 h-4" /></a>
             </div>
           </div>
 
           <div>
-            <p className="text-[10px] font-bold text-white/35 uppercase tracking-[0.2em] mb-4">Discover</p>
-            <ul className="space-y-2.5">
-              <li><button onClick={scrollToApp} className="text-sm text-white/45 hover:text-white transition-colors text-left">Events this week</button></li>
-              <li><button onClick={scrollToApp} className="text-sm text-white/45 hover:text-white transition-colors text-left">Trending venues</button></li>
-              <li><button onClick={scrollToApp} className="text-sm text-white/45 hover:text-white transition-colors text-left">Student nights</button></li>
-              <li><Link href="/submit" className="text-sm text-white/45 hover:text-white transition-colors">Submit your venue</Link></li>
+            <p className="text-[10px] font-bold text-whisper uppercase tracking-[0.2em] mb-4">Explore</p>
+            <ul className="space-y-3">
+              <li><button onClick={() => go?.({ tab: "foryou" })}  className="text-sm text-muted hover:text-szene transition-colors text-left w-full">For You — Recommendations</button></li>
+              <li><button onClick={() => go?.({ tab: "events" })}  className="text-sm text-muted hover:text-szene transition-colors text-left w-full">Events this week</button></li>
+              <li><button onClick={() => go?.({ tab: "tonight" })} className="text-sm text-muted hover:text-szene transition-colors text-left w-full">Open now — Tonight</button></li>
+              <li><button onClick={() => go?.({ tab: "venues" })}  className="text-sm text-muted hover:text-szene transition-colors text-left w-full">Trending venues</button></li>
+              <li><Link href="/submit-event" className="text-sm text-muted hover:text-szene transition-colors">Event einreichen →</Link></li>
+              <li><Link href="/partner" className="text-sm text-violet-400/70 hover:text-violet-300 transition-colors font-semibold">Partner with Szene →</Link></li>
             </ul>
           </div>
 
           <div>
-            <p className="text-[10px] font-bold text-white/35 uppercase tracking-[0.2em] mb-4">Cities</p>
-            <ul className="space-y-2.5">
+            <p className="text-[10px] font-bold text-whisper uppercase tracking-[0.2em] mb-4">Cities</p>
+            <ul className="space-y-3">
               {[
                 { label: "Mannheim",     id: "mannheim" },
                 { label: "Heidelberg",   id: "heidelberg" },
                 { label: "Frankfurt",    id: "frankfurt" },
-                { label: "Ludwigshafen",id: "ludwigshafen" },
-                { label: "Karlsruhe",   id: "karlsruhe" },
+                { label: "Ludwigshafen", id: "ludwigshafen" },
+                { label: "Karlsruhe",    id: "karlsruhe" },
               ].map(c => (
                 <li key={c.id}>
-                  <button onClick={() => pickCity(c.id)} className="text-sm text-white/45 hover:text-white transition-colors text-left">
+                  <button onClick={() => go?.({ city: c.id, tab: "foryou" })}
+                    className="text-sm text-muted hover:text-szene transition-colors text-left w-full">
                     {c.label}
                   </button>
                 </li>
@@ -61,19 +55,19 @@ export function Footer({ setCity }: { setCity?: (c: string) => void }) {
           </div>
 
           <div>
-            <p className="text-[10px] font-bold text-white/35 uppercase tracking-[0.2em] mb-4">Legal</p>
-            <ul className="space-y-2.5">
-              <li><Link href="/agb"         className="text-sm text-white/45 hover:text-white transition-colors">AGB</Link></li>
-              <li><Link href="/datenschutz" className="text-sm text-white/45 hover:text-white transition-colors">Datenschutz</Link></li>
-              <li><Link href="/impressum"   className="text-sm text-white/45 hover:text-white transition-colors">Impressum</Link></li>
-              <li><a href="mailto:hallo@szene-app.de" className="text-sm text-white/45 hover:text-white transition-colors">Contact</a></li>
+            <p className="text-[10px] font-bold text-whisper uppercase tracking-[0.2em] mb-4">Legal</p>
+            <ul className="space-y-3">
+              <li><Link href="/agb"         className="text-sm text-muted hover:text-szene transition-colors">AGB</Link></li>
+              <li><Link href="/datenschutz" className="text-sm text-muted hover:text-szene transition-colors">Datenschutz</Link></li>
+              <li><Link href="/impressum"   className="text-sm text-muted hover:text-szene transition-colors">Impressum</Link></li>
+              <li><a href="mailto:hallo@szene-app.de" className="text-sm text-muted hover:text-szene transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/[0.08] pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/30">&copy; {new Date().getFullYear()} Szene Digital Solutions UG (haftungsbeschränkt) · Planken 7, 68161 Mannheim</p>
-          <p className="text-xs text-white/20">Made in Mannheim 🇩🇪</p>
+        <div className="border-t border-szene pt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-whisper">&copy; {new Date().getFullYear()} Efstratios Kampourakis · Szene Digital Solutions UG (i.G.) · Roonstraße 29, 67061 Ludwigshafen</p>
+          <p className="text-xs text-whisper opacity-60">Made in Mannheim 🇩🇪</p>
         </div>
       </div>
     </footer>

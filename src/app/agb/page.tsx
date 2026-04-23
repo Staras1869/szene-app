@@ -5,10 +5,10 @@ export const metadata = {
   description: "Allgemeine Geschäftsbedingungen der Szene Digital Solutions UG (haftungsbeschränkt)",
 }
 
-const LAST_UPDATED = "16. April 2026"
-const COMPANY = "Szene Digital Solutions UG (haftungsbeschränkt)"
-const ADDRESS = "Planken 7, 68161 Mannheim, Deutschland"
-const EMAIL = "kontakt@szene-app.de"
+const LAST_UPDATED = "20. April 2026"
+const COMPANY = "Efstratios Kampourakis (Szene Digital Solutions UG in Gründung)"
+const ADDRESS = "Roonstraße 29, 67061 Ludwigshafen am Rhein, Deutschland"
+const EMAIL = "hallo@szene.app"
 
 export default function AGBPage() {
   return (
@@ -21,8 +21,8 @@ export default function AGBPage() {
           <Section title="§ 1 Geltungsbereich">
             <p>
               Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform
-              Szene (nachfolgend „Plattform"), die als Website unter <strong>szene-app.vercel.app</strong> sowie
-              als mobile Applikation für iOS und Android betrieben wird.
+              Szene (nachfolgend „Plattform"), die als Website unter <strong>szene.app</strong>
+              betrieben wird.
             </p>
             <p>
               Betreiberin der Plattform ist die <strong>{COMPANY}</strong>, {ADDRESS}

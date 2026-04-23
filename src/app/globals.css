@@ -2,35 +2,186 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Google Fonts ───────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700;900&family=Karla:wght@300;400;500;600;700&display=swap');
+
+/* ─── Night theme (6 PM – 6 AM) ─────────────────────────────────────────────── */
+:root,
+[data-theme="night"] {
+  --bg-primary:      #0a0a0f;
+  --bg-secondary:    #111118;
+  --bg-surface:      rgba(255, 255, 255, 0.04);
+  --bg-surface-hover:rgba(255, 255, 255, 0.07);
+  --bg-sticky:       rgba(10, 10, 15, 0.92);
+  --card-bg:         rgba(255, 255, 255, 0.04);
+  --card-border:     rgba(255, 255, 255, 0.10);
+  --card-hover:      rgba(255, 255, 255, 0.07);
+  --accent:          #a855f7;
+  --accent-2:        #6366f1;
+  --accent-fg:       #ffffff;
+  --accent-glow:     rgba(168, 85, 247, 0.20);
+  --city-active-bg:  #ffffff;
+  --city-active-fg:  #000000;
+  --text-primary:    #e2e0ff;
+  --text-secondary:  rgba(255,255,255,0.50);
+  --text-muted:      rgba(255,255,255,0.28);
+  --text-faint:      rgba(255,255,255,0.18);
+  --border:          rgba(255,255,255,0.10);
+  --border-strong:   rgba(255,255,255,0.18);
+  --success:         #22c55e;
+  --error:           #ef4444;
+  --shadow:          0 0 20px rgba(168, 85, 247, 0.15);
+  --font-display:    'Bebas Neue', sans-serif;
+  --font-body:       'DM Sans', sans-serif;
+  --transition:      background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+
+  /* shadcn compat */
+  --background:      10 10 15;
+  --foreground:      226 100% 94%;
+  --primary:         270 85% 60%;
+  --primary-foreground: 0 0% 100%;
+  --radius:          0.75rem;
+}
+
+/* ─── Day theme (6 AM – 6 PM) ───────────────────────────────────────────────── */
+[data-theme="day"] {
+  --bg-primary:      #faf9f6;
+  --bg-secondary:    #f0ede6;
+  --bg-surface:      rgba(0, 0, 0, 0.03);
+  --bg-surface-hover:rgba(0, 0, 0, 0.06);
+  --bg-sticky:       rgba(250, 249, 246, 0.92);
+  --card-bg:         rgba(0, 0, 0, 0.03);
+  --card-border:     rgba(0, 0, 0, 0.08);
+  --card-hover:      rgba(0, 0, 0, 0.06);
+  --accent:          #1a1a1a;
+  --accent-2:        #c8a97e;
+  --accent-fg:       #ffffff;
+  --accent-glow:     rgba(200, 169, 126, 0.15);
+  --city-active-bg:  #1a1a1a;
+  --city-active-fg:  #ffffff;
+  --text-primary:    #1a1a1a;
+  --text-secondary:  rgba(0,0,0,0.50);
+  --text-muted:      rgba(0,0,0,0.35);
+  --text-faint:      rgba(0,0,0,0.20);
+  --border:          rgba(0,0,0,0.08);
+  --border-strong:   rgba(0,0,0,0.14);
+  --success:         #16a34a;
+  --error:           #dc2626;
+  --shadow:          0 2px 16px rgba(0,0,0,0.06);
+  --font-display:    'Playfair Display', serif;
+  --font-body:       'Karla', sans-serif;
+  --transition:      background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────────────── */
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
+  html, body { height: 100%; }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    transition: var(--transition);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Smooth theme transitions on everything */
+  *, *::before, *::after {
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+  }
+
+  /* But keep interaction transitions snappy */
+  button, a, input, textarea, select {
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+                color 0.15s ease, opacity 0.15s ease, transform 0.15s ease,
+                box-shadow 0.15s ease;
   }
 }
 
-@layer base {
-  html, body { height: 100%; }
-  body {
-    background-color: #000;
-    color: #fff;
+/* ─── Utilities ──────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .font-display  { font-family: var(--font-display); }
+  .font-body     { font-family: var(--font-body); }
+
+  /* Backgrounds */
+  .bg-szene      { background-color: var(--bg-primary); }
+  .bg-surface    { background-color: var(--bg-surface); }
+  .bg-card       { background-color: var(--card-bg); }
+  .bg-sticky     { background-color: var(--bg-sticky); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+  /* Card compound */
+  .szene-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
+  .szene-card:hover { background-color: var(--card-hover); }
+
+  .szene-input {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .szene-input::placeholder { color: var(--text-faint); }
+  .szene-input:focus { border-color: var(--accent); }
+  .szene-input option { background-color: var(--card-bg); color: var(--text-primary); }
+
+  /* Text */
+  .text-szene    { color: var(--text-primary); }
+  .text-muted    { color: var(--text-secondary); }
+  .text-faint    { color: var(--text-muted); }
+  .text-whisper  { color: var(--text-faint); }
+
+  /* Borders */
+  .border-szene  { border-color: var(--border); }
+  .border-strong { border-color: var(--border-strong); }
+  .border-card   { border-color: var(--card-border); }
+
+  /* Accent */
+  .accent        { color: var(--accent); }
+  .bg-accent     { background-color: var(--accent); color: var(--accent-fg); }
+
+  /* City / tab pill buttons */
+  .pill-active {
+    background-color: var(--city-active-bg);
+    color: var(--city-active-fg);
+  }
+  .pill-inactive {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .pill-inactive:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  /* Vibe / filter pill — active uses accent colour */
+  .vibe-active {
+    background-color: var(--accent);
+    color: var(--accent-fg);
+    border: 1px solid transparent;
+  }
+  .vibe-inactive {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .vibe-inactive:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  /* Divider */
+  .divide-szene > * + * { border-top: 1px solid var(--border); }
+
+  .glow          { box-shadow: var(--shadow); }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
 }

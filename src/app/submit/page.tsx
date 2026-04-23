@@ -10,30 +10,30 @@ const TYPES  = ["Club", "Bar", "Restaurant", "Rooftop", "Jazz bar", "Wine bar", 
 type Tab = "venue" | "event"
 
 export default function SubmitPage() {
-  const [tab, setTab]       = useState<Tab>("venue")
+  const [tab, setTab]         = useState<Tab>("venue")
   const [loading, setLoading] = useState(false)
-  const [done, setDone]     = useState(false)
+  const [done, setDone]       = useState(false)
 
   // Venue form
-  const [vName, setVName]   = useState("")
-  const [vCity, setVCity]   = useState("")
-  const [vType, setVType]   = useState("")
-  const [vArea, setVArea]   = useState("")
+  const [vName, setVName]     = useState("")
+  const [vCity, setVCity]     = useState("")
+  const [vType, setVType]     = useState("")
+  const [vArea, setVArea]     = useState("")
   const [vAddress, setVAddress] = useState("")
-  const [vDesc, setVDesc]   = useState("")
-  const [vWeb, setVWeb]     = useState("")
-  const [vIg, setVIg]       = useState("")
+  const [vDesc, setVDesc]     = useState("")
+  const [vWeb, setVWeb]       = useState("")
+  const [vIg, setVIg]         = useState("")
 
   // Event form
-  const [eTitle, setETitle] = useState("")
-  const [eVenue, setEVenue] = useState("")
-  const [eCity, setECity]   = useState("")
-  const [eDate, setEDate]   = useState("")
-  const [eTime, setETime]   = useState("")
-  const [ePrice, setEPrice] = useState("")
-  const [eDesc, setEDesc]   = useState("")
-  const [eLink, setELink]   = useState("")
-  const [eIg, setEIg]       = useState("")
+  const [eTitle, setETitle]   = useState("")
+  const [eVenue, setEVenue]   = useState("")
+  const [eCity, setECity]     = useState("")
+  const [eDate, setEDate]     = useState("")
+  const [eTime, setETime]     = useState("")
+  const [ePrice, setEPrice]   = useState("")
+  const [eDesc, setEDesc]     = useState("")
+  const [eLink, setELink]     = useState("")
+  const [eIg, setEIg]         = useState("")
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -55,20 +55,21 @@ export default function SubmitPage() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center text-center px-4 gap-5">
+      <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 gap-5" style={{ backgroundColor: "var(--bg-primary)" }}>
         <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
           <Check className="w-8 h-8 text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-black text-white">Submitted!</h1>
-        <p className="text-white/40 text-sm max-w-xs">
+        <h1 className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>Submitted!</h1>
+        <p className="text-sm max-w-xs" style={{ color: "var(--text-muted)" }}>
           We'll review it and add it to the app. Usually within 24h.
         </p>
         <div className="flex gap-3">
           <button onClick={() => { setDone(false); setVName(""); setETitle("") }}
-            className="px-5 py-2.5 border border-white/20 text-white/60 hover:text-white rounded-full text-sm font-semibold transition-colors">
+            className="px-5 py-2.5 rounded-full text-sm font-semibold transition-colors"
+            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}>
             Submit another
           </button>
-          <Link href="/" className="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-full text-sm font-bold transition-colors">
+          <Link href="/" className="px-5 py-2.5 text-white rounded-full text-sm font-bold transition-colors" style={{ backgroundColor: "var(--accent)" }}>
             Back to app
           </Link>
         </div>
@@ -77,35 +78,36 @@ export default function SubmitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-white/[0.18]">
+      <div className="sticky top-0 z-40 backdrop-blur-xl" style={{ backgroundColor: "var(--bg-sticky)", borderBottom: "1px solid var(--border)" }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/" className="text-white/40 hover:text-white transition-colors">
+          <Link href="/" className="transition-colors" style={{ color: "var(--text-muted)" }}>
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-sm font-bold text-white">Add to Szene</h1>
+          <h1 className="text-sm font-bold">Add to Szene</h1>
         </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-8">
         {/* Intro */}
         <div className="mb-8">
-          <h2 className="text-3xl font-black text-white tracking-tight mb-2">
-            Are you a <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">promoter</span> or venue?
+          <h2 className="text-3xl font-black tracking-tight mb-2">
+            Are you a <span style={{ color: "var(--accent)" }}>promoter</span> or venue?
           </h2>
-          <p className="text-white/35 text-sm leading-relaxed">
+          <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
             Get your venue or event in front of thousands of people in Mannheim, Heidelberg, Frankfurt and beyond. Free, always.
           </p>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 p-1 bg-white/[0.10] border border-white/[0.15] rounded-xl mb-8 w-fit">
+        <div className="flex gap-1 p-1 rounded-xl mb-8 w-fit" style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)" }}>
           {(["venue", "event"] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all ${
-                tab === t ? "bg-violet-600 text-white" : "text-white/55 hover:text-white"
-              }`}>
+              className="px-6 py-2 rounded-lg text-sm font-bold capitalize transition-all"
+              style={tab === t
+                ? { backgroundColor: "var(--accent)", color: "#fff" }
+                : { color: "var(--text-muted)" }}>
               {t === "venue" ? "📍 Venue" : "🎉 Event"}
             </button>
           ))}
@@ -114,17 +116,17 @@ export default function SubmitPage() {
         <form onSubmit={submit} className="space-y-4">
           {tab === "venue" ? (
             <>
-              <Field label="Venue name *" required>
+              <Field label="Venue name *">
                 <input value={vName} onChange={e => setVName(e.target.value)} required placeholder="e.g. BASE Club" className={inputCls} />
               </Field>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="City *" required>
+                <Field label="City *">
                   <select value={vCity} onChange={e => setVCity(e.target.value)} required className={inputCls}>
                     <option value="">Select…</option>
                     {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </Field>
-                <Field label="Type *" required>
+                <Field label="Type *">
                   <select value={vType} onChange={e => setVType(e.target.value)} required className={inputCls}>
                     <option value="">Select…</option>
                     {TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -151,14 +153,14 @@ export default function SubmitPage() {
             </>
           ) : (
             <>
-              <Field label="Event title *" required>
+              <Field label="Event title *">
                 <input value={eTitle} onChange={e => setETitle(e.target.value)} required placeholder="e.g. Rooftop Sessions" className={inputCls} />
               </Field>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Venue / Location *" required>
+                <Field label="Venue / Location *">
                   <input value={eVenue} onChange={e => setEVenue(e.target.value)} required placeholder="Club name or address" className={inputCls} />
                 </Field>
-                <Field label="City *" required>
+                <Field label="City *">
                   <select value={eCity} onChange={e => setECity(e.target.value)} required className={inputCls}>
                     <option value="">Select…</option>
                     {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -166,7 +168,7 @@ export default function SubmitPage() {
                 </Field>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Date *" required>
+                <Field label="Date *">
                   <input value={eDate} onChange={e => setEDate(e.target.value)} required type="date" className={inputCls} />
                 </Field>
                 <Field label="Start time">
@@ -191,12 +193,13 @@ export default function SubmitPage() {
           )}
 
           <button type="submit" disabled={loading}
-            className="w-full mt-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white py-3.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+            className="w-full mt-2 disabled:opacity-50 text-white py-3.5 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2"
+            style={{ backgroundColor: "var(--accent)" }}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {loading ? "Submitting…" : `Submit ${tab}`}
           </button>
 
-          <p className="text-white/40 text-xs text-center">
+          <p className="text-xs text-center" style={{ color: "var(--text-muted)" }}>
             Reviewed within 24h · Free forever · No account needed
           </p>
         </form>
@@ -205,12 +208,12 @@ export default function SubmitPage() {
   )
 }
 
-const inputCls = "w-full bg-white/[0.10] border border-white/[0.15] rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-violet-500/50 transition-colors"
+const inputCls = "w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors szene-input"
 
-function Field({ label, children, required }: { label: string; children: React.ReactNode; required?: boolean }) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-xs text-white/35 uppercase tracking-widest mb-1.5 font-semibold">
+      <label className="block text-xs uppercase tracking-widest mb-1.5 font-semibold" style={{ color: "var(--text-muted)" }}>
         {label}
       </label>
       {children}

@@ -14,8 +14,8 @@ export default function ProfileEditPage() {
   }, [loading, user, router])
 
   if (loading || !user) return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--bg-primary)" }}>
+      <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }} />
     </div>
   )
 
