@@ -77,6 +77,8 @@ const EVENTS: Record<string, EventItem[]> = {
     { id: "m12", title: "7Grad Underground Night",  venue: "7Grad Mannheim",      day: 5, date: "", time: "23:00", emoji: "❄️", cat: "Party",   grad: "from-fuchsia-800 to-violet-900", going: 77,  vibe: "party",              price: "€6",   dresscode: "Black preferred", desc: "Techno & Electronic im Untergrund", instagram: "7grad.mannheim", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=500&fit=crop&auto=format" },
     { id: "m13", title: "Jazz & Cocktails",         venue: "Ella & Louis",        day: 5, date: "", time: "19:30", emoji: "🎷", cat: "Live",    grad: "from-amber-800 to-orange-900",   going: 41,  vibe: "music",              price: "Frei", dresscode: "Smart casual",    instagram: "ellaandlouis_mannheim", image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&h=500&fit=crop&auto=format" },
     { id: "m14", title: "AStA Semesterparty",       venue: "Galerie Kurzzeit",    day: 4, date: "", time: "21:00", emoji: "🎓", cat: "Uni",     grad: "from-blue-700 to-indigo-900",    going: 198, vibe: "student",            price: "€3",   dresscode: "Casual",          desc: "Vom AStA organisiert — günstig, voll, legendär", instagram: "asta_mannheim", website: "https://www.asta.uni-mannheim.de", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=500&fit=crop&auto=format" },
+    { id: "m15", title: "Maimarkt Mannheim",         venue: "Maimarkt Gelände",    date: "Sa 3 Mai", time: "10:00", emoji: "🎡", cat: "Messe",   grad: "from-yellow-700 to-orange-800",  going: 1840, vibe: "outside", hot: true, price: "€12", dresscode: "Casual", desc: "Größte regionale Verbrauchermesse — Essen, Musik, Aussteller aus ganz Deutschland", website: "https://www.maimarkt.de", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=500&fit=crop&auto=format" },
+    { id: "m16", title: "Pop-Up Art Fair Mannheim",  venue: "Rosengarten Congress", date: "Fr 25 Apr", time: "17:00", emoji: "🎨", cat: "Messe",  grad: "from-rose-800 to-pink-900",      going: 312, vibe: "outside",            price: "€8",  dresscode: "Smart", desc: "Zeitgenössische Kunst, Fotografie und Design. Vernissage mit Live-DJ.", website: "https://www.rosengarten-mannheim.de", image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&h=500&fit=crop&auto=format" },
   ],
   heidelberg: [
     { id: "h1", title: "Afro Night HD",            venue: "halle02",            day: 6, date: "", time: "22:00", emoji: "🌍", cat: "Afro",    grad: "from-green-800 to-emerald-900",  going: 112, vibe: "afro",    hot: true,  price: "€8",   dresscode: "Fashionable",  instagram: "halle02_heidelberg", website: "https://www.halle02.de", image: "https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=800&h=500&fit=crop&auto=format" },
@@ -87,6 +89,8 @@ const EVENTS: Record<string, EventItem[]> = {
     { id: "h6", title: "Billy Blues Live Music",   venue: "Billy Blues",        day: 6, date: "", time: "21:00", emoji: "🎸", cat: "Live",    grad: "from-blue-800 to-indigo-900",    going: 55,  vibe: "music",              price: "€7",   dresscode: "Smart casual", image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&h=500&fit=crop&auto=format" },
     { id: "h7", title: "Schloss Open Air",         venue: "Schloss Heidelberg", day: 6, date: "", time: "18:00", emoji: "🏰", cat: "Outside", grad: "from-stone-800 to-amber-900",    going: 220, vibe: "outside", hot: true,  price: "Frei", dresscode: "Casual",       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop&auto=format" },
     { id: "h8", title: "Harmoniegarten Sundowner", venue: "Harmoniegarten",     day: 0, date: "", time: "16:00", emoji: "🌿", cat: "Outside", grad: "from-emerald-800 to-teal-900",   going: 89,  vibe: "outside",            price: "Frei", dresscode: "Casual",       image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=500&fit=crop&auto=format" },
+    { id: "h9", title: "Heidelberger Frühling",   venue: "Stadthalle HD",      date: "So 27 Apr", time: "11:00", emoji: "🎻", cat: "Messe",   grad: "from-amber-700 to-yellow-800",  going: 520, vibe: "music",   hot: true, price: "€18", dresscode: "Smart casual", desc: "Das internationale Musikfestival mit Konzerten, Meisterkursen und Open-Air-Events am Neckar", website: "https://www.heidelberger-fruehling.de", image: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&h=500&fit=crop&auto=format" },
+    { id: "h10", title: "Heidelberg Design Fair", venue: "Print Media Academy", date: "Sa 3 Mai", time: "10:00", emoji: "🏛️", cat: "Messe",   grad: "from-slate-700 to-zinc-800",    going: 188, vibe: "outside",            price: "€6",  dresscode: "Casual",       desc: "Designmesse mit lokalen Kreativen, Vintage-Fashion und handgemachten Produkten", image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&h=500&fit=crop&auto=format" },
   ],
   frankfurt: [
     { id: "f1", title: "Afrohouse Frankfurt",      venue: "Robert Johnson",     day: 6, date: "", time: "23:00", emoji: "🌍", cat: "Afro",    grad: "from-green-800 to-teal-900",     going: 280, vibe: "afro",    hot: true,  price: "€12",  dresscode: "Fashionable",  instagram: "robertjohnson_club", website: "https://www.robert-johnson.de", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop&auto=format" },
@@ -96,6 +100,9 @@ const EVENTS: Record<string, EventItem[]> = {
     { id: "f5", title: "Cocoon Night",             venue: "Cocoon Club",        day: 6, date: "", time: "23:00", emoji: "🔮", cat: "Party",   grad: "from-violet-900 to-black",       going: 310, vibe: "party",   hot: true,  price: "€15",  dresscode: "Dark / Techno",instagram: "cocoonclub", website: "https://www.cocoon.net", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=500&fit=crop&auto=format" },
     { id: "f6", title: "Main Open Air",            venue: "Mainufer",           day: 0, date: "", time: "12:00", emoji: "🌅", cat: "Outside", grad: "from-amber-700 to-orange-800",   going: 520, vibe: "outside", hot: true,  price: "Frei", dresscode: "Casual",       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop&auto=format" },
     { id: "f7", title: "Latin x Afro Fusion",      venue: "Zoom Frankfurt",     day: 5, date: "", time: "22:00", emoji: "💃", cat: "Latin",   grad: "from-rose-800 to-orange-900",    going: 167, vibe: "latin",              price: "€9",   dresscode: "Fashionable",  image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&h=500&fit=crop&auto=format" },
+    { id: "f8", title: "Musikmesse Frankfurt",     venue: "Messe Frankfurt",    date: "Fr 25 Apr", time: "09:00", emoji: "🎸", cat: "Messe",   grad: "from-red-800 to-rose-900",       going: 8400, vibe: "music",  hot: true, price: "€28", dresscode: "Casual", desc: "Weltgrößte Musikmesse — Instrumente, Live-Acts, Workshops von über 1.500 Ausstellern aus 50 Ländern", website: "https://musikmesse.com", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop&auto=format" },
+    { id: "f9", title: "Ambiente Home & Living",   venue: "Messe Frankfurt",    date: "Mo 28 Apr", time: "09:00", emoji: "🏛️", cat: "Messe",   grad: "from-stone-700 to-zinc-800",     going: 5200, vibe: "outside",            price: "€22", dresscode: "Business", desc: "Internationale Konsumgütermesse — Wohnen, Schenken, Essen & Trinken. Tausende Aussteller, Trendshows.", website: "https://ambiente.messefrankfurt.com", image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&h=500&fit=crop&auto=format" },
+    { id: "f10", title: "Street Food Festival FFM", venue: "Mainkai Frankfurt",  date: "Sa 3 Mai", time: "11:00", emoji: "🍜", cat: "Messe",   grad: "from-orange-700 to-amber-800",   going: 3100, vibe: "outside", hot: true, price: "Frei", dresscode: "Casual", desc: "Über 60 internationale Street Food Stände am Mainufer — Asiatisch, Latein, Medi und alles dazwischen", image: "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?w=800&h=500&fit=crop&auto=format" },
   ],
   ludwigshafen: [
     { id: "l1", title: "Afro Night LU",            venue: "Das Haus",           day: 6, date: "", time: "22:00", emoji: "🌍", cat: "Afro",    grad: "from-green-800 to-emerald-900",  going: 54,  vibe: "afro",               price: "€5",   dresscode: "Casual",       instagram: "dashaus_lu", image: "https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=800&h=500&fit=crop&auto=format" },
@@ -224,6 +231,7 @@ const GRAD_BY_CAT: Record<string, string> = {
   Chill:   "from-stone-800 to-zinc-900",
   Live:    "from-amber-800 to-orange-900",
   Outside: "from-emerald-800 to-teal-900",
+  Messe:   "from-yellow-700 to-orange-800",
   Event:   "from-zinc-800 to-neutral-900",
 }
 
@@ -435,6 +443,7 @@ function ForYouTab({ city }: { city: string }) {
   const [going, setGoing] = useState<Set<string>>(new Set())
   const events = hydrateDates(EVENTS[city] ?? [])
   const hot    = events.filter(e => e.hot)
+  const messe  = events.filter(e => e.cat === "Messe")
   const afro   = events.filter(e => e.vibe === "afro")
   const latin  = events.filter(e => e.vibe === "latin")
   const uni    = events.filter(e => e.vibe === "student")
@@ -488,6 +497,7 @@ function ForYouTab({ city }: { city: string }) {
           </div>
         </div>
       )}
+      <Section title="Messen & Märkte" emoji="🏛️" items={messe} />
       <Section title="Afro & Afrobeats" emoji="🌍" items={afro} />
       <Section title="Reggaeton & Latin" emoji="🔥" items={latin} />
       <Section title="University Events" emoji="🎓" items={uni} />
@@ -820,11 +830,269 @@ function Onboarding({ onDone }: { onDone: (city: string, vibes: string[]) => voi
   )
 }
 
+// ─── Night Out Planner ────────────────────────────────────────────────────────
+type Stop = { time: string; emoji: string; place: string; area: string; type: string; tip: string; price: string }
+type Plan = { id: string; title: string; subtitle: string; emoji: string; grad: string; badge: string; stops: Stop[] }
+
+const PLANS: Record<string, Plan[]> = {
+  mannheim: [
+    {
+      id: "afro-night-ma",
+      title: "Afro Night Route",
+      subtitle: "Jungbusch crawl — deep cuts & big bass",
+      emoji: "🌍", grad: "from-green-800 to-emerald-900", badge: "Popular",
+      stops: [
+        { time: "20:00", emoji: "🍸", place: "Kaizen",        area: "Innenstadt", type: "Cocktail bar", tip: "Best pre-game spot — order their signature rum sour",        price: "~€12" },
+        { time: "22:00", emoji: "🎷", place: "Ella & Louis",  area: "Jungbusch",  type: "Jazz bar",     tip: "Warm up your night with live jazz and great cocktails",      price: "Frei" },
+        { time: "23:30", emoji: "🌍", place: "MS Connexion",  area: "Hafen",      type: "Club",         tip: "Main floor for Afrobeats — side room for Amapiano. Dress up", price: "€8"   },
+        { time: "02:00", emoji: "🌅", place: "Strandbar Rennwiese", area: "Rennwiese", type: "Afterhour", tip: "If it's summer — end at the Rhein. Best sunrise in Mannheim", price: "Frei" },
+      ],
+    },
+    {
+      id: "student-night-ma",
+      title: "Student Budget Night",
+      subtitle: "Max fun, min spend — under €15 total",
+      emoji: "🎓", grad: "from-blue-800 to-indigo-900", badge: "€€",
+      stops: [
+        { time: "19:00", emoji: "🍺", place: "Plan B",         area: "Jungbusch",  type: "Bar",        tip: "Happy hour until 21:00 — Bier für €2,50",                   price: "€3"   },
+        { time: "21:00", emoji: "🎨", place: "Galerie Kurzzeit",area: "Jungbusch", type: "Bar/Gallery", tip: "Local art on the walls, underground vibes, friendly crowd",  price: "Frei" },
+        { time: "22:00", emoji: "🎓", place: "Uni Mannheim Aula", area: "Quadrate", type: "Uni Party",  tip: "Free with student ID — biggest student night in the region", price: "Frei" },
+        { time: "01:00", emoji: "🍕", place: "L'Osteria Mannheim", area: "Innenstadt", type: "Late food", tip: "Grab a slice on the way home — open until 02:00",          price: "~€6"  },
+      ],
+    },
+    {
+      id: "date-night-ma",
+      title: "Date Night",
+      subtitle: "Impress someone — from cocktails to club",
+      emoji: "🥂", grad: "from-rose-800 to-pink-900", badge: "Romantic",
+      stops: [
+        { time: "19:30", emoji: "🍷", place: "Weinkeller Wasserturm", area: "Wasserturm", type: "Wine bar", tip: "Rhine Valley wines, candlelight — start here. Book ahead", price: "~€20" },
+        { time: "21:00", emoji: "🌬️", place: "ZEPHYR Bar",   area: "Quadrate",   type: "Cocktail bar", tip: "Dark, intimate, no tourists. Order whatever the bartender suggests", price: "~€14" },
+        { time: "23:00", emoji: "💜", place: "Tiffany Club",  area: "C-Quadrat",  type: "Club",         tip: "Dresscode enforced — dress up. Great sound, premium crowd",  price: "€8"  },
+      ],
+    },
+    {
+      id: "techno-night-ma",
+      title: "Underground Route",
+      subtitle: "Black clothes only — deep techno all night",
+      emoji: "❄️", grad: "from-fuchsia-900 to-black", badge: "After midnight",
+      stops: [
+        { time: "21:00", emoji: "🍸", place: "Hemingway Bar", area: "Innenstadt", type: "Bar",    tip: "Classic spirits, no nonsense. Fuel up before the long night", price: "~€13" },
+        { time: "23:00", emoji: "❄️", place: "7Grad Mannheim", area: "Jungbusch", type: "Club",   tip: "Arrives after midnight for best atmosphere. Dress: all black", price: "€6"   },
+        { time: "02:00", emoji: "🖤", place: "Zeitraumexit",  area: "Jungbusch",  type: "Club",   tip: "Experimental and raw — the real underground. ID required",    price: "€6"   },
+      ],
+    },
+  ],
+  heidelberg: [
+    {
+      id: "altstadt-crawl-hd",
+      title: "Altstadt Crawl",
+      subtitle: "Historic streets, great bars — the classic HD night",
+      emoji: "🏰", grad: "from-stone-800 to-amber-900", badge: "Local favourite",
+      stops: [
+        { time: "18:00", emoji: "🏰", place: "Schloss Biergarten", area: "Schloss",  type: "Beer garden", tip: "Start with sunset views over the Neckar — pure magic",    price: "~€6"  },
+        { time: "20:00", emoji: "🍏", place: "Green Apple",        area: "Altstadt", type: "Bar",         tip: "Popular student spot — cocktail pitchers, great DJ sets",  price: "~€8"  },
+        { time: "22:00", emoji: "🍺", place: "O'Brien's",          area: "Altstadt", type: "Irish pub",   tip: "Packed with students and expats — great energy",           price: "~€5"  },
+        { time: "23:30", emoji: "🎸", place: "Cave 54",            area: "Altstadt", type: "Club",        tip: "Heidelberg legend since 1969 — get there before 00:00",    price: "€3"   },
+      ],
+    },
+    {
+      id: "music-night-hd",
+      title: "Music & Festival Night",
+      subtitle: "Live music from sunset to last dance",
+      emoji: "🎻", grad: "from-amber-700 to-yellow-800", badge: "Culture",
+      stops: [
+        { time: "17:00", emoji: "🎻", place: "Heidelberger Frühling", area: "Stadthalle", type: "Festival", tip: "World-class classical festival — book tickets in advance", price: "€18"  },
+        { time: "20:00", emoji: "🌿", place: "Harmoniegarten",    area: "Weststadt",  type: "Garden bar",  tip: "Outdoor drinks after the concert — great Weizen",         price: "~€5"  },
+        { time: "21:00", emoji: "🎸", place: "Billy Blues",       area: "Altstadt",   type: "Music bar",   tip: "Live band, great sound, small and intimate",              price: "€7"   },
+        { time: "23:00", emoji: "🎶", place: "Nachtschicht",      area: "Bergheim",   type: "Club",        tip: "HD's biggest club — go to the main floor for house",      price: "€6"   },
+      ],
+    },
+  ],
+  frankfurt: [
+    {
+      id: "messe-afterparty-ffm",
+      title: "Messe Day → Night",
+      subtitle: "After a long day at the fair — where to go",
+      emoji: "🎸", grad: "from-red-800 to-rose-900", badge: "Messe season",
+      stops: [
+        { time: "17:00", emoji: "🎸", place: "Musikmesse Frankfurt", area: "Messe",        type: "Trade fair", tip: "Catch the last sessions and artist showcases",                 price: "€28"  },
+        { time: "20:00", emoji: "🌆", place: "Main Tower Lounge",    area: "Bankenviertel",type: "Rooftop bar", tip: "200m up — cocktails with Frankfurt skyline view. Dress smart", price: "~€15" },
+        { time: "22:00", emoji: "🎺", place: "Jazzkeller Frankfurt", area: "Innenstadt",   type: "Jazz club",   tip: "Since 1952 — intimate, legendary, real Frankfurt vibe",         price: "€8"   },
+        { time: "00:00", emoji: "🎛️", place: "Robert Johnson",      area: "Offenbach",    type: "Club",        tip: "World-class electronic — take the tram from Hauptwache",       price: "€12"  },
+      ],
+    },
+    {
+      id: "afro-night-ffm",
+      title: "Afro Fusion Night",
+      subtitle: "From Sachsenhausen to Offenbach",
+      emoji: "🌍", grad: "from-green-800 to-teal-900", badge: "Hot",
+      stops: [
+        { time: "20:00", emoji: "🍜", place: "Street Food Festival", area: "Mainkai",      type: "Food market", tip: "If it's on — eat here first. 60+ stands on the Mainufer", price: "~€12" },
+        { time: "22:00", emoji: "🌴", place: "King Kamehameha",      area: "Sachsenhausen",type: "Club",        tip: "Reggaeton + Latin first, then Afrobeats after midnight",  price: "€8"   },
+        { time: "23:30", emoji: "🌍", place: "Robert Johnson",       area: "Offenbach",    type: "Club",        tip: "Afrohouse & Techno — the main event. Arrive after 01:00", price: "€12"  },
+      ],
+    },
+    {
+      id: "student-ffm",
+      title: "Goethe Uni Night",
+      subtitle: "Student budget, Frankfurt energy",
+      emoji: "🎓", grad: "from-blue-800 to-indigo-900", badge: "Budget",
+      stops: [
+        { time: "19:00", emoji: "🏙️", place: "Sachsenhäuser Ufer", area: "Sachsenhausen", type: "Outdoor",    tip: "Free — just grab a beer from a Kiosk and sit by the Main", price: "~€3"  },
+        { time: "21:00", emoji: "🎓", place: "Club Voltaire",       area: "Innenstadt",    type: "Uni Bar",    tip: "Artsy, political, cheap drinks — classic Frankfurt student", price: "€2"   },
+        { time: "23:00", emoji: "🎉", place: "Metropol",            area: "Sachsenhausen", type: "Club",       tip: "R&B and Hip-Hop — always packed on weekends",              price: "€6"   },
+      ],
+    },
+  ],
+  ludwigshafen: [
+    {
+      id: "rhein-night-lu",
+      title: "Rhein Night",
+      subtitle: "Waterfronts, Hemshof, and late nights",
+      emoji: "🌊", grad: "from-cyan-800 to-blue-900", badge: "Local",
+      stops: [
+        { time: "16:00", emoji: "🌊", place: "Rheinufer",     area: "Rheinufer",  type: "Outdoor",    tip: "Grab drinks from a Kiosk, watch the river — classic LU",    price: "~€4"  },
+        { time: "20:00", emoji: "☕", place: "Hemshof Café",   area: "Hemshof",    type: "Bar",        tip: "Local neighbourhood gem — quiz nights on Thursdays",        price: "~€5"  },
+        { time: "22:00", emoji: "🏠", place: "Das Haus",       area: "Mitte",      type: "Club",       tip: "Small but sweaty — Afro and party mix. Arrive by 23:00",    price: "€5"   },
+      ],
+    },
+  ],
+  karlsruhe: [
+    {
+      id: "kit-night-ka",
+      title: "KIT Student Night",
+      subtitle: "Substage to Tollhaus — the classic KA route",
+      emoji: "🎓", grad: "from-blue-800 to-indigo-900", badge: "Student",
+      stops: [
+        { time: "19:00", emoji: "🌿", place: "Kühler Krug",     area: "Günther-K.",  type: "Beer garden", tip: "Best Biergarten in Karlsruhe — great for groups",           price: "~€5"  },
+        { time: "21:00", emoji: "🍸", place: "Hemingway KA",     area: "Innenstadt",  type: "Cocktail bar", tip: "Pre-game cocktails — try the mojito",                       price: "~€12" },
+        { time: "23:00", emoji: "🎸", place: "Substage",         area: "Südstadt",    type: "Club",        tip: "KIT Semesterparty — cheapest entry, biggest crowd",         price: "€4"   },
+        { time: "01:30", emoji: "🎭", place: "Tollhaus",         area: "Oststadt",    type: "Club",        tip: "If Substage gets too packed — Tollhaus is 5 min walk away", price: "€6"   },
+      ],
+    },
+  ],
+}
+
+function PlannerTab({ city }: { city: string }) {
+  const plans = PLANS[city] ?? PLANS.mannheim
+  const [active, setActive] = useState<string | null>(null)
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="mb-2">
+        <p className="text-[10px] text-violet-400 uppercase tracking-[0.2em] font-semibold mb-1">Night Out Planner</p>
+        <h2 className="text-xl font-black text-szene tracking-tight">Curated combos for tonight</h2>
+        <p className="text-xs text-muted mt-1">Tap a plan to see the full itinerary — where to go and when.</p>
+      </div>
+
+      {plans.map(plan => (
+        <div key={plan.id} className="szene-card overflow-hidden">
+          {/* Plan header */}
+          <button className="w-full text-left p-4" onClick={() => setActive(a => a === plan.id ? null : plan.id)}>
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.grad} flex items-center justify-center text-2xl flex-shrink-0`}>
+                {plan.emoji}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-sm font-bold text-szene">{plan.title}</p>
+                  <span className="text-[9px] text-violet-400 border border-violet-500/30 bg-violet-500/10 px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">{plan.badge}</span>
+                </div>
+                <p className="text-xs text-muted truncate">{plan.subtitle}</p>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  {plan.stops.map((s, i) => (
+                    <span key={i} className="text-[10px] text-faint bg-surface border border-szene px-1.5 py-0.5 rounded-full">{s.time}</span>
+                  ))}
+                </div>
+              </div>
+              <span className="text-faint text-xs flex-shrink-0">{active === plan.id ? "▲" : "▼"}</span>
+            </div>
+          </button>
+
+          {/* Expanded itinerary */}
+          {active === plan.id && (
+            <div className="border-t border-szene px-4 pb-4 pt-3">
+              <div className="relative">
+                {/* Vertical timeline line */}
+                <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/40 via-violet-500/20 to-transparent" />
+                <div className="space-y-4">
+                  {plan.stops.map((stop, i) => (
+                    <div key={i} className="flex gap-4">
+                      {/* Timeline dot */}
+                      <div className="flex-shrink-0 w-10 flex flex-col items-center">
+                        <div className="w-5 h-5 rounded-full bg-violet-600/30 border border-violet-500/40 flex items-center justify-center text-[10px] z-10">
+                          {stop.emoji}
+                        </div>
+                      </div>
+                      {/* Stop info */}
+                      <div className="flex-1 min-w-0 pb-1">
+                        <div className="flex items-baseline gap-2 mb-0.5">
+                          <span className="text-[10px] font-bold text-violet-400 font-mono">{stop.time}</span>
+                          <p className="text-sm font-bold text-szene truncate">{stop.place}</p>
+                        </div>
+                        <p className="text-[10px] text-faint mb-1">{stop.type} · {stop.area}</p>
+                        <p className="text-xs text-muted leading-relaxed">{stop.tip}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                            stop.price === "Frei" || stop.price === "~€3" || stop.price === "~€4"
+                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+                              : "bg-violet-500/15 text-violet-400 border border-violet-500/20"
+                          }`}>🎟 {stop.price}</span>
+                          <a
+                            href={`https://maps.google.com/?q=${encodeURIComponent(stop.place + ", " + city)}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="text-[10px] text-faint hover:text-muted border border-szene px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
+                            <Navigation className="w-2.5 h-2.5" /> Map
+                          </a>
+                          <a
+                            href={`https://maps.google.com/maps?q=${encodeURIComponent("parking near " + stop.place + ", " + city)}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="text-[10px] text-blue-400/70 hover:text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full transition-colors flex items-center gap-1">
+                            <ParkingCircle className="w-2.5 h-2.5" /> P
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Share plan */}
+              <button
+                onClick={() => {
+                  const text = `${plan.title} — ${city.charAt(0).toUpperCase() + city.slice(1)}\n` +
+                    plan.stops.map(s => `${s.time} ${s.emoji} ${s.place}`).join("\n") +
+                    "\n\nvia Szene App 🎉"
+                  navigator.clipboard.writeText(text)
+                }}
+                className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-szene text-xs text-muted hover:text-szene hover:border-strong transition-all font-semibold">
+                <Copy className="w-3 h-3" /> Copy plan to share
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Messe callout if no city-specific plans */}
+      {(PLANS[city]?.length ?? 0) === 0 && (
+        <div className="szene-card p-5 text-center">
+          <p className="text-2xl mb-2">🏛️</p>
+          <p className="text-sm font-bold text-szene mb-1">Plans coming soon for {city}</p>
+          <p className="text-xs text-muted">Check the Events tab for Messen and local happenings.</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: "foryou",  label: "For You",  icon: Sparkles },
   { id: "events",  label: "Events",   icon: Calendar },
   { id: "tonight", label: "Tonight",  icon: MapPin },
+  { id: "plan",    label: "Plan",     icon: ArrowUpRight },
   { id: "venues",  label: "Venues",   icon: Star },
   { id: "friends", label: "Friends",  icon: Users },
 ]
@@ -917,10 +1185,11 @@ export function AppShell({
 
       {/* Content */}
       <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
-        {activeTab === "foryou"  && <ForYouTab  city={city} />}
-        {activeTab === "events"  && <EventsTab  city={city} />}
-        {activeTab === "tonight" && <TonightTab city={city} />}
-        {activeTab === "venues"  && <VenuesTab  city={city} />}
+        {activeTab === "foryou"  && <ForYouTab   city={city} />}
+        {activeTab === "events"  && <EventsTab   city={city} />}
+        {activeTab === "tonight" && <TonightTab  city={city} />}
+        {activeTab === "plan"    && <PlannerTab  city={city} />}
+        {activeTab === "venues"  && <VenuesTab   city={city} />}
         {activeTab === "friends" && <FriendsTab />}
       </div>
     </div>
