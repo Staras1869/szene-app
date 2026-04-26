@@ -20,7 +20,7 @@ const AVATAR_COLORS = [
 
 const NEIGHBORHOODS = [
   "Jungbusch","Quadrate","Wasserturm","Innenstadt","Neckarstadt",
-  "Lindenhof","Feudenheim","Heidelberg","Ludwigshafen","Other",
+  "Lindenhof","Feudenheim","Heidelberg","Stuttgart","Other",
 ]
 
 const MUSIC_OPTIONS = [

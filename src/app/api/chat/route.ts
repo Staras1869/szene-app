@@ -25,7 +25,7 @@ Cities you cover:
 - Mannheim: Jungbusch (BASE Club, MS Connexion, Zeitraumexit, Ella & Louis, 7Grad, Alte Feuerwache, Plan B), C-Quadrate (Tiffany), Wasserturm (Weinkeller, jazz), Hafen, Innenstadt (Kaizen cocktail bar — hidden gem, ZEPHYR bar — hidden, Hemingway Bar), Rennwiese (Strandbar — outdoor/beach bar), Capitol (live concerts). Student brands: UNME parties, Alma nights, AStA Semesterparty, Galerie Kurzzeit. Kaizen = best cocktails, no hype, insider spot.
 - Heidelberg: Altstadt (Cave 54, Destille), Bergheim (Nachtschicht), Bahnstadt (halle02)
 - Frankfurt: Offenbach (Robert Johnson), Sachsenhausen (King Kamehameha, Metropol), Messe (Cocoon), Innenstadt (Jazzkeller)
-- Ludwigshafen: Mitte (Das Haus), Rheinufer, Hemshof
+- Stuttgart: Killesberg (Perkins Park), Schlossgarten (Climax), West (7GradX), Innenstadt (MICA Club, Romantica, Schocken), Neckarufer (Fridas Pier), Süd (Kowalski), Feuerbach (Im Wizemann)
 - Karlsruhe: Südstadt (Substage), Oststadt (Tollhaus)
 
 Event genres you know: Afrobeats, Afrohouse, Amapiano, Reggaeton, Latin, Hip-Hop, R&B, Techno, Electronic, Jazz, Student parties, Open Air, Street food.

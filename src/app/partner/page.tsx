@@ -119,7 +119,7 @@ export default function PartnerPage() {
                       <option value="mannheim">Mannheim</option>
                       <option value="heidelberg">Heidelberg</option>
                       <option value="frankfurt">Frankfurt</option>
-                      <option value="ludwigshafen">Ludwigshafen</option>
+                      <option value="stuttgart">Stuttgart</option>
                       <option value="karlsruhe">Karlsruhe</option>
                     </select>
                   </div>

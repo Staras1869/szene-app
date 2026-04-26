@@ -4,7 +4,7 @@ import { useState } from "react"
 import { ArrowLeft, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
 
-const CITIES = ["Mannheim", "Heidelberg", "Frankfurt", "Ludwigshafen", "Karlsruhe"]
+const CITIES = ["Mannheim", "Heidelberg", "Frankfurt", "Stuttgart", "Karlsruhe"]
 const TYPES  = ["Club", "Bar", "Restaurant", "Rooftop", "Jazz bar", "Wine bar", "Culture venue", "Festival", "Pop-up", "Other"]
 
 type Tab = "venue" | "event"
