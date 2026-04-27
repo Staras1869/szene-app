@@ -11,15 +11,17 @@ import { BrowseGate } from "@/components/browse-gate"
 
 export const metadata: Metadata = {
   title: {
-    default: "Szene — Nightlife in Mannheim, Heidelberg & Frankfurt",
+    default: "Szene — Nightlife in Germany",
     template: "%s | Szene",
   },
   description:
-    "Entdecke die besten Events, Clubs, Bars und versteckte Geheimtipps in Mannheim, Heidelberg und Frankfurt. KI-gestützte Nightlife-Discovery.",
+    "Entdecke die besten Events, Clubs, Bars in Mannheim, Heidelberg, Frankfurt, Stuttgart, Berlin, München, Köln und Karlsruhe. KI-gestützte Nightlife-Discovery mit Live-Map.",
   keywords: [
-    "Mannheim Nightlife", "Heidelberg Party", "Frankfurt Club", "Ludwigshafen", "Karlsruhe",
+    "Mannheim Nightlife", "Heidelberg Party", "Frankfurt Club", "Karlsruhe",
+    "Berlin Club", "München Nightlife", "Köln Party", "Stuttgart Club",
+    "Berghain", "Bootshaus", "MS Connexion", "halle02",
     "Afrobeats", "Latin Night", "Techno", "Reggaeton", "Uni Party", "Jungbusch",
-    "Events heute", "Club tonight", "Bar empfehlung",
+    "Events heute", "Club tonight", "Bar empfehlung", "Nightlife Map",
   ],
   authors: [{ name: "Szene" }],
   creator: "Szene",

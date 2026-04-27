@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp } from "lucide-react"
+import { MapTab } from "./map-tab"
 import { triggerEventToast } from "./event-toast"
 import { trackEventView } from "./browse-gate"
 import Link from "next/link"
@@ -105,6 +106,37 @@ function hydrateDates(events: EventItem[]): EventItem[] {
     ...e,
     date: e.day !== undefined ? nextOccurrence(e.day) : e.date,
   }))
+}
+
+// City total "going tonight"
+function cityGoingTotal(city: string): number {
+  return (EVENTS[city] ?? []).reduce((sum, e) => sum + (e.going ?? 0), 0)
+}
+
+// Event live status
+type EventStatus = "now" | "soon" | "tonight" | null
+function getEventStatus(e: EventItem): EventStatus {
+  const now   = new Date()
+  const h     = now.getHours() < 6 ? now.getHours() + 24 : now.getHours()
+  const today = now.getDay()
+  if (e.day === undefined) return null
+  if (e.day !== today) return null
+  const eH = parseInt(e.time?.split(":")[0] ?? "22", 10)
+  if (h >= eH && h < eH + 5) return "now"
+  if (eH - h > 0 && eH - h <= 2) return "soon"
+  if (eH > h) return "tonight"
+  return "now" // past start, assume still going (clubs run until 6am)
+}
+
+// Format countdown "in Xh Ym"
+function countdown(targetHour: number): string {
+  const h = new Date().getHours() < 6 ? new Date().getHours() + 24 : new Date().getHours()
+  const m = new Date().getMinutes()
+  const diff = (targetHour - h) * 60 - m
+  if (diff <= 0) return "now"
+  const hrs = Math.floor(diff / 60)
+  const mins = diff % 60
+  return hrs > 0 ? `in ${hrs}h ${mins}m` : `in ${mins}m`
 }
 
 const EVENTS: Record<string, EventItem[]> = {
@@ -520,10 +552,34 @@ function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
         )}
         {/* Meta row — date/time/price always shown */}
         <div className="flex items-center gap-3 px-4 py-2.5 text-xs text-faint flex-wrap">
-          {e.date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{e.date}</span>}
-          {e.time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.time}</span>}
+          {(() => {
+            const status = getEventStatus(e)
+            if (status === "now") return (
+              <span className="flex items-center gap-1 font-bold text-emerald-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                Happening now
+              </span>
+            )
+            if (status === "soon") return (
+              <span className="flex items-center gap-1 font-bold text-orange-400">
+                <Zap className="w-3 h-3" />
+                Doors {countdown(parseInt(e.time?.split(":")[0] ?? "22", 10))}
+              </span>
+            )
+            if (status === "tonight") return (
+              <span className="flex items-center gap-1 font-semibold text-violet-400">
+                <Clock className="w-3 h-3" />Tonight · {e.time}
+              </span>
+            )
+            return e.date ? <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{e.date}</span> : null
+          })()}
+          {e.time && getEventStatus(e) === null && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.time}</span>}
           {e.price && <span className={`font-semibold ${e.price === "Frei" ? "text-emerald-500" : "text-violet-400"}`}>{e.price}</span>}
           {e.dresscode && <span className="text-whisper">👔 {e.dresscode}</span>}
+          {e.going > 500 && <span className="flex items-center gap-1 text-orange-400/70 font-semibold"><TrendingUp className="w-3 h-3" />{e.going.toLocaleString()} going</span>}
         </div>
       </button>
 
@@ -1531,6 +1587,7 @@ const TABS = [
   { id: "foryou",  label: "For You",  icon: Sparkles },
   { id: "events",  label: "Events",   icon: Calendar },
   { id: "tonight", label: "Tonight",  icon: MapPin },
+  { id: "map",     label: "Map",      icon: Map },
   { id: "daytime", label: "Daytime",  icon: Sun },
   { id: "plan",    label: "Plan",     icon: ArrowUpRight },
   { id: "venues",  label: "Venues",   icon: Star },
@@ -1602,6 +1659,24 @@ export function AppShell({
                 </button>
               </div>
 
+              {/* City pulse stats */}
+              {(() => {
+                const total = cityGoingTotal(city)
+                const h     = new Date().getHours()
+                const isNight = h >= 20 || h < 6
+                return total > 0 ? (
+                  <div className="flex items-center gap-2 pb-2 text-xs">
+                    <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${isNight ? "bg-violet-400" : "bg-amber-400"}`} />
+                      <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${isNight ? "bg-violet-400" : "bg-amber-400"}`} />
+                    </span>
+                    <span className="font-bold" style={{ color: isNight ? "var(--accent)" : "#f59e0b" }}>
+                      {total.toLocaleString()} {isNight ? "going out tonight" : "events this week"} in {city.charAt(0).toUpperCase() + city.slice(1)}
+                    </span>
+                  </div>
+                ) : null
+              })()}
+
               {/* Tab bar */}
               <div className="flex gap-1 pb-3 overflow-x-auto scrollbar-hide -mx-1 px-1">
                 {TABS.map(t => {
@@ -1628,6 +1703,7 @@ export function AppShell({
         {activeTab === "foryou"  && <ForYouTab   city={city} />}
         {activeTab === "events"  && <EventsTab   city={city} />}
         {activeTab === "tonight" && <TonightTab  city={city} />}
+        {activeTab === "map"     && <MapTab city={city} venues={VENUES_BY_CITY[city] ?? []} />}
         {activeTab === "daytime" && <BrunchTab   city={city} />}
         {activeTab === "plan"    && <PlannerTab  city={city} />}
         {activeTab === "venues"  && <VenuesTab   city={city} />}
