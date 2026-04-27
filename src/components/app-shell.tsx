@@ -580,13 +580,65 @@ function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
           {e.time && getEventStatus(e) === null && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.time}</span>}
           {e.price && <span className={`font-semibold ${e.price === "Frei" ? "text-emerald-500" : "text-violet-400"}`}>{e.price}</span>}
           {e.dresscode && <span className="text-whisper">👔 {e.dresscode}</span>}
-          {e.going > 500 && <span className="flex items-center gap-1 text-orange-400/70 font-semibold"><TrendingUp className="w-3 h-3" />{e.going.toLocaleString()} going</span>}
+          {/* Social proof — avatars + count */}
+          {e.going > 0 && (
+            <span className="flex items-center gap-1.5 ml-auto">
+              {/* mini avatar stack */}
+              <span className="flex -space-x-1.5">
+                {["A","B","C"].map((l, i) => (
+                  <span key={i} className="w-4 h-4 rounded-full border border-black flex items-center justify-center text-[7px] font-black text-white"
+                    style={{ background: ["#7c3aed","#059669","#dc2626"][i], zIndex: 3-i }}>
+                    {l}
+                  </span>
+                ))}
+              </span>
+              <span className={`font-bold ${e.going > 500 ? "text-orange-400" : "text-faint"}`}>
+                {e.going > 500
+                  ? <span className="flex items-center gap-0.5"><TrendingUp className="w-2.5 h-2.5" />{e.going.toLocaleString()}</span>
+                  : e.going
+                }
+              </span>
+            </span>
+          )}
         </div>
       </button>
 
       {/* Expanded panel */}
       {expanded && (
         <div className="px-4 pb-4 border-t border-szene pt-3 space-y-3">
+
+          {/* Social proof bar */}
+          <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.12)" }}>
+            <div className="flex items-center gap-2.5">
+              {/* Avatar stack — more visible in expanded view */}
+              <span className="flex -space-x-2">
+                {[
+                  { l: "M", c: "#7c3aed" }, { l: "S", c: "#059669" },
+                  { l: "L", c: "#dc2626" }, { l: "K", c: "#d97706" },
+                ].map(({ l, c }, i) => (
+                  <span key={i} className="w-6 h-6 rounded-full border-2 border-black flex items-center justify-center text-[9px] font-black text-white"
+                    style={{ background: c, zIndex: 4-i }}>
+                    {l}
+                  </span>
+                ))}
+                {e.going > 4 && (
+                  <span className="w-6 h-6 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center text-[8px] font-bold text-muted" style={{ zIndex: 0 }}>
+                    +{(e.going - 4).toLocaleString()}
+                  </span>
+                )}
+              </span>
+              <div>
+                <p className="text-xs font-bold text-szene">{e.going.toLocaleString()} going</p>
+                <p className="text-[10px] text-faint">Szene users tonight</p>
+              </div>
+            </div>
+            {e.going > 200 && (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-1 rounded-full">
+                <TrendingUp className="w-3 h-3" /> Trending
+              </span>
+            )}
+          </div>
+
           {/* Info row */}
           <div className="flex flex-wrap gap-2">
             {e.dresscode && (
