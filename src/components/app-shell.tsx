@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee } from "lucide-react"
 import { triggerEventToast } from "./event-toast"
 import { trackEventView } from "./browse-gate"
 import Link from "next/link"
@@ -15,6 +15,9 @@ const CITIES = [
   { id: "frankfurt",    label: "Frankfurt" },
   { id: "stuttgart",    label: "Stuttgart" },
   { id: "karlsruhe",    label: "Karlsruhe" },
+  { id: "berlin",       label: "Berlin" },
+  { id: "munich",       label: "Munich" },
+  { id: "cologne",      label: "Cologne" },
 ]
 
 // ─── Vibes ───────────────────────────────────────────────────────────────────
@@ -135,6 +138,34 @@ const EVENTS: Record<string, EventItem[]> = {
     { id: "k3", title: "Latin Night KA",           venue: "Substage",           day: 6, date: "", time: "23:00", emoji: "🔥", cat: "Latin",   grad: "from-orange-800 to-red-900",     going: 58,  vibe: "latin",              price: "€6",   dresscode: "Streetwear",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&h=500&fit=crop&auto=format" },
     { id: "k4", title: "Kulturfestival Open Air",  venue: "Tollhaus Garten",    day: 0, date: "", time: "14:00", emoji: "🎭", cat: "Outside", grad: "from-emerald-800 to-teal-900",   going: 95,  vibe: "outside", hot: true,  price: "Frei", dresscode: "Casual",       image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=500&fit=crop&auto=format" },
   ],
+  berlin: [
+    { id: "b1",  title: "Berghain Friday",          venue: "Berghain",           day: 5, date: "", time: "00:00", emoji: "🖤", cat: "Party",   grad: "from-zinc-900 to-black",          going: 2800, vibe: "party",   hot: true,  price: "€20–25", dresscode: "Black only",      desc: "The world's most iconic club — Funktion-One, 3 floors, no photos, no tourist vibes", instagram: "berghain_official", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=500&fit=crop&auto=format" },
+    { id: "b2",  title: "Watergate Saturday",       venue: "Watergate",          day: 6, date: "", time: "23:00", emoji: "🌊", cat: "Party",   grad: "from-blue-900 to-teal-950",       going: 1100, vibe: "party",   hot: true,  price: "€15",    dresscode: "Dark",            desc: "Spree-facing floor-to-ceiling windows — best sunrise of Berlin", instagram: "watergateclubberlin", image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=800&h=500&fit=crop&auto=format" },
+    { id: "b3",  title: "Tresor Saturday",          venue: "Tresor",             day: 6, date: "", time: "23:00", emoji: "⚙️", cat: "Party",   grad: "from-zinc-800 to-zinc-950",       going: 950,  vibe: "party",   hot: true,  price: "€20–30", dresscode: "Techno",          desc: "Berlin's original techno bunker — vault floor, industrial concrete, no compromise", instagram: "tresor_berlin", image: "https://images.unsplash.com/photo-1598387181032-a3103d8f5797?w=800&h=500&fit=crop&auto=format" },
+    { id: "b4",  title: "Sisyphos Weekend",         venue: "Sisyphos",           day: 6, date: "", time: "22:00", emoji: "🏕️", cat: "Outside", grad: "from-emerald-800 to-teal-900",    going: 1800, vibe: "outside", hot: true,  price: "€15",    dresscode: "Festival",        desc: "Open-air festival club — hammerhalle, disko, outdoor stages. Opens Fri, closes Mon", instagram: "sisyphos_berlin", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&h=500&fit=crop&auto=format" },
+    { id: "b5",  title: "Wilde Renate House Night", venue: "Wilde Renate",       day: 6, date: "", time: "23:00", emoji: "🌿", cat: "Party",   grad: "from-violet-800 to-fuchsia-900",  going: 650,  vibe: "party",              price: "€12",    dresscode: "Colourful",       desc: "Multi-room labyrinth in a converted house — quirky, underground, authentic Berlin", instagram: "wilde_renate", image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop&auto=format" },
+    { id: "b6",  title: "About Blank Queer Rave",   venue: "About Blank",        day: 5, date: "", time: "23:00", emoji: "🌈", cat: "Party",   grad: "from-rose-800 to-pink-900",       going: 480,  vibe: "party",              price: "€10",    dresscode: "Anything goes",   desc: "Berlin's most inclusive dancefloor — queer, safe, no dress code police", instagram: "aboutblank_berlin", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=500&fit=crop&auto=format" },
+    { id: "b7",  title: "Prince Charles House",     venue: "Prince Charles",     day: 4, date: "", time: "23:00", emoji: "🎛️", cat: "Party",   grad: "from-indigo-800 to-blue-900",     going: 380,  vibe: "party",              price: "€10",    dresscode: "Casual",          desc: "Former swimming pool turned intimate club — Kreuzberg underground house & techno", instagram: "prince_charles_berlin", image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=800&h=500&fit=crop&auto=format" },
+    { id: "b8",  title: "Afrobeats Berlin Night",   venue: "Yaam Club",          day: 6, date: "", time: "22:00", emoji: "🌍", cat: "Afro",    grad: "from-green-800 to-emerald-900",   going: 520,  vibe: "afro",    hot: true,  price: "€8",     dresscode: "Fashionable",     desc: "Beachclub on the Spree — Afrobeats, Dancehall and open-air vibes", instagram: "yaambeach", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop&auto=format" },
+  ],
+  munich: [
+    { id: "mu1", title: "Harry Klein Friday",       venue: "Harry Klein",        day: 5, date: "", time: "23:00", emoji: "🔊", cat: "Party",   grad: "from-violet-900 to-black",        going: 680,  vibe: "party",   hot: true,  price: "€15–20", dresscode: "Black",           desc: "Munich's best techno club — intimate, Funktion-One, no tourists. Expect a queue", instagram: "harryblein_munich", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu2", title: "Rote Sonne Saturday",      venue: "Rote Sonne",         day: 6, date: "", time: "23:00", emoji: "🔴", cat: "Party",   grad: "from-red-900 to-rose-950",        going: 450,  vibe: "party",   hot: true,  price: "€12",    dresscode: "Dark",            desc: "Munich's oldest electronic club — low ceilings, 300 cap, legendary crowd", instagram: "rotesonne", image: "https://images.unsplash.com/photo-1598387181032-a3103d8f5797?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu3", title: "P1 Premium Saturday",      venue: "P1 Munich",          day: 6, date: "", time: "22:00", emoji: "💎", cat: "Party",   grad: "from-amber-800 to-orange-900",    going: 820,  vibe: "party",   hot: true,  price: "€20",    dresscode: "Smart / No Sneakers",desc: "Munich's most exclusive club — Maximilianeum, strict door, celeb sightings", instagram: "p1munich", image: "https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu4", title: "Muffatwerk Electronic",    venue: "Muffatwerk",         day: 5, date: "", time: "22:00", emoji: "🏭", cat: "Party",   grad: "from-zinc-800 to-slate-900",      going: 390,  vibe: "party",              price: "€15",    dresscode: "Casual",          desc: "Converted power plant — indoor & outdoor, eclectic programming, riverside location", instagram: "muffatwerk", website: "https://www.muffatwerk.de", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu5", title: "Blitz Techno Friday",      venue: "Blitz Club",         day: 5, date: "", time: "23:00", emoji: "⚡", cat: "Party",   grad: "from-yellow-900 to-orange-950",   going: 520,  vibe: "party",   hot: true,  price: "€15",    dresscode: "Techno",          desc: "Underground bunker below a shopping centre — serious techno, no posing", instagram: "blitz_munich", image: "https://images.unsplash.com/photo-1471478331149-c72f17e33c73?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu6", title: "Latin x Afro Night MUC",   venue: "MMA Club",           day: 6, date: "", time: "22:00", emoji: "🔥", cat: "Afro",    grad: "from-orange-800 to-red-900",      going: 310,  vibe: "afro",    hot: true,  price: "€10",    dresscode: "Fashionable",     desc: "Munich's hottest Latin & Afrobeats night — 2 floors, all vibes", instagram: "mmaclub_munich", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=500&fit=crop&auto=format" },
+    { id: "mu7", title: "Atomic Café Indie Night",  venue: "Atomic Café",        day: 5, date: "", time: "22:00", emoji: "🎸", cat: "Live",    grad: "from-pink-800 to-rose-900",       going: 240,  vibe: "music",              price: "€8",     dresscode: "Casual",          desc: "Iconic Munich indie club — retro design, real music lovers, no mainstream BS", instagram: "atomic_cafe_munich", image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&h=500&fit=crop&auto=format" },
+  ],
+  cologne: [
+    { id: "c1",  title: "Bootshaus Saturday",       venue: "Bootshaus",          day: 6, date: "", time: "23:00", emoji: "⛵", cat: "Party",   grad: "from-violet-900 to-black",        going: 1600, vibe: "party",   hot: true,  price: "€15–25", dresscode: "Techno",          desc: "World-class techno on 3 floors — voted best club in Germany. 90-min queue normal", instagram: "bootshaus_cologne", website: "https://www.bootshaus.tv", image: "https://images.unsplash.com/photo-1471478331149-c72f17e33c73?w=800&h=500&fit=crop&auto=format" },
+    { id: "c2",  title: "CBE Club Friday",          venue: "Club Bahnhof Ehrenfeld", day: 5, date: "", time: "23:00", emoji: "🚂", cat: "Party",   grad: "from-zinc-800 to-slate-900",      going: 580,  vibe: "party",   hot: true,  price: "€10",    dresscode: "Casual",          desc: "Under the S-Bahn in Ehrenfeld — local techno and house, best sound in Cologne", instagram: "cbe_cologne", image: "https://images.unsplash.com/photo-1598387181032-a3103d8f5797?w=800&h=500&fit=crop&auto=format" },
+    { id: "c3",  title: "Yuca Latin Night",         venue: "Yuca Club",          day: 6, date: "", time: "22:00", emoji: "🔥", cat: "Latin",   grad: "from-orange-800 to-red-900",      going: 920,  vibe: "latin",   hot: true,  price: "€12",    dresscode: "Streetwear",      desc: "1,500-cap Latin fortress in Ehrenfeld — Reggaeton, Bachata, Salsa. Get there early", instagram: "yuca_cologne", image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&h=500&fit=crop&auto=format" },
+    { id: "c4",  title: "Gewölbe Electronic",       venue: "Gewölbe",            day: 6, date: "", time: "23:00", emoji: "🔮", cat: "Party",   grad: "from-indigo-800 to-purple-900",   going: 360,  vibe: "party",              price: "€10",    dresscode: "Dark",            desc: "Kalk's underground gem — relaxed door, good underground techno, no attitude", instagram: "gewoelbe_cologne", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=500&fit=crop&auto=format" },
+    { id: "c5",  title: "Odonien Open Air",         venue: "Odonien",            day: 0, date: "", time: "16:00", emoji: "🌿", cat: "Outside", grad: "from-emerald-800 to-teal-900",    going: 700,  vibe: "outside", hot: true,  price: "€8",     dresscode: "Festival",        desc: "Industrial sculpture garden turned open-air — only in summer, magical vibe", instagram: "odonien_koeln", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop&auto=format" },
+    { id: "c6",  title: "Stadtgarten Jazz Night",   venue: "Stadtgarten",        day: 5, date: "", time: "20:00", emoji: "🎷", cat: "Live",    grad: "from-amber-800 to-orange-900",    going: 210,  vibe: "music",              price: "€15",    dresscode: "Smart casual",    desc: "Cologne's best jazz & world music venue — intimate hall + biergarten", instagram: "stadtgarten_koeln", website: "https://www.stadtgarten.de", image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&h=500&fit=crop&auto=format" },
+    { id: "c7",  title: "Afrobeats Cologne",        venue: "Luxor Cologne",      day: 6, date: "", time: "22:00", emoji: "🌍", cat: "Afro",    grad: "from-green-800 to-emerald-900",   going: 430,  vibe: "afro",    hot: true,  price: "€10",    dresscode: "Fashionable",     desc: "Ehrenfeld's best Afrobeats and Amapiano night — sweat and good energy", instagram: "luxor_cologne", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop&auto=format" },
+  ],
 }
 
 // ─── Open now ─────────────────────────────────────────────────────────────────
@@ -180,6 +211,31 @@ const OPEN_NOW: Record<string, { name: string; area: string; type: string; emoji
     { name: "Tollhaus",              area: "Oststadt",    type: "Culture",  emoji: "🎭", opens: 19, closes: 26, hot: false, vibe: "afro" },
     { name: "Hemingway KA",          area: "Innenstadt",  type: "Bar",      emoji: "🍸", opens: 18, closes: 25, hot: false, vibe: "chill" },
     { name: "Kühler Krug",           area: "Günther-K.",  type: "Garden",   emoji: "🌿", opens: 15, closes: 23, hot: false, vibe: "outside" },
+  ],
+  berlin: [
+    { name: "Berghain",              area: "Friedrichshain",type: "Club",    emoji: "🖤", opens: 24, closes: 36, hot: true,  vibe: "party" },
+    { name: "Watergate",             area: "Kreuzberg",   type: "Club",     emoji: "🌊", opens: 23, closes: 34, hot: true,  vibe: "party" },
+    { name: "Tresor",                area: "Mitte",       type: "Club",     emoji: "⚙️", opens: 23, closes: 36, hot: true,  vibe: "party" },
+    { name: "Sisyphos",              area: "Rummelsburg", type: "Open Air", emoji: "🏕️", opens: 22, closes: 36, hot: true,  vibe: "outside" },
+    { name: "Wilde Renate",          area: "Friedrichshain",type: "Club",   emoji: "🌿", opens: 23, closes: 34, hot: false, vibe: "party" },
+    { name: "About Blank",           area: "Kreuzberg",   type: "Club",     emoji: "🌈", opens: 23, closes: 34, hot: false, vibe: "party" },
+    { name: "Yaam Club",             area: "Mitte",       type: "Beach",    emoji: "🌍", opens: 22, closes: 30, hot: true,  vibe: "afro" },
+  ],
+  munich: [
+    { name: "Harry Klein",           area: "Innenstadt",  type: "Club",     emoji: "🔊", opens: 23, closes: 34, hot: true,  vibe: "party" },
+    { name: "Rote Sonne",            area: "Maximiliansp.",type: "Club",    emoji: "🔴", opens: 23, closes: 34, hot: true,  vibe: "party" },
+    { name: "P1 Munich",             area: "Maximilianeum",type:"Club",     emoji: "💎", opens: 22, closes: 30, hot: true,  vibe: "party" },
+    { name: "Muffatwerk",            area: "Haidhausen",  type: "Venue",    emoji: "🏭", opens: 22, closes: 28, hot: false, vibe: "party" },
+    { name: "Blitz Club",            area: "Innenstadt",  type: "Club",     emoji: "⚡", opens: 23, closes: 34, hot: true,  vibe: "party" },
+    { name: "MMA Club",              area: "Innenstadt",  type: "Club",     emoji: "🔥", opens: 22, closes: 30, hot: false, vibe: "afro" },
+  ],
+  cologne: [
+    { name: "Bootshaus",             area: "Deutz",       type: "Club",     emoji: "⛵", opens: 23, closes: 36, hot: true,  vibe: "party" },
+    { name: "Club Bahnhof Ehrenfeld",area: "Ehrenfeld",   type: "Club",     emoji: "🚂", opens: 23, closes: 34, hot: true,  vibe: "party" },
+    { name: "Yuca Club",             area: "Ehrenfeld",   type: "Club",     emoji: "🔥", opens: 22, closes: 30, hot: true,  vibe: "latin" },
+    { name: "Gewölbe",               area: "Kalk",        type: "Club",     emoji: "🔮", opens: 23, closes: 34, hot: false, vibe: "party" },
+    { name: "Stadtgarten",           area: "Innenstadt",  type: "Jazz",     emoji: "🎷", opens: 20, closes: 28, hot: false, vibe: "music" },
+    { name: "Odonien",               area: "Ehrenfeld",   type: "Open Air", emoji: "🌿", opens: 16, closes: 26, hot: true,  vibe: "outside" },
   ],
 }
 
@@ -244,6 +300,37 @@ const VENUES_BY_CITY: Record<string, { id: string; name: string; area: string; t
     { id: "tollhaus",       name: "Tollhaus",            area: "Oststadt",    type: "Culture",  emoji: "🎭", tag: "Afro · Culture",    vibe: "afro"    },
     { id: "hemingway-ka",   name: "Hemingway KA",        area: "Innenstadt",  type: "Bar",      emoji: "🍸", tag: "Cocktails · Chill", vibe: "chill"   },
     { id: "kuhler-krug",    name: "Kühler Krug",         area: "Günther-K.",  type: "Garden",   emoji: "🌿", tag: "Beer garden",       vibe: "outside" },
+  ],
+  berlin: [
+    { id: "berghain",      name: "Berghain",            area: "Friedrichshain", type: "Club",     emoji: "🖤", tag: "Techno · Iconic",      vibe: "party"  },
+    { id: "watergate",     name: "Watergate",           area: "Kreuzberg",      type: "Club",     emoji: "🌊", tag: "House · Spree view",   vibe: "party"  },
+    { id: "tresor",        name: "Tresor",              area: "Mitte",          type: "Club",     emoji: "⚙️", tag: "Techno · Legendary",  vibe: "party"  },
+    { id: "sisyphos",      name: "Sisyphos",            area: "Rummelsburg",    type: "Open Air", emoji: "🏕️", tag: "Festival · Weekend",  vibe: "outside" },
+    { id: "wilde-renate",  name: "Wilde Renate",        area: "Friedrichshain", type: "Club",     emoji: "🌿", tag: "House · Quirky",       vibe: "party"  },
+    { id: "about-blank",   name: "About Blank",         area: "Kreuzberg",      type: "Club",     emoji: "🌈", tag: "Queer · Inclusive",    vibe: "party"  },
+    { id: "kitkat",        name: "KitKatClub",          area: "Mitte",          type: "Club",     emoji: "🐱", tag: "Fetish · Electronic",  vibe: "party"  },
+    { id: "prince-charles",name: "Prince Charles",      area: "Kreuzberg",      type: "Club",     emoji: "🎛️", tag: "House · Pool club",   vibe: "party"  },
+    { id: "yaam",          name: "Yaam Club",           area: "Mitte",          type: "Beach",    emoji: "🌍", tag: "Afrobeats · Outdoor",  vibe: "afro"   },
+    { id: "five-elephant", name: "Five Elephant",       area: "Kreuzberg",      type: "Café",     emoji: "☕", tag: "Specialty · Brunch",  vibe: "chill"  },
+  ],
+  munich: [
+    { id: "harry-klein",   name: "Harry Klein",         area: "Innenstadt",     type: "Club",     emoji: "🔊", tag: "Techno · Intimate",    vibe: "party"  },
+    { id: "rote-sonne",    name: "Rote Sonne",          area: "Maximiliansp.",  type: "Club",     emoji: "🔴", tag: "Electronic · Classic", vibe: "party"  },
+    { id: "p1-munich",     name: "P1 Munich",           area: "Maximilianeum",  type: "Club",     emoji: "💎", tag: "Exclusive · Premium",  vibe: "party"  },
+    { id: "muffatwerk",    name: "Muffatwerk",          area: "Haidhausen",     type: "Venue",    emoji: "🏭", tag: "Eclectic · Riverside", vibe: "party"  },
+    { id: "blitz-munich",  name: "Blitz Club",          area: "Innenstadt",     type: "Club",     emoji: "⚡", tag: "Techno · Bunker",     vibe: "party"  },
+    { id: "backstage",     name: "Club Backstage",      area: "Neuhausen",      type: "Club",     emoji: "🎸", tag: "Rock · Live",          vibe: "music"  },
+    { id: "mma-club",      name: "MMA Club",            area: "Innenstadt",     type: "Club",     emoji: "🔥", tag: "Latin · Afrobeats",   vibe: "afro"   },
+    { id: "atomic-cafe",   name: "Atomic Café",         area: "Innenstadt",     type: "Club",     emoji: "🎸", tag: "Indie · Retro",        vibe: "music"  },
+  ],
+  cologne: [
+    { id: "bootshaus",     name: "Bootshaus",           area: "Deutz",          type: "Club",     emoji: "⛵", tag: "Techno · World-class", vibe: "party"  },
+    { id: "cbe",           name: "Club Bahnhof Ehrenfeld", area: "Ehrenfeld",   type: "Club",     emoji: "🚂", tag: "Techno · Underground", vibe: "party"  },
+    { id: "yuca-cologne",  name: "Yuca Club",           area: "Ehrenfeld",      type: "Club",     emoji: "🔥", tag: "Latin · 1500 cap",    vibe: "latin"  },
+    { id: "gewoelbe",      name: "Gewölbe",             area: "Kalk",           type: "Club",     emoji: "🔮", tag: "House · Chill door",  vibe: "party"  },
+    { id: "odonien",       name: "Odonien",             area: "Ehrenfeld",      type: "Open Air", emoji: "🌿", tag: "Outdoor · Sculpture", vibe: "outside" },
+    { id: "stadtgarten",   name: "Stadtgarten",         area: "Innenstadt",     type: "Jazz",     emoji: "🎷", tag: "Jazz · World music",  vibe: "music"  },
+    { id: "luxor-cologne", name: "Luxor Cologne",       area: "Ehrenfeld",      type: "Club",     emoji: "🌍", tag: "Afrobeats · Energy",  vibe: "afro"   },
   ],
 }
 
@@ -1087,6 +1174,66 @@ const PLANS: Record<string, Plan[]> = {
       ],
     },
   ],
+  berlin: [
+    {
+      id: "berlin-techno-tour",
+      title: "Berlin Techno Pilgrimage",
+      subtitle: "Watergate → Berghain — the ultimate route",
+      emoji: "🖤", grad: "from-zinc-900 to-black", badge: "Techno",
+      stops: [
+        { time: "22:00", emoji: "🍺", place: "Madame Claude",       area: "Kreuzberg",      type: "Bar",    tip: "Furniture on the ceiling, cheap beer, warm-up vibes",       price: "~€4"  },
+        { time: "00:00", emoji: "🌊", place: "Watergate",           area: "Kreuzberg",      type: "Club",   tip: "Spree windows open at 2am — floor-to-ceiling sunrise view",  price: "€15"  },
+        { time: "06:00", emoji: "🖤", place: "Berghain",            area: "Friedrichshain", type: "Club",   tip: "Go at 6am — shorter queue. Dress dark, no groups of 4+",    price: "€20"  },
+      ],
+    },
+    {
+      id: "berlin-festival-weekend",
+      title: "Sisyphos Weekend",
+      subtitle: "The festival club that doesn't stop",
+      emoji: "🏕️", grad: "from-emerald-800 to-teal-900", badge: "Open Air",
+      stops: [
+        { time: "20:00", emoji: "🌿", place: "Holzmarkt 25",        area: "Friedrichshain", type: "Bar",    tip: "River bar with stunning Spree views — great food too",       price: "~€5"  },
+        { time: "22:00", emoji: "🎛️", place: "Wilde Renate",        area: "Friedrichshain", type: "Club",   tip: "Multi-room labyrinth — get lost intentionally",              price: "€12"  },
+        { time: "02:00", emoji: "🏕️", place: "Sisyphos",           area: "Rummelsburg",    type: "Open Air",tip: "Taxi from Ostkreuz — outdoor stages start at sunrise",       price: "€15"  },
+      ],
+    },
+  ],
+  munich: [
+    {
+      id: "munich-techno-night",
+      title: "Munich Underground",
+      subtitle: "Harry Klein & Rote Sonne — the real Munich",
+      emoji: "🔊", grad: "from-violet-900 to-black", badge: "Techno",
+      stops: [
+        { time: "20:00", emoji: "🍺", place: "Augustiner Stammhaus", area: "Innenstadt",    type: "Bar",    tip: "Old Munich beer hall — litre Mass, no tourists know this one",price: "~€9" },
+        { time: "23:00", emoji: "🔴", place: "Rote Sonne",           area: "Maximiliansp.", type: "Club",   tip: "300-cap legend — arrive before midnight for no queue",       price: "€12"  },
+        { time: "02:00", emoji: "🔊", place: "Harry Klein",          area: "Innenstadt",    type: "Club",   tip: "Best techno in Munich — Funktion-One, serious crowd",        price: "€18"  },
+      ],
+    },
+  ],
+  cologne: [
+    {
+      id: "cologne-techno-night",
+      title: "Cologne Club Night",
+      subtitle: "Ehrenfeld to Bootshaus — the full route",
+      emoji: "⛵", grad: "from-violet-900 to-black", badge: "Techno",
+      stops: [
+        { time: "21:00", emoji: "🍺", place: "Brauhaus Sion",        area: "Altstadt",       type: "Bar",    tip: "Real Kölsch brewery — locals only pub, no tourist trap",    price: "~€3"  },
+        { time: "23:00", emoji: "🚂", place: "Club Bahnhof Ehrenfeld",area: "Ehrenfeld",     type: "Club",   tip: "Under the S-Bahn — best local techno. Queue at 11:30pm",   price: "€10"  },
+        { time: "02:00", emoji: "⛵", place: "Bootshaus",            area: "Deutz",          type: "Club",   tip: "Take taxi across Rhine — 3 rooms, 6+ hours minimum",        price: "€20"  },
+      ],
+    },
+    {
+      id: "cologne-latin-night",
+      title: "Cologne Latin Nights",
+      subtitle: "Yuca Club to Odonien — sun & sound",
+      emoji: "🔥", grad: "from-orange-800 to-red-900", badge: "Latin",
+      stops: [
+        { time: "20:00", emoji: "🌿", place: "Stadtgarten Biergarten",area: "Innenstadt",   type: "Garden", tip: "Pre-drinks in the jazz garden — outdoor, chill, great food",price: "~€6"  },
+        { time: "22:00", emoji: "🔥", place: "Yuca Club",            area: "Ehrenfeld",      type: "Club",   tip: "1,500 cap Latin club — arrive early, it sells out",         price: "€12"  },
+      ],
+    },
+  ],
 }
 
 function PlannerTab({ city }: { city: string }) {
@@ -1202,11 +1349,130 @@ function PlannerTab({ city }: { city: string }) {
   )
 }
 
+// ─── Brunch / Daytime ────────────────────────────────────────────────────────
+type BrunchSpot = { name: string; area: string; type: string; emoji: string; opens: number; closes: number; desc: string; hot?: boolean; price?: string; instagram?: string }
+const BRUNCH_BY_CITY: Record<string, BrunchSpot[]> = {
+  mannheim: [
+    { name: "Emma Wolf",            area: "Jungbusch",   type: "Café",        emoji: "☕", opens: 8,  closes: 17, hot: true,  price: "~€8",  desc: "Mannheim's best specialty coffee, homemade cakes, terrace in summer", instagram: "emmawolf_mannheim" },
+    { name: "Café Prag",            area: "Innenstadt",  type: "Café",        emoji: "🥐", opens: 8,  closes: 18, hot: false, price: "~€6",  desc: "Cosy Viennese-style café, excellent pastries, beloved by students" },
+    { name: "Brunch & Co.",         area: "Quadrate",    type: "Brunch",      emoji: "🍳", opens: 9,  closes: 15, hot: true,  price: "~€15", desc: "Weekend brunch buffet — eggs 7 ways, prosecco included on Sundays" },
+    { name: "Morgenstern",          area: "Lindenhof",   type: "Café",        emoji: "🌅", opens: 7,  closes: 16, hot: false, price: "~€7",  desc: "Local neighbourhood spot with fresh bakes every morning" },
+    { name: "Weinkeller Wasserturm",area: "Wasserturm",  type: "Wine brunch", emoji: "🍷", opens: 11, closes: 15, hot: true,  price: "~€20", desc: "Sunday wine brunch with regional wines and charcuterie" },
+  ],
+  heidelberg: [
+    { name: "Café Knösel",          area: "Altstadt",    type: "Café",        emoji: "🥐", opens: 9,  closes: 18, hot: true,  price: "~€8",  desc: "Heidelberg's oldest café — Studentenkuss chocolates, beautiful terrace", instagram: "cafe_knoesel" },
+    { name: "Kulturbrauerei",       area: "Altstadt",    type: "Brunch",      emoji: "🍺", opens: 10, closes: 15, hot: true,  price: "~€14", desc: "Historic brewery turned brunch spot — Sunday buffet with live jazz" },
+    { name: "Goldener Hecht",       area: "Altstadt",    type: "Café",        emoji: "🐟", opens: 9,  closes: 17, hot: false, price: "~€10", desc: "Classic old-town café with Neckar terrace views" },
+    { name: "Backmulde",            area: "Altstadt",    type: "Bakery café", emoji: "🥖", opens: 7,  closes: 14, hot: false, price: "~€5",  desc: "Best bread in Heidelberg — sourdough, pastries, strong coffee" },
+  ],
+  frankfurt: [
+    { name: "Metropol Café",        area: "Sachsenhausen",type: "Café",       emoji: "☕", opens: 8,  closes: 18, hot: true,  price: "~€9",  desc: "Hipster café in Sachsenhausen — filter coffee, avocado toast, long waits" },
+    { name: "Café Liebfrauenberg",  area: "Innenstadt",  type: "Brunch",      emoji: "🍳", opens: 9,  closes: 16, hot: true,  price: "~€15", desc: "Weekend brunch buffet in the shadow of the Liebfrauenkirche" },
+    { name: "Kleinmarkthalle",      area: "Innenstadt",  type: "Market",      emoji: "🛒", opens: 8,  closes: 18, hot: true,  price: "~€5",  desc: "Frankfurt's indoor market — cheeses, meats, fresh juice, street food" },
+    { name: "Café Kante",           area: "Bornheim",    type: "Café",        emoji: "🌿", opens: 9,  closes: 17, hot: false, price: "~€8",  desc: "Quiet neighbourhood café with homemade food and natural light" },
+  ],
+  stuttgart: [
+    { name: "Café Muse",            area: "Mitte",       type: "Café",        emoji: "☕", opens: 8,  closes: 17, hot: true,  price: "~€8",  desc: "Stuttgart's favourite specialty coffee spot — single origin, seasonal menu", instagram: "cafemuse_stgt" },
+    { name: "Markthalle Stuttgart", area: "Innenstadt",  type: "Market",      emoji: "🛒", opens: 7,  closes: 18, hot: true,  price: "~€5",  desc: "Beautiful Art Nouveau market hall — best Maultaschen, local produce" },
+    { name: "Stuttgarter Brunch",   area: "Schlossgarten",type: "Brunch",     emoji: "🍳", opens: 10, closes: 15, hot: true,  price: "~€18", desc: "Sunday brunch in the Schlossgarten — outdoor tables, full menu" },
+    { name: "Café Rosenau",         area: "West",        type: "Café",        emoji: "🌹", opens: 9,  closes: 18, hot: false, price: "~€7",  desc: "Stuttgart West neighbourhood staple — locals only, great Kuchen" },
+  ],
+  karlsruhe: [
+    { name: "Café Palaver",         area: "Innenstadt",  type: "Café",        emoji: "☕", opens: 9,  closes: 17, hot: true,  price: "~€7",  desc: "Students' favourite in the Kaiserstraße area — cozy, cheap, excellent coffee" },
+    { name: "Badisches Brauhaus",   area: "Durlach",     type: "Brunch",      emoji: "🍺", opens: 10, closes: 15, hot: true,  price: "~€14", desc: "Local brewery brunch on Sundays — Baden specialties, Bier included" },
+    { name: "Marktplatz Food",      area: "Marktplatz",  type: "Market",      emoji: "🛒", opens: 7,  closes: 13, hot: false, price: "~€5",  desc: "Sat & Wed market — fresh bread, local cheese, sausages, flowers" },
+  ],
+  berlin: [
+    { name: "Silo Coffee",          area: "Friedrichshain",type: "Café",      emoji: "☕", opens: 8,  closes: 16, hot: true,  price: "~€10", desc: "Berlin's most hyped brunch — mushroom toast, flat whites, expect a queue", instagram: "silocoffee" },
+    { name: "Five Elephant",        area: "Kreuzberg",   type: "Café",        emoji: "🐘", opens: 8,  closes: 18, hot: true,  price: "~€9",  desc: "World-class cheesecake and specialty coffee — a Berlin institution", instagram: "fiveelephant" },
+    { name: "Bonanza Coffee",       area: "Prenzlauer Berg",type: "Café",     emoji: "🌿", opens: 8,  closes: 17, hot: true,  price: "~€6",  desc: "Berlin's original third-wave roaster — roastery café, outdoor courtyard", instagram: "bonanzacoffee" },
+    { name: "Anna Blume",           area: "Prenzlauer Berg",type: "Brunch",   emoji: "🌸", opens: 9,  closes: 17, hot: true,  price: "~€16", desc: "Flower shop café — weekend brunch buffet, stunning floral interior, queue always there", instagram: "cafe_anna_blume" },
+    { name: "Café Luzia",           area: "Kreuzberg",   type: "Café",        emoji: "🍹", opens: 9,  closes: 18, hot: false, price: "~€8",  desc: "Kreuzberg cool — morning cocktails, pancakes, tattooed baristas", instagram: "cafe_luzia" },
+    { name: "Zola",                 area: "Prenzlauer Berg",type: "Brunch",   emoji: "🥂", opens: 10, closes: 16, hot: false, price: "~€18", desc: "Upscale weekend brunch with natural wines and French vibes" },
+  ],
+  munich: [
+    { name: "Cotidiano",            area: "Schwabing",   type: "Café",        emoji: "🇮🇹", opens: 8,  closes: 17, hot: true,  price: "~€9",  desc: "Italian-style all-day café — best cornetto in Munich, strong espresso", instagram: "cotidiano_munich" },
+    { name: "Park Café",            area: "Maximilianspark",type: "Brunch",   emoji: "🌳", opens: 9,  closes: 17, hot: true,  price: "~€18", desc: "Beautiful park setting — Sunday brunch with live music, great terrace" },
+    { name: "Cafe Frischhut",       area: "Viktualienmarkt",type: "Traditional",emoji: "🥐", opens: 5, closes: 14, hot: true,  price: "~€4",  desc: "Old Munich institution — Schmalznudeln (fried pastry) eaten standing, cash only", instagram: "cafeschmalznudel" },
+    { name: "Rosi",                 area: "Neuhausen",   type: "Café",        emoji: "🌹", opens: 8,  closes: 16, hot: false, price: "~€8",  desc: "Munich neighbourhood gem — excellent coffee, homemade pastries, no hype" },
+    { name: "Viktualienmarkt",      area: "Innenstadt",  type: "Market",      emoji: "🛒", opens: 8,  closes: 18, hot: true,  price: "~€6",  desc: "Munich's daily food market — sausages, cheese, fresh bread, beer garden" },
+  ],
+  cologne: [
+    { name: "Die Mehlwerkstatt",    area: "Ehrenfeld",   type: "Bakery café", emoji: "🥖", opens: 7,  closes: 15, hot: true,  price: "~€6",  desc: "Artisan sourdough bakery — long queues for a reason, best bread in Cologne", instagram: "mehlwerkstatt" },
+    { name: "Café Caprista",        area: "Innenstadt",  type: "Café",        emoji: "🇮🇹", opens: 8,  closes: 17, hot: true,  price: "~€8",  desc: "Italian breakfast culture all day — proper espresso, tiramisu, cornetti" },
+    { name: "Südlicht Cafe",        area: "Sülz",        type: "Café",        emoji: "☀️", opens: 9,  closes: 17, hot: false, price: "~€7",  desc: "Quiet student café in Sülz — natural light, homemade cakes, local crowd" },
+    { name: "Markt am Rudolfplatz", area: "Innenstadt",  type: "Market",      emoji: "🛒", opens: 7,  closes: 14, hot: false, price: "~€5",  desc: "Weekly Saturday market — local farmers, bread, cheese, flowers" },
+    { name: "Café Orlando",         area: "Friesenplatz",type: "Brunch",      emoji: "🍳", opens: 9,  closes: 16, hot: true,  price: "~€15", desc: "Cologne brunch institution — Sunday buffet, great Eggs Benny, always packed" },
+  ],
+}
+
+function BrunchTab({ city }: { city: string }) {
+  const h     = new Date().getHours()
+  const spots = BRUNCH_BY_CITY[city] ?? BRUNCH_BY_CITY.mannheim
+  const open  = spots.filter(s => h >= s.opens && h < s.closes)
+  const later = spots.filter(s => h < s.opens)
+  const closed= spots.filter(s => h >= s.closes)
+
+  function Section({ title, items, dim }: { title: string; items: BrunchSpot[]; dim?: boolean }) {
+    if (!items.length) return null
+    return (
+      <div className={dim ? "opacity-50" : ""}>
+        <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3" style={{ color: "var(--accent)" }}>{title}</p>
+        <div className="space-y-3">
+          {items.map(s => (
+            <div key={s.name} className="szene-card p-4 flex gap-3">
+              <div className="text-2xl flex-shrink-0 mt-0.5">{s.emoji}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <p className="text-sm font-bold text-szene">{s.name}</p>
+                  {s.hot && <span className="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-bold">🔥 Hot</span>}
+                </div>
+                <p className="text-[10px] text-muted mb-1">{s.area} · {s.type}{s.price ? ` · ${s.price}` : ""}</p>
+                <p className="text-xs text-muted leading-relaxed">{s.desc}</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-[10px] text-faint">⏰ {s.opens}:00–{s.closes > 23 ? `${s.closes - 24}:00+1` : `${s.closes}:00`}</span>
+                  {s.instagram && (
+                    <a href={`https://instagram.com/${s.instagram}`} target="_blank" rel="noopener noreferrer"
+                      className="text-[10px] transition-opacity hover:opacity-70" style={{ color: "var(--accent)" }}>
+                      @{s.instagram}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="mb-2">
+        <p className="text-[10px] text-violet-400 uppercase tracking-[0.2em] font-semibold mb-1">Daytime Guide</p>
+        <h2 className="text-xl font-black text-szene tracking-tight">Cafés & Brunch spots</h2>
+        <p className="text-xs text-muted mt-1">The best places to start your day in {city.charAt(0).toUpperCase() + city.slice(1)}</p>
+      </div>
+      {open.length === 0 && later.length === 0 && (
+        <div className="szene-card p-6 text-center">
+          <p className="text-2xl mb-2">😴</p>
+          <p className="text-sm font-bold text-szene">Nothing open right now</p>
+          <p className="text-xs text-muted mt-1">Most cafés open at 8am — check back in the morning</p>
+        </div>
+      )}
+      <Section title={`Open now (${open.length})`} items={open} />
+      <Section title="Opening later today" items={later} />
+      <Section title="Closed today" items={closed} dim />
+    </div>
+  )
+}
+
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: "foryou",  label: "For You",  icon: Sparkles },
   { id: "events",  label: "Events",   icon: Calendar },
   { id: "tonight", label: "Tonight",  icon: MapPin },
+  { id: "daytime", label: "Daytime",  icon: Sun },
   { id: "plan",    label: "Plan",     icon: ArrowUpRight },
   { id: "venues",  label: "Venues",   icon: Star },
   { id: "friends", label: "Friends",  icon: Users },
@@ -1303,6 +1569,7 @@ export function AppShell({
         {activeTab === "foryou"  && <ForYouTab   city={city} />}
         {activeTab === "events"  && <EventsTab   city={city} />}
         {activeTab === "tonight" && <TonightTab  city={city} />}
+        {activeTab === "daytime" && <BrunchTab   city={city} />}
         {activeTab === "plan"    && <PlannerTab  city={city} />}
         {activeTab === "venues"  && <VenuesTab   city={city} />}
         {activeTab === "friends" && <FriendsTab />}

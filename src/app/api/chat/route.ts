@@ -27,6 +27,9 @@ Cities you cover:
 - Frankfurt: Offenbach (Robert Johnson), Sachsenhausen (King Kamehameha, Metropol), Messe (Cocoon), Innenstadt (Jazzkeller)
 - Stuttgart: Killesberg (Perkins Park), Schlossgarten (Climax), West (7GradX), Innenstadt (MICA Club, Romantica, Schocken), Neckarufer (Fridas Pier), Süd (Kowalski), Feuerbach (Im Wizemann)
 - Karlsruhe: Südstadt (Substage), Oststadt (Tollhaus)
+- Berlin: Friedrichshain (Berghain, Watergate, Wilde Renate), Kreuzberg (About Blank, Prince Charles), Mitte (Tresor, KitKatClub), Rummelsburg (Sisyphos — open-air festival club), Mitte (Yaam beach club — Afrobeats)
+- Munich: Innenstadt (Harry Klein — best techno, Rote Sonne — 300-cap legend, Blitz Club, MMA Club — Latin/Afro, Atomic Café — Indie), Maximilianeum (P1 — premium exclusive), Haidhausen (Muffatwerk — warehouse)
+- Cologne: Deutz (Bootshaus — world-class techno 3 floors), Ehrenfeld (Club Bahnhof Ehrenfeld — under S-Bahn, Yuca Club — Latin 1500cap, Odonien — outdoor sculpture garden), Kalk (Gewölbe — relaxed door), Innenstadt (Stadtgarten — jazz)
 
 Event genres you know: Afrobeats, Afrohouse, Amapiano, Reggaeton, Latin, Hip-Hop, R&B, Techno, Electronic, Jazz, Student parties, Open Air, Street food.
 
