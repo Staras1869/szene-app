@@ -1,5 +1,5 @@
 // ─── Cache ────────────────────────────────────────────────────────────────────
-const cacheName = "szene-cache-v3"
+const cacheName = "szene-cache-v5"
 const precacheResources = ["/", "/offline.html", "/app-icon-192.png", "/app-icon-512.png", "/manifest.json"]
 
 self.addEventListener("install", (event) => {
