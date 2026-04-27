@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket } from "lucide-react"
 import { MapTab } from "./map-tab"
 import { triggerEventToast } from "./event-toast"
+import { triggerPushPrompt } from "./push-prompt"
 import { trackEventView } from "./browse-gate"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
@@ -41,6 +42,10 @@ function useFollowedEvents(events?: EventItem[]) {
             meta[id] = { title: e.title, venue: e.venue, emoji: e.emoji }
             localStorage.setItem(FOLLOW_META, JSON.stringify(meta))
           }
+        }
+        // First follow ever → perfect moment to ask for push notifications
+        if (prev.size === 0 && !localStorage.getItem("szene_push_asked")) {
+          setTimeout(() => triggerPushPrompt(), 600)
         }
       }
       saveFollowed(next)
@@ -1706,6 +1711,8 @@ export function AppShell({
     if (chosenVibes.length) localStorage.setItem("szene_vibes", JSON.stringify(chosenVibes))
     setShowOnboarding(false)
     go({ city: chosenCity || city })
+    // Show push prompt 8s after onboarding — user has seen the app, prime moment
+    setTimeout(() => triggerPushPrompt(), 8_000)
   }
 
   function handleTabSwitch(t: string) {

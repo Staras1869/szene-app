@@ -17,20 +17,42 @@ const PERKS = [
   { icon: MapPin, text: "Tonight's hot spots near you",     sub: "real-time from Szene" },
 ]
 
+/** Call this to show the push prompt at high-intent moments */
+export function triggerPushPrompt() {
+  window.dispatchEvent(new CustomEvent("szene:push-prompt"))
+}
+
 export function PushPrompt() {
   const [show, setShow]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [done, setDone]       = useState(false)
   const [closing, setClosing] = useState(false)
 
-  useEffect(() => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return
-    if (localStorage.getItem("szene_push_asked")) return
-    if (Notification.permission === "denied") return
-    if (!localStorage.getItem("szene_onboarded")) return
+  function canShow() {
+    if (typeof window === "undefined") return false
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return false
+    if (localStorage.getItem("szene_push_asked")) return false
+    if (Notification.permission === "denied") return false
+    return true
+  }
 
-    const t = setTimeout(() => setShow(true), 30_000)
-    return () => clearTimeout(t)
+  useEffect(() => {
+    // Trigger 1: event follow (highest intent)
+    function onHighIntent() {
+      if (!canShow()) return
+      setShow(true)
+    }
+    window.addEventListener("szene:push-prompt", onHighIntent)
+
+    // Trigger 2: 12s fallback after onboarding (was 30s, gated on onboarded flag)
+    let t: ReturnType<typeof setTimeout> | undefined
+    if (canShow() && localStorage.getItem("szene_onboarded")) {
+      t = setTimeout(() => setShow(true), 12_000)
+    }
+    return () => {
+      window.removeEventListener("szene:push-prompt", onHighIntent)
+      if (t) clearTimeout(t)
+    }
   }, [])
 
   async function subscribe() {
