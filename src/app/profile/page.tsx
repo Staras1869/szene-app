@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { LogOut, User, MapPin, Music2, Bell, ChevronRight, ExternalLink, Sparkles, Globe } from "lucide-react"
+import { LogOut, User, MapPin, Music2, Bell, ChevronRight, ExternalLink, Sparkles, Globe, Bookmark } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { Header } from "@/components/header"
 import { useLanguage } from "@/contexts/language-context"
@@ -12,7 +12,11 @@ import { LanguagePicker } from "@/components/language-picker"
 const CITY_LABELS: Record<string, string> = {
   mannheim: "Mannheim", heidelberg: "Heidelberg", frankfurt: "Frankfurt",
   stuttgart: "Stuttgart", karlsruhe: "Karlsruhe",
+  berlin: "Berlin", munich: "Munich", cologne: "Cologne",
 }
+
+const FOLLOW_KEY  = "szene_followed_events"
+const FOLLOW_META = "szene_followed_meta"  // id → {title,venue,emoji}
 const VIBE_LABELS: Record<string, { label: string; emoji: string }> = {
   afro:    { label: "Afrobeats",  emoji: "🌍" },
   latin:   { label: "Latin",      emoji: "🔥" },
@@ -31,6 +35,8 @@ export default function ProfilePage() {
   const [city, setCity]   = useState<string>("")
   const [vibes, setVibes] = useState<string[]>([])
   const [pushOn, setPushOn] = useState(false)
+  const [followedIds, setFollowedIds]   = useState<string[]>([])
+  const [followedMeta, setFollowedMeta] = useState<Record<string, { title: string; venue: string; emoji: string }>>({})
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login")
@@ -40,7 +46,18 @@ export default function ProfilePage() {
     setCity(localStorage.getItem("szene_city") ?? "mannheim")
     try { setVibes(JSON.parse(localStorage.getItem("szene_vibes") ?? "[]")) } catch { /**/ }
     setPushOn(!!localStorage.getItem("szene_push_asked"))
+    try { setFollowedIds(JSON.parse(localStorage.getItem(FOLLOW_KEY) ?? "[]")) } catch { /**/ }
+    try { setFollowedMeta(JSON.parse(localStorage.getItem(FOLLOW_META) ?? "{}")) } catch { /**/ }
   }, [])
+
+  function unfollow(id: string) {
+    const next = followedIds.filter(x => x !== id)
+    setFollowedIds(next)
+    localStorage.setItem(FOLLOW_KEY, JSON.stringify(next))
+    const meta = { ...followedMeta }; delete meta[id]
+    setFollowedMeta(meta)
+    localStorage.setItem(FOLLOW_META, JSON.stringify(meta))
+  }
 
   async function handleLogout() {
     await logout()
@@ -70,6 +87,40 @@ export default function ProfilePage() {
           <h1 className="text-xl font-black text-szene">{displayName}</h1>
           <p className="text-sm text-muted mt-0.5">{user.email}</p>
         </div>
+
+        {/* Following */}
+        {followedIds.length > 0 && (
+          <div className="szene-card p-5 mb-4">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-surface border border-szene flex items-center justify-center">
+                <Bookmark className="w-4 h-4" style={{ color: "var(--accent)", fill: "var(--accent)" }} />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-szene">Following</p>
+                <p className="text-xs text-muted">{followedIds.length} {followedIds.length === 1 ? "party" : "parties"}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {followedIds.map(id => {
+                const meta = followedMeta[id]
+                if (!meta) return null
+                return (
+                  <div key={id} className="flex items-center gap-3 py-2 border-b border-szene last:border-0">
+                    <span className="text-xl flex-shrink-0">{meta.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-szene truncate">{meta.title}</p>
+                      <p className="text-xs text-muted truncate">{meta.venue}</p>
+                    </div>
+                    <button onClick={() => unfollow(id)}
+                      className="text-[10px] text-faint hover:text-red-400 transition-colors font-medium flex-shrink-0">
+                      Unfollow
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Preferences card */}
         <div className="szene-card p-5 mb-4 space-y-4">

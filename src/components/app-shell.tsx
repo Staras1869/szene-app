@@ -1,12 +1,53 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark } from "lucide-react"
 import { triggerEventToast } from "./event-toast"
 import { trackEventView } from "./browse-gate"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
 import { SearchSystem } from "./search-system"
+
+// ─── Follow store (localStorage) ─────────────────────────────────────────────
+const FOLLOW_KEY  = "szene_followed_events"
+const FOLLOW_META = "szene_followed_meta"
+function getFollowed(): Set<string> {
+  try { return new Set(JSON.parse(localStorage.getItem(FOLLOW_KEY) ?? "[]")) } catch { return new Set() }
+}
+function getFollowedMeta(): Record<string, { title: string; venue: string; emoji: string }> {
+  try { return JSON.parse(localStorage.getItem(FOLLOW_META) ?? "{}") } catch { return {} }
+}
+function saveFollowed(s: Set<string>) {
+  localStorage.setItem(FOLLOW_KEY, JSON.stringify([...s]))
+}
+function useFollowedEvents(events?: EventItem[]) {
+  const [followed, setFollowed] = useState<Set<string>>(new Set())
+  useEffect(() => { setFollowed(getFollowed()) }, [])
+  function toggle(id: string) {
+    setFollowed(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+        // Remove from meta
+        const meta = getFollowedMeta(); delete meta[id]; localStorage.setItem(FOLLOW_META, JSON.stringify(meta))
+      } else {
+        next.add(id)
+        // Save meta for profile display
+        if (events) {
+          const e = events.find(ev => ev.id === id)
+          if (e) {
+            const meta = getFollowedMeta()
+            meta[id] = { title: e.title, venue: e.venue, emoji: e.emoji }
+            localStorage.setItem(FOLLOW_META, JSON.stringify(meta))
+          }
+        }
+      }
+      saveFollowed(next)
+      return next
+    })
+  }
+  return { followed, toggle }
+}
 
 // ─── Cities ──────────────────────────────────────────────────────────────────
 const CITIES = [
@@ -408,8 +449,9 @@ function VibeBar({ vibe, setVibe }: { vibe: string; setVibe: (v: string) => void
 }
 
 // ─── Event card ───────────────────────────────────────────────────────────────
-function EventCard({ e, going, onToggle, user, city }: {
+function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
   e: EventItem; going: boolean; onToggle: () => void; user: any; city?: string
+  followed?: boolean; onFollow?: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
   const mapQuery     = encodeURIComponent(`${e.venue}${city ? `, ${city}` : ""}`)
@@ -436,6 +478,14 @@ function EventCard({ e, going, onToggle, user, city }: {
               {e.partner && <span className="text-[9px] font-black bg-violet-500 text-white px-2 py-0.5 rounded-full">✓ Partner</span>}
               <span className="text-[9px] text-white/70 bg-black/40 border border-white/[0.15] px-2 py-0.5 rounded-full">{e.cat}</span>
             </div>
+            {/* Follow button top-left */}
+            {onFollow && (
+              <button onClick={ev => { ev.stopPropagation(); onFollow() }}
+                className="absolute top-2.5 left-2.5 w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                style={{ backgroundColor: followed ? "var(--accent)" : "rgba(0,0,0,0.45)", border: "1px solid rgba(255,255,255,0.15)" }}>
+                <Bookmark className="w-3.5 h-3.5" style={{ color: followed ? "#fff" : "rgba(255,255,255,0.7)", fill: followed ? "#fff" : "none" }} />
+              </button>
+            )}
             {/* Title overlay at bottom */}
             <div className="absolute bottom-0 left-0 right-0 p-3">
               <p className="text-sm font-bold text-white leading-tight">{e.title}</p>
@@ -452,7 +502,16 @@ function EventCard({ e, going, onToggle, user, city }: {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-sm font-bold text-szene group-hover:text-violet-400 transition-colors truncate">{e.title}</p>
-                <span className="text-[10px] text-faint border border-szene px-2 py-0.5 rounded-full flex-shrink-0">{e.cat}</span>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <span className="text-[10px] text-faint border border-szene px-2 py-0.5 rounded-full">{e.cat}</span>
+                  {onFollow && (
+                    <button onClick={ev => { ev.stopPropagation(); onFollow() }}
+                      className="w-6 h-6 rounded-lg flex items-center justify-center transition-all"
+                      style={{ backgroundColor: followed ? "var(--accent)" : "transparent", border: followed ? "none" : "1px solid var(--border)" }}>
+                      <Bookmark className="w-3 h-3" style={{ color: followed ? "#fff" : "var(--text-faint)", fill: followed ? "#fff" : "none" }} />
+                    </button>
+                  )}
+                </div>
               </div>
               <p className="text-xs text-muted mt-0.5 truncate">{e.venue}</p>
               {e.desc && <p className="text-xs text-faint mt-0.5 truncate">{e.desc}</p>}
@@ -566,6 +625,7 @@ function ForYouTab({ city }: { city: string }) {
   const { user } = useAuth()
   const [going, setGoing] = useState<Set<string>>(new Set())
   const events = hydrateDates(EVENTS[city] ?? [])
+  const { followed, toggle: toggleFollow } = useFollowedEvents(events)
   const hot    = events.filter(e => e.hot)
   const messe  = events.filter(e => e.cat === "Messe")
   const afro   = events.filter(e => e.vibe === "afro")
@@ -596,7 +656,7 @@ function ForYouTab({ city }: { city: string }) {
         </div>
         <div className="space-y-2">
           {items.slice(0, 3).map(e => (
-            <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} />
+            <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} followed={followed.has(e.id)} onFollow={() => toggleFollow(e.id)} />
           ))}
         </div>
       </div>
@@ -616,7 +676,7 @@ function ForYouTab({ city }: { city: string }) {
           </div>
           <div className="space-y-2">
             {hot.map(e => (
-              <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} />
+              <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} followed={followed.has(e.id)} onFollow={() => toggleFollow(e.id)} />
             ))}
           </div>
         </div>
@@ -634,10 +694,13 @@ function ForYouTab({ city }: { city: string }) {
 function EventsTab({ city }: { city: string }) {
   const { user } = useAuth()
   const [vibe, setVibe]     = useState("all")
+  const [query, setQuery]   = useState("")
   const [going, setGoing]   = useState<Set<string>>(new Set())
   const [liveEvents, setLiveEvents] = useState<any[]>([])
   const [liveLoading, setLiveLoading] = useState(false)
   const [sources, setSources] = useState<any>(null)
+  const staticForFollow = hydrateDates(EVENTS[city] ?? [])
+  const { followed, toggle: toggleFollow } = useFollowedEvents(staticForFollow)
 
   useEffect(() => {
     setLiveLoading(true)
@@ -670,7 +733,9 @@ function EventsTab({ city }: { city: string }) {
       .finally(() => setLiveLoading(false))
   }, [city, vibe])
 
-  const staticEvents = hydrateDates(EVENTS[city] ?? []).filter(e => vibe === "all" || e.vibe === vibe)
+  const q = query.trim().toLowerCase()
+  const staticEvents = hydrateDates(EVENTS[city] ?? [])
+    .filter(e => (vibe === "all" || e.vibe === vibe) && (!q || e.title.toLowerCase().includes(q) || e.venue.toLowerCase().includes(q)))
   const allEvents    = liveEvents.length > 0 ? liveEvents : staticEvents
 
   useEffect(() => {
@@ -709,12 +774,17 @@ function EventsTab({ city }: { city: string }) {
       ) : (
         <div className="space-y-3">
           {allEvents.map((e: any) => {
-            const isLive  = !!e.source
-            const cat     = e.category ?? e.cat ?? "Event"
-            const grad    = e.grad ?? GRAD_BY_CAT[cat] ?? GRAD_BY_CAT.Event
-            const emoji   = e.emoji ?? "✦"
-            const price   = e.price ?? null
-            const url     = e.url ?? null
+            const isLive = !!e.source
+            // Static events — use full EventCard with follow support
+            if (!isLive) {
+              return <EventCard key={e.id} e={e} going={going.has(e.id)} onToggle={() => toggle(e.id)} user={user} city={city} followed={followed.has(e.id)} onFollow={() => toggleFollow(e.id)} />
+            }
+            // Live events — compact inline card with bookmark
+            const cat   = e.category ?? e.cat ?? "Event"
+            const grad  = e.grad ?? GRAD_BY_CAT[cat] ?? GRAD_BY_CAT.Event
+            const emoji = e.emoji ?? "✦"
+            const price = e.price ?? null
+            const url   = e.url ?? null
             return (
               <div key={e.id} className="flex gap-4 p-4 rounded-2xl border border-white/[0.10] bg-white/[0.04] hover:bg-white/[0.07] transition-colors group">
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${grad} flex items-center justify-center flex-shrink-0 text-2xl`}>
@@ -728,6 +798,11 @@ function EventsTab({ city }: { city: string }) {
                     </div>
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       <span className="text-[10px] text-white/40 border border-white/[0.10] px-2 py-0.5 rounded-full">{cat}</span>
+                      <button onClick={() => toggleFollow(e.id)}
+                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all flex-shrink-0"
+                        style={{ backgroundColor: followed.has(e.id) ? "var(--accent)" : "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                        <Bookmark className="w-3 h-3" style={{ color: followed.has(e.id) ? "#fff" : "rgba(255,255,255,0.4)", fill: followed.has(e.id) ? "#fff" : "none" }} />
+                      </button>
                       {url && (
                         <a href={url} target="_blank" rel="noopener noreferrer"
                           className="text-white/30 hover:text-violet-400 transition-colors" onClick={ev => ev.stopPropagation()}>
@@ -742,23 +817,7 @@ function EventsTab({ city }: { city: string }) {
                       {e.time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{e.time}</span>}
                       {price && <span className={`font-semibold ${price === "Frei" || price === "Free" ? "text-emerald-400" : "text-violet-400/80"}`}>{price}</span>}
                     </div>
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <ShareEvent title={e.title} url={url ?? undefined} />
-                      {!isLive && (
-                        user ? (
-                          <button onClick={() => toggle(e.id)}
-                            className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-semibold transition-all flex-shrink-0 ${
-                              going.has(e.id) ? "bg-violet-600 text-white" : "border border-white/[0.15] text-white/50 hover:border-violet-400/50 hover:text-white"
-                            }`}>
-                            {going.has(e.id) ? <><Check className="w-3 h-3" /> Going</> : <><Users className="w-3 h-3" /> {e.going ?? 0}</>}
-                          </button>
-                        ) : (
-                          <Link href="/login" className="text-xs text-white/40 hover:text-white/70 transition-colors flex items-center gap-1">
-                            <Users className="w-3 h-3" /> {e.going ?? 0}
-                          </Link>
-                        )
-                      )}
-                    </div>
+                    <ShareEvent title={e.title} url={url ?? undefined} />
                   </div>
                 </div>
               </div>
