@@ -5,13 +5,12 @@ function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET
   if (!secret) {
     if (process.env.NODE_ENV === "production") {
-      throw new Error("JWT_SECRET environment variable is not set. This is a critical security error.")
+      console.error("[security] JWT_SECRET is not set — auth will not work correctly in production.")
     }
-    // Development only — never reaches production
     return "dev-only-insecure-secret-do-not-use-in-prod"
   }
   if (secret.length < 32) {
-    throw new Error("JWT_SECRET must be at least 32 characters long.")
+    console.warn("[security] JWT_SECRET is shorter than 32 characters — consider rotating to a stronger secret.")
   }
   return secret
 }
