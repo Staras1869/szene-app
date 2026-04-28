@@ -29,8 +29,9 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // Scripts: self + Next.js inline + Leaflet from unpkg
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com",
+      // Scripts: self + Next.js inline. 'unsafe-eval' removed — not needed by Next.js 14+ in prod.
+      // If a third-party lib breaks, add it here explicitly rather than re-enabling unsafe-eval.
+      "script-src 'self' 'unsafe-inline' https://unpkg.com",
       // Styles: self + inline (Tailwind/Leaflet need this)
       "style-src 'self' 'unsafe-inline' https://unpkg.com",
       // Images: self + data URIs + all HTTPS (scraped venue/event images)
