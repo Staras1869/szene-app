@@ -8,6 +8,7 @@ import { PushPrompt } from "@/components/push-prompt"
 import { EventToastManager } from "@/components/event-toast"
 import { GuestCTA } from "@/components/guest-cta"
 import { BrowseGate } from "@/components/browse-gate"
+import { CookieConsent } from "@/components/cookie-consent"
 
 export const metadata: Metadata = {
   title: {
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <GuestCTA />
             <BrowseGate />
             <InstallPrompt />
+            <CookieConsent />
           </LanguageProvider>
         </SzeneThemeProvider>
       </body>

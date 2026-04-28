@@ -28,6 +28,9 @@ model User {
   vibes          String[]
   instagram      String?
   onboarded      Boolean        @default(false)
+  emailVerified  Boolean        @default(false)
+  verifyToken    String?        @unique
+  verifyExpires  DateTime?
   events         Event[]
   reviews        Review[]
   favorites      UserFavorite[]
