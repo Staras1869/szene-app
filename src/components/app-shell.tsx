@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket, Activity, Dumbbell, Wind, Leaf, Droplets, Bike, Footprints } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket, Activity, Dumbbell, Wind, Leaf, Droplets, Bike, Footprints, Instagram } from "lucide-react"
 import { MapTab } from "./map-tab"
 import { triggerEventToast } from "./event-toast"
 import { triggerPushPrompt } from "./push-prompt"
@@ -535,6 +535,67 @@ function ShareEvent({ title, url }: { title: string; url?: string }) {
   )
 }
 
+// ─── Instagram venue feed ─────────────────────────────────────────────────────
+interface IGPost { id: string; media_url?: string; thumbnail_url?: string; permalink: string; caption?: string; like_count?: number }
+interface IGProfile { username: string; followers_count: number; media?: { data: IGPost[] } }
+
+function IGVenueFeed({ handle }: { handle: string }) {
+  const [profile, setProfile] = useState<IGProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`/api/instagram/venue?handle=${encodeURIComponent(handle)}&limit=6`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (!cancelled) { setProfile(d); setLoading(false) } })
+      .catch(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [handle])
+
+  if (loading) return (
+    <div className="flex items-center gap-2 py-2">
+      <Loader2 className="w-3 h-3 animate-spin text-pink-400" />
+      <span className="text-[10px] text-faint">Loading @{handle}…</span>
+    </div>
+  )
+  if (!profile || !profile.media?.data?.length) return null
+
+  const posts = profile.media.data.filter(p => p.media_url || p.thumbnail_url).slice(0, 6)
+  if (!posts.length) return null
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Instagram className="w-3.5 h-3.5 text-pink-400" />
+        <a href={`https://instagram.com/${profile.username}`} target="_blank" rel="noopener noreferrer"
+          className="text-[10px] font-bold text-pink-400 hover:text-pink-300 transition-colors">
+          @{profile.username}
+        </a>
+        <span className="text-[10px] text-faint">{profile.followers_count?.toLocaleString()} followers</span>
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide -mx-1 px-1">
+        {posts.map(post => (
+          <a key={post.id} href={post.permalink} target="_blank" rel="noopener noreferrer"
+            className="flex-shrink-0 relative group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.media_url ?? post.thumbnail_url ?? ""}
+              alt={post.caption?.slice(0, 50) ?? "Instagram post"}
+              className="w-20 h-20 object-cover rounded-xl border border-white/10 group-hover:opacity-80 transition-opacity"
+              loading="lazy"
+            />
+            {post.like_count && post.like_count > 0 && (
+              <div className="absolute bottom-1 left-1 flex items-center gap-0.5 bg-black/60 rounded px-1 py-0.5">
+                <span className="text-[8px] text-white/80">♥ {post.like_count > 999 ? `${(post.like_count/1000).toFixed(1)}k` : post.like_count}</span>
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Vibe bar ─────────────────────────────────────────────────────────────────
 function VibeBar({ vibe, setVibe }: { vibe: string; setVibe: (v: string) => void }) {
   return (
@@ -797,12 +858,15 @@ function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
             </a>
           )}
 
+          {/* Instagram venue posts */}
+          {e.instagram && <IGVenueFeed handle={e.instagram} />}
+
           {/* Secondary action links */}
           <div className="flex flex-wrap gap-2">
             {e.instagram && (
               <a href={`https://instagram.com/${e.instagram}`} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl bg-gradient-to-r from-pink-600/20 to-violet-600/20 border border-pink-500/20 text-pink-400 hover:text-pink-300 hover:border-pink-400/40 transition-all font-semibold">
-                <ExternalLink className="w-3 h-3" />
+                <Instagram className="w-3 h-3" />
                 @{e.instagram}
               </a>
             )}
