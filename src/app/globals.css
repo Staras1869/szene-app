@@ -73,6 +73,43 @@
   --transition:      background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
 }
 
+/* ─── Protocol theme (active / wellness / performance) ──────────────────────── */
+[data-theme="protocol"] {
+  --bg-primary:      #f2f8f4;
+  --bg-secondary:    #e6f2ea;
+  --bg-surface:      rgba(22, 163, 74, 0.05);
+  --bg-surface-hover:rgba(22, 163, 74, 0.09);
+  --bg-sticky:       rgba(242, 248, 244, 0.94);
+  --card-bg:         rgba(255, 255, 255, 0.80);
+  --card-border:     rgba(22, 163, 74, 0.14);
+  --card-hover:      rgba(255, 255, 255, 0.95);
+  --accent:          #16a34a;
+  --accent-2:        #0ea5e9;
+  --accent-fg:       #ffffff;
+  --accent-glow:     rgba(22, 163, 74, 0.22);
+  --city-active-bg:  #16a34a;
+  --city-active-fg:  #ffffff;
+  --text-primary:    #0f2d1a;
+  --text-secondary:  rgba(15, 45, 26, 0.55);
+  --text-muted:      rgba(15, 45, 26, 0.38);
+  --text-faint:      rgba(15, 45, 26, 0.22);
+  --border:          rgba(22, 163, 74, 0.12);
+  --border-strong:   rgba(22, 163, 74, 0.22);
+  --success:         #16a34a;
+  --error:           #dc2626;
+  --shadow:          0 2px 20px rgba(22, 163, 74, 0.12);
+  --font-display:    'DM Sans', sans-serif;
+  --font-body:       'DM Sans', sans-serif;
+  --transition:      background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+
+  /* shadcn compat */
+  --background:      138 46% 97%;
+  --foreground:      138 60% 10%;
+  --primary:         142 70% 38%;
+  --primary-foreground: 0 0% 100%;
+  --radius:          0.75rem;
+}
+
 /* ─── Base styles ────────────────────────────────────────────────────────────── */
 @layer base {
   html, body { height: 100%; }

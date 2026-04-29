@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket, Activity, Dumbbell, Wind, Leaf, Droplets, Bike, Footprints } from "lucide-react"
 import { MapTab } from "./map-tab"
 import { triggerEventToast } from "./event-toast"
 import { triggerPushPrompt } from "./push-prompt"
@@ -1739,16 +1739,350 @@ function BrunchTab({ city }: { city: string }) {
   )
 }
 
+// ─── Protocol data ────────────────────────────────────────────────────────────
+
+const PROTOCOL_VIBES = [
+  { id: "all",    label: "All",          emoji: "⚡" },
+  { id: "run",    label: "Run Club",     emoji: "🏃" },
+  { id: "gym",    label: "Gym",          emoji: "💪" },
+  { id: "yoga",   label: "Yoga",         emoji: "🧘" },
+  { id: "matcha", label: "Matcha",       emoji: "🍵" },
+  { id: "fuel",   label: "Fuel",         emoji: "🥗" },
+  { id: "cold",   label: "Cold Plunge",  emoji: "🧊" },
+  { id: "hike",   label: "Hike",         emoji: "🥾" },
+  { id: "cycle",  label: "Cycle",        emoji: "🚴" },
+  { id: "brunch", label: "Healthy Brunch",emoji: "🌅" },
+]
+
+type ProtocolVenue = {
+  id: string; name: string; area: string; type: string; emoji: string
+  tag: string; vibe: string; desc: string; hours?: string
+  instagram?: string; website?: string; hot?: boolean
+}
+
+type ProtocolEvent = {
+  id: string; title: string; venue: string; emoji: string
+  day: number; time: string; vibe: string; price: string; desc: string; hot?: boolean
+}
+
+const PROTOCOL_VENUES: Record<string, ProtocolVenue[]> = {
+  mannheim: [
+    { id: "p-ma-1",  name: "Sportpark Rheinau",      area: "Rheinau",     type: "Run route",    emoji: "🏃", tag: "Run · Rhein",      vibe: "run",    desc: "7km riverside loop along the Rhine — flat, fast, stunning at sunrise", hours: "24h", hot: true },
+    { id: "p-ma-2",  name: "Jungbusch Morning Run",  area: "Jungbusch",   type: "Run Club",     emoji: "👟", tag: "Run Club · Social", vibe: "run",    desc: "Community run every Tuesday & Saturday 7am. All paces welcome", hours: "Tue/Sat 7:00", instagram: "jungbusch.run" },
+    { id: "p-ma-3",  name: "Urban Sports Club MA",   area: "Innenstadt",  type: "Gym",          emoji: "💪", tag: "Gym · Multi-sport", vibe: "gym",    desc: "Access to 50+ gyms, pools, yoga studios across Mannheim with one membership", website: "https://urbansportsclub.com" },
+    { id: "p-ma-4",  name: "Yoga Loft Mannheim",     area: "Quadrate",    type: "Yoga studio",  emoji: "🧘", tag: "Yoga · Vinyasa",    vibe: "yoga",   desc: "Light-flooded studio above the Quadrate. Vinyasa, Yin, Ashtanga", hours: "6:30–21:00", instagram: "yogaloft.mannheim", hot: true },
+    { id: "p-ma-5",  name: "Matcha Collective MA",   area: "Jungbusch",   type: "Matcha bar",   emoji: "🍵", tag: "Matcha · Ceremonial",vibe: "matcha", desc: "First dedicated matcha bar in Mannheim. Ceremonial grade, oat & almond", hours: "7:00–18:00", instagram: "matcha.collective.ma", hot: true },
+    { id: "p-ma-6",  name: "Bodylicious Mannheim",   area: "Neckarstadt", type: "Healthy food", emoji: "🥗", tag: "Fuel · Bowls",       vibe: "fuel",   desc: "Acai bowls, smoothies, protein wraps. Post-run fuel done right", hours: "8:00–20:00" },
+    { id: "p-ma-7",  name: "EMS Fit Studio",         area: "Innenstadt",  type: "EMS / PT",     emoji: "⚡", tag: "Gym · EMS",          vibe: "gym",    desc: "20-minute EMS full-body sessions. Max results, minimal time" },
+    { id: "p-ma-8",  name: "Neckarauer Crossing",    area: "Neckarauer",  type: "Cold plunge",  emoji: "🧊", tag: "Cold · River",       vibe: "cold",   desc: "Wild swimming spot. Local ice bathers year-round. Not for the faint-hearted", hours: "Sunrise–Sunset" },
+    { id: "p-ma-9",  name: "Grünwieselpfad",         area: "Vogelstang",  type: "Hike/trail",   emoji: "🥾", tag: "Hike · Forest",      vibe: "hike",   desc: "10km forest trail through Käfertal — deer, fresh air, zero crowds" },
+    { id: "p-ma-10", name: "Brunchery Mannheim",     area: "Innenstadt",  type: "Healthy brunch",emoji:"🌅", tag: "Brunch · Organic",   vibe: "brunch", desc: "Sourdough, avocado, organic eggs. The post-workout brunch Mannheim needed", hours: "9:00–15:00" },
+  ],
+  heidelberg: [
+    { id: "p-hd-1",  name: "Philosophenweg Run",     area: "Altstadt",    type: "Run route",    emoji: "🏃", tag: "Run · Iconic",       vibe: "run",    desc: "The most beautiful run in Germany — Neckar views, forest, 3–8km options", hours: "24h", hot: true },
+    { id: "p-hd-2",  name: "HD Trail Runners",       area: "Odenwald",    type: "Run Club",     emoji: "👟", tag: "Trail · Social",     vibe: "run",    desc: "Trail running club meets every Sunday 8am at Bismarckplatz. All levels", hours: "Sun 8:00", instagram: "hd.trailrunners" },
+    { id: "p-hd-3",  name: "McFIT Heidelberg",       area: "Bahnstadt",   type: "Gym",          emoji: "💪", tag: "Gym · 24h",          vibe: "gym",    desc: "24h access, full equipment, low price. Gets the job done", hours: "24h" },
+    { id: "p-hd-4",  name: "Yoga am Schloss",        area: "Schloss",     type: "Yoga",         emoji: "🧘", tag: "Yoga · Outdoor",     vibe: "yoga",   desc: "Outdoor yoga sessions with castle backdrop. Bring a mat, leave your phone", hours: "Summer mornings", hot: true },
+    { id: "p-hd-5",  name: "Matchado HD",            area: "Altstadt",    type: "Matcha bar",   emoji: "🍵", tag: "Matcha · Cozy",      vibe: "matcha", desc: "Tiny matcha-only café in the old town. Perfect post-Philosophenweg ritual", hours: "8:00–17:00", instagram: "matchado.hd", hot: true },
+    { id: "p-hd-6",  name: "Neckar Naturpool",       area: "Neuenheim",   type: "Cold plunge",  emoji: "🧊", tag: "Cold · River",       vibe: "cold",   desc: "Natural river swimming in the Neckar. Cold, clean, transformative" },
+    { id: "p-hd-7",  name: "Kohlhof Hike",           area: "Odenwald",    type: "Hike",         emoji: "🥾", tag: "Hike · Views",       vibe: "hike",   desc: "Classic 12km Heidelberg–Kohlhof loop through forest and castle ruins" },
+    { id: "p-hd-8",  name: "Organic Rooftop Brunch", area: "Altstadt",    type: "Healthy brunch",emoji:"🌅", tag: "Brunch · Views",     vibe: "brunch", desc: "100% organic brunch with Neckar views. The best Sunday table in the city", hours: "10:00–15:00", hot: true },
+  ],
+  frankfurt: [
+    { id: "p-ff-1",  name: "Mainkai Morning Run",    area: "Mainufer",    type: "Run route",    emoji: "🏃", tag: "Run · Skyline",      vibe: "run",    desc: "Frankfurt skyline at dawn — 8km flat loop along the Main. Stunning", hours: "24h", hot: true },
+    { id: "p-ff-2",  name: "Lauftreff Frankfurt",    area: "Sachsenhausen",type:"Run Club",      emoji: "👟", tag: "Run Club",           vibe: "run",    desc: "Wednesday 18:30 and Sunday 9:00 from the Flößerbrücke. 400+ members", instagram: "lauftreff.frankfurt" },
+    { id: "p-ff-3",  name: "Holmes Place Frankfurt", area: "Innenstadt",  type: "Premium gym",  emoji: "💪", tag: "Gym · Premium",      vibe: "gym",    desc: "High-end gym with pool, spa, rooftop terrace. Frankfurt's best fitness club", hot: true },
+    { id: "p-ff-4",  name: "Yogalife Frankfurt",     area: "Nordend",     type: "Yoga studio",  emoji: "🧘", tag: "Yoga · All styles",  vibe: "yoga",   desc: "20+ classes a week, every style from Yin to Power. Frankfurt's favourite studio", instagram: "yogalife.frankfurt" },
+    { id: "p-ff-5",  name: "Cha No Ma",              area: "Bornheim",    type: "Matcha bar",   emoji: "🍵", tag: "Matcha · Japanese",  vibe: "matcha", desc: "Authentic Japanese matcha ceremony in Bornheim. The real thing", hours: "9:00–18:00", hot: true },
+    { id: "p-ff-6",  name: "Taunusanlage Park",      area: "Bankenviertel",type:"Outdoor gym",   emoji: "🏋️",tag: "Gym · Outdoor",      vibe: "gym",    desc: "Free outdoor calisthenics park in the middle of the banking district" },
+    { id: "p-ff-7",  name: "Bowl & Grain Frankfurt", area: "Sachsenhausen",type:"Fuel",          emoji: "🥗", tag: "Fuel · Bowls",       vibe: "fuel",   desc: "Grain bowls, smoothies, protein shakes — built for athletes", hours: "7:00–21:00" },
+    { id: "p-ff-8",  name: "Taunus Wander",          area: "Taunus",      type: "Hike",         emoji: "🥾", tag: "Hike · Taunus",      vibe: "hike",   desc: "Frankfurt's backyard — 20min drive to Großer Feldberg, 879m summit, epic views" },
+  ],
+  stuttgart: [
+    { id: "p-s-1",   name: "Schlossgarten Parkrun",  area: "Schlossgarten",type:"Run Club",      emoji: "🏃", tag: "Run · Parkrun",      vibe: "run",    desc: "Free 5km Parkrun every Saturday 9am in the Schlossgarten. 200+ runners", hours: "Sat 9:00", hot: true },
+    { id: "p-s-2",   name: "Killesberg Trail",        area: "Killesberg",  type: "Run route",    emoji: "👟", tag: "Run · Hills",        vibe: "run",    desc: "6km hilly loop through Killesbergpark — perfect for threshold training" },
+    { id: "p-s-3",   name: "FitX Stuttgart West",     area: "West",        type: "Gym",          emoji: "💪", tag: "Gym · Value",        vibe: "gym",    desc: "Massive gym, all equipment, 24h access. Best value in Stuttgart" },
+    { id: "p-s-4",   name: "Yoga Stuttgart",          area: "Mitte",       type: "Yoga studio",  emoji: "🧘", tag: "Yoga · Boutique",    vibe: "yoga",   desc: "Boutique studio in Stuttgart Mitte. Hot yoga, Vinyasa, sound bath sessions", instagram: "yoga.stuttgart", hot: true },
+    { id: "p-s-5",   name: "Grüne Oase Matcha",       area: "Bohnenviertel",type:"Matcha café",  emoji: "🍵", tag: "Matcha · Organic",   vibe: "matcha", desc: "Organic matcha sourced directly from Uji, Japan. Stuttgart's hidden gem", hours: "8:00–17:00", hot: true },
+    { id: "p-s-6",   name: "Schwäbische Alb Hike",    area: "Alb",         type: "Hike",         emoji: "🥾", tag: "Hike · Alb",         vibe: "hike",   desc: "45min from Stuttgart — limestone plateaus, gorges, castles, Swabian magic" },
+    { id: "p-s-7",   name: "Mineral Bad Cannstatt",   area: "Bad Cannstatt",type:"Cold / Spa",   emoji: "🧊", tag: "Cold · Mineral",     vibe: "cold",   desc: "Historic mineral baths with cold plunge pools. Stuttgart's wellness secret", hot: true },
+    { id: "p-s-8",   name: "Superfood Bar STR",       area: "Mitte",       type: "Fuel",         emoji: "🥗", tag: "Fuel · Superfood",   vibe: "fuel",   desc: "Acai, spirulina, adaptogens — every bowl is a protocol in itself" },
+  ],
+  karlsruhe: [
+    { id: "p-ka-1",  name: "Schlossgarten Run KA",   area: "Schloss",     type: "Run route",    emoji: "🏃", tag: "Run · Schloss",      vibe: "run",    desc: "Beautiful 5km loop around the Schloss gardens — gravel paths, symmetrical trees", hours: "24h" },
+    { id: "p-ka-2",  name: "KIT Campus Calisthenics", area: "KIT Campus",  type: "Outdoor gym",  emoji: "💪", tag: "Gym · Outdoor",      vibe: "gym",    desc: "Free outdoor training area on KIT campus. Pull-ups, dips, parallel bars" },
+    { id: "p-ka-3",  name: "Yoga Raum KA",           area: "Innenstadt",  type: "Yoga studio",  emoji: "🧘", tag: "Yoga · Calm",        vibe: "yoga",   desc: "Small, focused yoga studio in the city center. No-nonsense practice" },
+    { id: "p-ka-4",  name: "Matcha & More KA",       area: "Innenstadt",  type: "Matcha",       emoji: "🍵", tag: "Matcha · Cozy",      vibe: "matcha", desc: "Matcha lattes, protein bites, quiet working space. KA's wellness café", hours: "8:00–18:00" },
+    { id: "p-ka-5",  name: "Turmberg Trail",         area: "Durlach",     type: "Hike/Run",     emoji: "🥾", tag: "Hike · Tower",       vibe: "hike",   desc: "600m sprint up to Turmberg tower, 360° views over KA and the Rhine plain", hot: true },
+    { id: "p-ka-6",  name: "Rheinbad KA",            area: "Rheinhafen",  type: "Cold / Pool",  emoji: "🧊", tag: "Cold · Rhine",       vibe: "cold",   desc: "Rhine outdoor swimming — cold water from the Alps, open May–September" },
+    { id: "p-ka-7",  name: "Green Bowl KA",          area: "Innenstadt",  type: "Fuel",         emoji: "🥗", tag: "Fuel · Vegan",       vibe: "fuel",   desc: "100% plant-based bowls and wraps. KA's best post-training nutrition stop" },
+  ],
+  berlin: [
+    { id: "p-b-1",   name: "Tempelhof Morgenrun",    area: "Tempelhof",   type: "Run route",    emoji: "🏃", tag: "Run · Iconic",       vibe: "run",    desc: "Berlin's legendary airfield — 6km loop, sunrise silhouettes, zero cars. Iconic", hours: "24h", hot: true },
+    { id: "p-b-2",   name: "Berlin Brunch Run",      area: "Kreuzberg",   type: "Run Club",     emoji: "👟", tag: "Run Club · Brunch",  vibe: "run",    desc: "Run 10km, then brunch together. Every Sunday 8am, Görlitzer Park. 500+ members", instagram: "berlin.brunchrun", hot: true },
+    { id: "p-b-3",   name: "YPSI Berlin",            area: "Mitte",       type: "Premium gym",  emoji: "💪", tag: "Gym · Elite",        vibe: "gym",    desc: "Berlin's most results-driven gym. Strength, conditioning, no mirrors, no ego", hot: true, instagram: "ypsi_berlin" },
+    { id: "p-b-4",   name: "Jivamukti Berlin",       area: "Prenzlauer Berg",type:"Yoga",       emoji: "🧘", tag: "Yoga · Premium",     vibe: "yoga",   desc: "World-famous Jivamukti method. Spiritual, physical, life-changing", hours: "6:30–21:00", instagram: "jivamuktiberlin", hot: true },
+    { id: "p-b-5",   name: "Matchaholic Berlin",     area: "Mitte",       type: "Matcha bar",   emoji: "🍵", tag: "Matcha · 🔒 Hidden", vibe: "matcha", desc: "Hidden matcha bar above a bookshop. No signs. Word of mouth only. Get the hojicha latte", hours: "9:00–17:00", hot: true },
+    { id: "p-b-6",   name: "Voo Store Cold Bar",     area: "Kreuzberg",   type: "Matcha",       emoji: "🍵", tag: "Matcha · Concept",   vibe: "matcha", desc: "Concept store and matcha bar. The aesthetic is the protocol" },
+    { id: "p-b-7",   name: "Kreuzberg Ice Plunge",   area: "Kreuzberg",   type: "Cold plunge",  emoji: "🧊", tag: "Cold · Community",   vibe: "cold",   desc: "Underground cold plunge group. DM for location. 4°C, community, ice baths", instagram: "kreuzberg.coldplunge", hot: true },
+    { id: "p-b-8",   name: "Müggelsee Swim",         area: "Köpenick",    type: "Cold / Swim",  emoji: "🏊", tag: "Cold · Lake",        vibe: "cold",   desc: "Biggest lake in Berlin. Cold swims year round, sauna huts in winter" },
+    { id: "p-b-9",   name: "Grunewald Trail Run",    area: "Grunewald",   type: "Hike/Run",     emoji: "🥾", tag: "Hike · Forest",      vibe: "hike",   desc: "20km of forest trails 20min from Mitte. Berlin's wild side" },
+    { id: "p-b-10",  name: "Bonanza Coffee Brunch",  area: "Prenzlauer Berg",type:"Healthy brunch",emoji:"🌅",tag: "Brunch · Specialty", vibe: "brunch", desc: "Berlin's best specialty coffee + avocado toast ritual. Post-run mandatory stop", hot: true },
+    { id: "p-b-11",  name: "Gorillas Organic Market",area: "Mitte",       type: "Fuel",         emoji: "🥗", tag: "Fuel · Organic",     vibe: "fuel",   desc: "Organic supermarket with hot food bar, protein shakes, recovery nutrition" },
+  ],
+  munich: [
+    { id: "p-mu-1",  name: "Englischer Garten Run",  area: "Schwabing",   type: "Run route",    emoji: "🏃", tag: "Run · Park",         vibe: "run",    desc: "Europe's largest urban park — endless trails, river surfers, sunrise serenity", hours: "24h", hot: true },
+    { id: "p-mu-2",  name: "Isar Morning Swimmers",  area: "Isarvorstädte",type:"Cold / Swim",   emoji: "🧊", tag: "Cold · River",       vibe: "cold",   desc: "Year-round Isar swimming community. Crystal Alpine water, serious cold exposure", instagram: "isar.swimmers", hot: true },
+    { id: "p-mu-3",  name: "Body & Soul Munich",     area: "Maxvorstadt",  type: "Premium gym",  emoji: "💪", tag: "Gym · Premium",      vibe: "gym",    desc: "Munich's finest training facility — powerlifting, Olympic lifting, recovery suite" },
+    { id: "p-mu-4",  name: "Schule des Yoga Munich", area: "Schwabing",    type: "Yoga studio",  emoji: "🧘", tag: "Yoga · Traditional", vibe: "yoga",   desc: "One of Germany's oldest yoga schools. Authentic, disciplined, transformative", instagram: "yoga.munich", hot: true },
+    { id: "p-mu-5",  name: "Matchamu München",       area: "Maxvorstadt",  type: "Matcha bar",   emoji: "🍵", tag: "Matcha · Artisan",   vibe: "matcha", desc: "Artisan matcha — single-origin from Nishio, hand-whisked, no shortcuts", hours: "8:00–17:00", hot: true },
+    { id: "p-mu-6",  name: "Olympiapark Trail",      area: "Olympiapark",  type: "Run/Hike",     emoji: "🥾", tag: "Hike · Olympia",    vibe: "hike",   desc: "Trails around the Olympic grounds and Olympiasee. Iconic Munich training ground" },
+    { id: "p-mu-7",  name: "Frisches Grün MUC",      area: "Innenstadt",   type: "Fuel",         emoji: "🥗", tag: "Fuel · Clean eating",vibe: "fuel",   desc: "Clean eating concept — macro-tracked meals, seasonal ingredients, no compromise", hot: true },
+    { id: "p-mu-8",  name: "Benediktenwand Hike",    area: "Voralpen",     type: "Hike",         emoji: "🥾", tag: "Hike · Alps",        vibe: "hike",   desc: "1h from Munich — 1800m summit, Bavarian Alps panorama. The ultimate reset" },
+  ],
+  cologne: [
+    { id: "p-cg-1",  name: "Rheinufer Morning Run",  area: "Deutz",       type: "Run route",    emoji: "🏃", tag: "Run · Cathedral",    vibe: "run",    desc: "10km Rhine loop with Dom backdrop at dawn. Cologne's best running route", hours: "24h", hot: true },
+    { id: "p-cg-2",  name: "Niehler Hafen Run Club", area: "Nippes",      type: "Run Club",     emoji: "👟", tag: "Run Club · Social",  vibe: "run",    desc: "Sunday 8am run club from Niehler Hafen. 5–15km options, coffee after", instagram: "niehlerhafen.run" },
+    { id: "p-cg-3",  name: "FitX Köln Ehrenfeld",    area: "Ehrenfeld",   type: "Gym",          emoji: "💪", tag: "Gym · Value",        vibe: "gym",    desc: "Best gym deal in Cologne — huge floor, all equipment, 24h" },
+    { id: "p-cg-4",  name: "Yoga Vidya Köln",        area: "Innenstadt",  type: "Yoga studio",  emoji: "🧘", tag: "Yoga · Classical",   vibe: "yoga",   desc: "Germany's largest yoga network. Classical Hatha and modern flows daily", instagram: "yogavidya.koeln", hot: true },
+    { id: "p-cg-5",  name: "Matchabar Cologne",      area: "Ehrenfeld",   type: "Matcha",       emoji: "🍵", tag: "Matcha · Modern",    vibe: "matcha", desc: "Ehrenfeld's coolest wellness café — matcha flights, cacao ceremony, adaptogens", hours: "8:00–17:00", hot: true },
+    { id: "p-cg-6",  name: "Freibad Stadion",        area: "Müngersdorf", type: "Cold / Pool",  emoji: "🧊", tag: "Cold · Outdoor pool", vibe: "cold",  desc: "Outdoor pool with cold zones. Open May–September. Post-run ice protocol" },
+    { id: "p-cg-7",  name: "Bergisches Land Trail",  area: "Bergisches Land",type:"Hike",       emoji: "🥾", tag: "Hike · Forest",      vibe: "hike",   desc: "30min from Cologne — rolling hills, forest trails, waterfalls. Full reset" },
+    { id: "p-cg-8",  name: "Organic Kitchen CGN",    area: "Ehrenfeld",   type: "Healthy brunch",emoji:"🌅", tag: "Brunch · Organic",   vibe: "brunch", desc: "Full organic breakfast and brunch. Ehrenfeld's wellness anchor spot", hours: "8:00–16:00" },
+  ],
+}
+
+const PROTOCOL_EVENTS: Record<string, ProtocolEvent[]> = {
+  mannheim: [
+    { id: "pe-ma-1", title: "Jungbusch Morning Run",      venue: "Jungbusch Riverfront", emoji: "🏃", day: 2, time: "07:00", vibe: "run",    price: "Free", desc: "Community 5K. All paces. Coffee after at Matcha Collective.", hot: true },
+    { id: "pe-ma-2", title: "Sunrise Yoga — Wasserturm",  venue: "Wasserturm",           emoji: "🧘", day: 0, time: "07:30", vibe: "yoga",   price: "Free", desc: "Outdoor yoga every Sunday at the Wasserturm. Bring a mat." },
+    { id: "pe-ma-3", title: "Protein Brunch Sundays",     venue: "Brunchery Mannheim",   emoji: "🌅", day: 0, time: "10:00", vibe: "brunch", price: "€18",  desc: "Post-workout organic brunch. High protein menu every Sunday." },
+    { id: "pe-ma-4", title: "Cold Exposure Morning",      venue: "Neckarauer Crossing",  emoji: "🧊", day: 6, time: "07:00", vibe: "cold",   price: "Free", desc: "Group cold plunge in the Neckar. 10 brave souls every Saturday." },
+  ],
+  heidelberg: [
+    { id: "pe-hd-1", title: "HD Trail Run — Königstuhl", venue: "Bismarckplatz",         emoji: "🏃", day: 0, time: "08:00", vibe: "run",    price: "Free", desc: "8km trail up to Königstuhl. Stunning views, hard effort.", hot: true },
+    { id: "pe-hd-2", title: "Castle Yoga Session",        venue: "Schloss Heidelberg",    emoji: "🧘", day: 6, time: "08:00", vibe: "yoga",   price: "€12",  desc: "Yoga under the castle walls. Limited to 20 spots — book ahead." },
+    { id: "pe-hd-3", title: "Organic Rooftop Brunch HD",  venue: "Organic Rooftop",       emoji: "🌅", day: 0, time: "10:30", vibe: "brunch", price: "€22",  desc: "Neckar views, 100% organic, the best Sunday table in the city.", hot: true },
+  ],
+  frankfurt: [
+    { id: "pe-ff-1", title: "Main Run — Dawn Patrol",     venue: "Flößerbrücke",          emoji: "🏃", day: 3, time: "06:30", vibe: "run",    price: "Free", desc: "Frankfurt skyline at dawn. 8km flat. 400+ members every Wednesday.", hot: true },
+    { id: "pe-ff-2", title: "Rooftop Yoga Frankfurt",     venue: "Holmes Place Rooftop",  emoji: "🧘", day: 0, time: "09:00", vibe: "yoga",   price: "€20",  desc: "Sunday rooftop yoga above the banking district. Skyline views." },
+    { id: "pe-ff-3", title: "Taunus Summit Hike",         venue: "Großer Feldberg",       emoji: "🥾", day: 6, time: "08:00", vibe: "hike",   price: "Free", desc: "879m summit hike. 20min from Frankfurt. Weekly group hike Saturdays.", hot: true },
+    { id: "pe-ff-4", title: "Post-Run Recovery Brunch",   venue: "Bowl & Grain Frankfurt", emoji: "🌅", day: 0, time: "11:00", vibe: "brunch", price: "€16",  desc: "Designed for runners. Macro-tracked, anti-inflammatory menu." },
+  ],
+  stuttgart: [
+    { id: "pe-s-1",  title: "Schlossgarten Parkrun",      venue: "Schlossgarten",         emoji: "🏃", day: 6, time: "09:00", vibe: "run",    price: "Free", desc: "Official Parkrun. Flat, friendly, timed. 200 runners every Saturday.", hot: true },
+    { id: "pe-s-2",  title: "Hot Yoga Stuttgart",         venue: "Yoga Stuttgart",        emoji: "🧘", day: 3, time: "19:00", vibe: "yoga",   price: "€15",  desc: "40°C hot yoga session. Detox in 60 minutes." },
+    { id: "pe-s-3",  title: "Mineral Bath Recovery Day",  venue: "Mineral Bad Cannstatt", emoji: "🧊", day: 0, time: "10:00", vibe: "cold",   price: "€9",   desc: "Cold plunge + mineral pools + sauna. The Stuttgart recovery protocol.", hot: true },
+  ],
+  karlsruhe: [
+    { id: "pe-ka-1", title: "Turmberg Sunrise Sprint",    venue: "Turmberg, Durlach",     emoji: "🏃", day: 6, time: "07:00", vibe: "run",    price: "Free", desc: "600m vertical sprint to the tower. Coffee at the top. Weekly.", hot: true },
+    { id: "pe-ka-2", title: "Rhine Cold Swim KA",         venue: "Rheinbad Karlsruhe",    emoji: "🧊", day: 6, time: "08:00", vibe: "cold",   price: "Free", desc: "Group cold swim in the Rhine. Alpinewater, all year round." },
+    { id: "pe-ka-3", title: "Yoga im Schlossgarten",      venue: "Schloss Karlsruhe",     emoji: "🧘", day: 0, time: "09:30", vibe: "yoga",   price: "Free", desc: "Free outdoor yoga every Sunday in the castle gardens." },
+  ],
+  berlin: [
+    { id: "pe-b-1",  title: "Tempelhof Sunrise 10K",      venue: "Tempelhofer Feld",      emoji: "🏃", day: 6, time: "06:30", vibe: "run",    price: "Free", desc: "600 runners every Saturday. Most iconic run in Germany. Show up.", hot: true },
+    { id: "pe-b-2",  title: "Brunch Run Kreuzberg",       venue: "Görlitzer Park",        emoji: "🏃", day: 0, time: "08:00", vibe: "run",    price: "Free", desc: "10K run then eat together. Berlin's most social fitness event.", hot: true },
+    { id: "pe-b-3",  title: "Ice Bath Sundays",           venue: "Kreuzberg Ice Plunge",  emoji: "🧊", day: 0, time: "08:00", vibe: "cold",   price: "€10",  desc: "Community ice bath. 4°C. 500 people. Life-changing every single time." },
+    { id: "pe-b-4",  title: "Jivamukti Morning Class",    venue: "Jivamukti Berlin",      emoji: "🧘", day: 1, time: "07:00", vibe: "yoga",   price: "€22",  desc: "World-class Jivamukti morning class. The gold standard of yoga in Berlin." },
+    { id: "pe-b-5",  title: "Grunewald Trail — 20K",      venue: "Grunewald Forest",      emoji: "🥾", day: 0, time: "09:00", vibe: "hike",   price: "Free", desc: "Sunday long run / hike in Berlin's forest. All paces welcome." },
+  ],
+  munich: [
+    { id: "pe-mu-1", title: "Englischer Garten Dawn Run", venue: "Englischer Garten",     emoji: "🏃", day: 6, time: "06:30", vibe: "run",    price: "Free", desc: "Munich's most beloved run. Surfers, deer, and sunrise. 10K loop.", hot: true },
+    { id: "pe-mu-2", title: "Isar Cold Swim",             venue: "Isar, Isarvorstädte",   emoji: "🧊", day: 6, time: "07:30", vibe: "cold",   price: "Free", desc: "Alpine river cold immersion. The Munich morning protocol.", hot: true },
+    { id: "pe-mu-3", title: "Schule des Yoga Morning",    venue: "Schule des Yoga",       emoji: "🧘", day: 1, time: "07:00", vibe: "yoga",   price: "€18",  desc: "Germany's oldest yoga school. Classical, disciplined, authentic." },
+    { id: "pe-mu-4", title: "Benediktenwand Summit Hike", venue: "Voralpen",              emoji: "🥾", day: 0, time: "07:00", vibe: "hike",   price: "Free", desc: "1800m Alpine summit. 1h from Munich. The ultimate Sunday protocol.", hot: true },
+  ],
+  cologne: [
+    { id: "pe-cg-1", title: "Rhine Dawn 10K",             venue: "Deutzer Brücke",        emoji: "🏃", day: 6, time: "07:00", vibe: "run",    price: "Free", desc: "Dom backdrop, flat Rhine loop. Cologne's favourite Saturday run.", hot: true },
+    { id: "pe-cg-2", title: "Yoga Vidya Sunday Flow",     venue: "Yoga Vidya Köln",       emoji: "🧘", day: 0, time: "09:00", vibe: "yoga",   price: "€12",  desc: "Germany's most popular yoga chain. Sunday flow, all levels." },
+    { id: "pe-cg-3", title: "Bergisches Land Trail Day",  venue: "Bergisches Land",       emoji: "🥾", day: 0, time: "08:00", vibe: "hike",   price: "Free", desc: "30min from Cologne. Full day hike in rolling forest hills.", hot: true },
+    { id: "pe-cg-4", title: "Outdoor Pool Cold Protocol", venue: "Freibad Stadion",       emoji: "🧊", day: 6, time: "08:00", vibe: "cold",   price: "€5",   desc: "Cold water swimming with community. Protocol Cologne." },
+  ],
+}
+
+// ─── Protocol Tab ─────────────────────────────────────────────────────────────
+function ProtocolTab({ city }: { city: string }) {
+  const [vibe, setVibe] = useState("all")
+  const venues = (PROTOCOL_VENUES[city] ?? PROTOCOL_VENUES.mannheim).filter(v => vibe === "all" || v.vibe === vibe)
+  const events = (PROTOCOL_EVENTS[city] ?? PROTOCOL_EVENTS.mannheim).filter(e => vibe === "all" || e.vibe === vibe)
+  const cityName = city.charAt(0).toUpperCase() + city.slice(1)
+
+  const VIBE_ICONS: Record<string, React.ElementType> = {
+    run: Footprints, gym: Dumbbell, yoga: Wind, matcha: Leaf,
+    fuel: Leaf, cold: Droplets, hike: Footprints, cycle: Bike, brunch: Sun,
+  }
+
+  return (
+    <div className="space-y-6 pb-8">
+      {/* Header */}
+      <div>
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold mb-1" style={{ color: "var(--accent)" }}>Protocol Mode</p>
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: "var(--text-primary)" }}>
+          Active {cityName}
+        </h2>
+        <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+          Run clubs · Matcha · Yoga · Gyms · Cold plunge · Healthy brunch
+        </p>
+      </div>
+
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: "Venues", val: (PROTOCOL_VENUES[city] ?? []).length, icon: "📍" },
+          { label: "Events", val: (PROTOCOL_EVENTS[city] ?? []).length, icon: "📅" },
+          { label: "Hot spots", val: (PROTOCOL_VENUES[city] ?? []).filter(v => v.hot).length, icon: "🔥" },
+        ].map(s => (
+          <div key={s.label} className="szene-card p-3 text-center">
+            <div className="text-lg mb-0.5">{s.icon}</div>
+            <div className="text-lg font-black" style={{ color: "var(--accent)" }}>{s.val}</div>
+            <div className="text-[10px] font-semibold" style={{ color: "var(--text-muted)" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Vibe filter */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
+        {PROTOCOL_VIBES.map(v => (
+          <button key={v.id} onClick={() => setVibe(v.id)}
+            className="flex-shrink-0 flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full font-semibold transition-all"
+            style={vibe === v.id
+              ? { background: "var(--accent)", color: "#fff", boxShadow: "0 0 12px var(--accent-glow)" }
+              : { background: "var(--bg-surface)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+            <span>{v.emoji}</span>
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Events this week */}
+      {events.length > 0 && (
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-bold mb-3" style={{ color: "var(--accent)" }}>
+            Events this week
+          </p>
+          <div className="space-y-3">
+            {events.map(e => {
+              const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+              return (
+                <div key={e.id} className="szene-card p-4 flex gap-3">
+                  <div className="text-2xl flex-shrink-0">{e.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                      <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{e.title}</p>
+                      {e.hot && (
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                          style={{ background: "rgba(22,163,74,0.15)", color: "var(--accent)", border: "1px solid rgba(22,163,74,0.25)" }}>
+                          🔥 Hot
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] mb-1" style={{ color: "var(--text-muted)" }}>
+                      {days[e.day]} · {e.time} · {e.venue}
+                    </p>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>{e.desc}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                        style={{ background: e.price === "Free" ? "rgba(22,163,74,0.12)" : "var(--bg-surface)", color: e.price === "Free" ? "var(--accent)" : "var(--text-muted)" }}>
+                        {e.price === "Free" ? "✓ Free" : e.price}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Venues */}
+      {venues.length > 0 && (
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-bold mb-3" style={{ color: "var(--accent)" }}>
+            Spots in {cityName}
+          </p>
+          <div className="space-y-3">
+            {venues.map(v => {
+              const VibeIcon = VIBE_ICONS[v.vibe] ?? Activity
+              return (
+                <div key={v.id} className="szene-card p-4 flex gap-3">
+                  <div className="text-2xl flex-shrink-0">{v.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                      <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>{v.name}</p>
+                      {v.hot && (
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                          style={{ background: "rgba(22,163,74,0.15)", color: "var(--accent)", border: "1px solid rgba(22,163,74,0.25)" }}>
+                          🔥 Hot
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <VibeIcon className="w-3 h-3 flex-shrink-0" style={{ color: "var(--accent)" }} />
+                      <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                        {v.area} · {v.type}
+                        {v.hours ? ` · ${v.hours}` : ""}
+                      </p>
+                    </div>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>{v.desc}</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                        style={{ background: "var(--bg-surface)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+                        {v.tag}
+                      </span>
+                      {v.instagram && (
+                        <a href={`https://instagram.com/${v.instagram}`} target="_blank" rel="noopener noreferrer"
+                          className="text-[10px] font-semibold transition-opacity hover:opacity-70"
+                          style={{ color: "var(--accent)" }}>
+                          @{v.instagram}
+                        </a>
+                      )}
+                      {v.website && (
+                        <a href={v.website} target="_blank" rel="noopener noreferrer"
+                          className="text-[10px] font-semibold transition-opacity hover:opacity-70"
+                          style={{ color: "var(--accent)" }}>
+                          Visit ↗
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {venues.length === 0 && events.length === 0 && (
+        <div className="szene-card p-8 text-center">
+          <p className="text-3xl mb-3">🏃</p>
+          <p className="text-sm font-black" style={{ color: "var(--text-primary)" }}>No spots found</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Try a different filter</p>
+        </div>
+      )}
+
+      {/* Protocol tip */}
+      <div className="rounded-2xl p-4" style={{ background: "rgba(22,163,74,0.08)", border: "1px solid rgba(22,163,74,0.18)" }}>
+        <p className="text-xs font-black mb-1" style={{ color: "var(--accent)" }}>💡 Daily Protocol</p>
+        <p className="text-xs leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+          Morning light → movement → cold exposure → fuel → focus. Build the stack. Szene Protocol has the spots.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 const TABS = [
-  { id: "foryou",  label: "For You",  icon: Sparkles },
-  { id: "events",  label: "Events",   icon: Calendar },
-  { id: "tonight", label: "Tonight",  icon: MapPin },
-  { id: "map",     label: "Map",      icon: Map },
-  { id: "daytime", label: "Daytime",  icon: Sun },
-  { id: "plan",    label: "Plan",     icon: ArrowUpRight },
-  { id: "venues",  label: "Venues",   icon: Star },
-  { id: "friends", label: "Friends",  icon: Users },
+  { id: "foryou",    label: "For You",   icon: Sparkles },
+  { id: "events",    label: "Events",    icon: Calendar },
+  { id: "tonight",   label: "Tonight",   icon: MapPin },
+  { id: "map",       label: "Map",       icon: Map },
+  { id: "daytime",   label: "Daytime",   icon: Sun },
+  { id: "plan",      label: "Plan",      icon: ArrowUpRight },
+  { id: "venues",    label: "Venues",    icon: Star },
+  { id: "friends",   label: "Friends",   icon: Users },
+  { id: "protocol",  label: "Protocol",  icon: Activity },
 ]
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
@@ -1780,6 +2114,18 @@ export function AppShell({
     // Show push prompt 8s after onboarding — user has seen the app, prime moment
     setTimeout(() => triggerPushPrompt(), 8_000)
   }
+
+  // Override data-theme when entering/leaving Protocol tab
+  useEffect(() => {
+    const h = new Date().getHours()
+    const stored = typeof window !== "undefined" ? localStorage.getItem("szene-theme") : null
+    if (activeTab === "protocol") {
+      document.documentElement.setAttribute("data-theme", "protocol")
+    } else {
+      const base = stored === "day" || stored === "night" ? stored : (h >= 6 && h < 18 ? "day" : "night")
+      document.documentElement.setAttribute("data-theme", base)
+    }
+  }, [activeTab])
 
   function handleTabSwitch(t: string) {
     switchTab(t)
@@ -1841,11 +2187,19 @@ export function AppShell({
                 {TABS.map(t => {
                   const Icon   = t.icon
                   const active = activeTab === t.id
+                  const isProtocol = t.id === "protocol"
                   return (
                     <button key={t.id} onClick={() => handleTabSwitch(t.id)}
                       className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                        active ? "bg-accent text-white" : "text-muted hover:text-szene hover:bg-surface"
-                      }`}>
+                        active && isProtocol
+                          ? "text-white"
+                          : active
+                          ? "bg-accent text-white"
+                          : isProtocol
+                          ? "text-emerald-600 hover:bg-emerald-50 border border-emerald-200"
+                          : "text-muted hover:text-szene hover:bg-surface"
+                      }`}
+                      style={active && isProtocol ? { background: "linear-gradient(135deg, #16a34a, #22c55e)", boxShadow: "0 0 16px rgba(22,163,74,0.3)" } : {}}>
                       <Icon className="w-3.5 h-3.5" />
                       {t.label}
                     </button>
@@ -1866,7 +2220,8 @@ export function AppShell({
         {activeTab === "daytime" && <BrunchTab   city={city} />}
         {activeTab === "plan"    && <PlannerTab  city={city} />}
         {activeTab === "venues"  && <VenuesTab   city={city} />}
-        {activeTab === "friends" && <FriendsTab />}
+        {activeTab === "friends"  && <FriendsTab />}
+        {activeTab === "protocol" && <ProtocolTab city={city} />}
       </div>
     </div>
   )
