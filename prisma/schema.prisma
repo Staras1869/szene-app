@@ -31,7 +31,6 @@ model User {
   emailVerified  Boolean        @default(false)
   verifyToken    String?        @unique
   verifyExpires  DateTime?
-  events         Event[]
   reviews        Review[]
   favorites      UserFavorite[]
   checkIns       CheckIn[]
@@ -56,19 +55,23 @@ model Event {
   id          String   @id @default(cuid())
   title       String
   description String?
-  date        DateTime
-  location    String
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  venues      Venue[]
-}
+  date        String   // YYYY-MM-DD
+  time        String?  // HH:MM or null
+  venue       String
+  city        String
+  category    String   @default("Other")
+  price       String?
+  imageUrl    String?
+  sourceUrl   String?
+  lat         Float?
+  lon         Float?
+  status      String   @default("approved") // approved | pending
+  source      String   @default("manual")   // manual | facebook | instagram
+  externalId  String?  @unique              // FB event ID or IG post ID — used for dedup
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-model Venue {
-  id      String  @id @default(cuid())
-  name    String
-  address String
-  Event   Event?  @relation(fields: [eventId], references: [id])
-  eventId String?
+  @@map("events")
 }
 
 // OSM venue id stored as string — no FK into Venue table (venues come from OpenStreetMap live)

@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // ── Date helpers ────────────────────────────────────────────────────────────
 
@@ -305,33 +306,76 @@ export async function GET(request: NextRequest) {
     const city     = searchParams.get("city");
     const category = searchParams.get("category");
     const search   = searchParams.get("search");
-    const date     = searchParams.get("date") ?? "all"; // today | weekend | week | all
+    const date     = searchParams.get("date") ?? "all";
     const limit    = Math.min(Number.parseInt(searchParams.get("limit") ?? "20"), 50);
 
-    let events = [...MOCK_EVENTS];
+    // ── Try DB first ──────────────────────────────────────────────────────────
+    let events: typeof MOCK_EVENTS = [];
 
-    if (status)                   events = events.filter((e) => e.status === status);
-    if (city && city !== "all")   events = events.filter((e) => e.city.toLowerCase() === city.toLowerCase());
-    if (category && category !== "all")
-      events = events.filter((e) => e.category.toLowerCase() === category.toLowerCase());
-    if (search) {
-      const q = search.toLowerCase();
-      events = events.filter(
-        (e) =>
-          e.title.toLowerCase().includes(q) ||
-          e.venue.toLowerCase().includes(q) ||
-          e.description.toLowerCase().includes(q)
-      );
+    try {
+      const where: Record<string, unknown> = {};
+      if (status)                   where.status   = status;
+      if (city && city !== "all")   where.city     = { equals: city,     mode: "insensitive" };
+      if (category && category !== "all") where.category = { equals: category, mode: "insensitive" };
+      if (search) {
+        const q = search;
+        where.OR = [
+          { title:       { contains: q, mode: "insensitive" } },
+          { venue:       { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+        ];
+      }
+
+      const rows = await prisma.event.findMany({ where, orderBy: { date: "asc" } });
+
+      if (rows.length > 0) {
+        events = rows
+          .filter((e) => date === "all" || matchesDateFilter(e.date, date))
+          .map((e) => ({
+            id:          e.id,
+            title:       e.title,
+            venue:       e.venue,
+            date:        e.date,
+            time:        e.time ?? "TBD",
+            city:        e.city,
+            category:    e.category,
+            price:       e.price ?? "TBD",
+            description: e.description ?? "",
+            imageUrl:    e.imageUrl ?? "",
+            sourceUrl:   e.sourceUrl ?? "",
+            status:      e.status,
+            lat:         e.lat ?? 0,
+            lon:         e.lon ?? 0,
+          }));
+      }
+    } catch (dbErr) {
+      console.error("DB query failed, falling back to mock:", dbErr);
     }
-    if (date !== "all") events = events.filter((e) => matchesDateFilter(e.date, date));
 
-    // Sort by date ascending
-    events.sort((a, b) => a.date.localeCompare(b.date));
+    // ── Fall back to mock events when DB is empty ─────────────────────────────
+    if (events.length === 0) {
+      events = [...MOCK_EVENTS];
+      if (status)                   events = events.filter((e) => e.status === status);
+      if (city && city !== "all")   events = events.filter((e) => e.city.toLowerCase() === city.toLowerCase());
+      if (category && category !== "all")
+        events = events.filter((e) => e.category.toLowerCase() === category.toLowerCase());
+      if (search) {
+        const q = search.toLowerCase();
+        events = events.filter(
+          (e) =>
+            e.title.toLowerCase().includes(q) ||
+            e.venue.toLowerCase().includes(q) ||
+            e.description.toLowerCase().includes(q)
+        );
+      }
+      if (date !== "all") events = events.filter((e) => matchesDateFilter(e.date, date));
+      events.sort((a, b) => a.date.localeCompare(b.date));
+    }
 
     const total = events.length;
-    events = events.slice(0, limit);
+    const page  = events.slice(0, limit);
 
-    return NextResponse.json({ events, total, hasMore: total > limit });
+    return NextResponse.json({ events: page, total, hasMore: total > limit });
   } catch (error) {
     console.error("Events GET error:", error);
     return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
