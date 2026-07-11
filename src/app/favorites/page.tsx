@@ -63,7 +63,7 @@ export default function FavoritesPage() {
           </div>
         ) : venues.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
-            <p>Your saved venues aren't in our current database view. <br />
+            <p>Your saved venues aren&apos;t in our current database view. <br />
               <Link href="/discover" className="text-purple-600 underline">Browse live venues</Link> and re-save them.
             </p>
           </div>

@@ -63,7 +63,7 @@ export function SignInPrompt() {
               onClick={dismiss}
               className="block w-full border-2 border-gray-200 hover:border-violet-400 hover:bg-violet-50 text-gray-700 hover:text-violet-700 py-3 rounded-xl text-sm font-semibold transition-colors text-center"
             >
-              Create account — it's free
+              Create account &mdash; it&apos;s free
             </Link>
             <button
               onClick={dismiss}

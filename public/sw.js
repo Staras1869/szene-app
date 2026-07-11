@@ -1,5 +1,5 @@
 // ─── Cache ────────────────────────────────────────────────────────────────────
-const cacheName = "szene-cache-v5"
+const cacheName = "szene-cache-v6"
 const precacheResources = ["/", "/offline.html", "/app-icon-192.png", "/app-icon-512.png", "/manifest.json"]
 
 self.addEventListener("install", (event) => {
@@ -47,7 +47,21 @@ self.addEventListener("fetch", (event) => {
     return
   }
 
-  // For static assets — cache first, then network
+  // For Next.js JS/CSS chunks — network first so deploys always reach users
+  if (url.pathname.startsWith("/_next/")) {
+    event.respondWith(
+      fetch(event.request).then(res => {
+        if (res.ok) {
+          const clone = res.clone()
+          caches.open(cacheName).then(cache => cache.put(event.request, clone))
+        }
+        return res
+      }).catch(() => caches.match(event.request).then(cached => cached || new Response("", { status: 503 })))
+    )
+    return
+  }
+
+  // For other static assets — cache first, then network
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached

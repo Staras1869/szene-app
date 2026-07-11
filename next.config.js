@@ -42,7 +42,6 @@ const securityHeaders = [
       "connect-src 'self' https://overpass-api.de https://api.openweathermap.org https://nominatim.openstreetmap.org wss://szene-app.vercel.app",
       // Map tiles via worker
       "worker-src 'self' blob:",
-      // Leaflet loads tiles in an iframe-less way but needs frame-src for embed protection
       "frame-src 'none'",
       // Object/media
       "object-src 'none'",

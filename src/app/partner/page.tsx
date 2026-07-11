@@ -85,7 +85,7 @@ export default function PartnerPage() {
                 <Check className="w-6 h-6 text-emerald-400" />
               </div>
               <h2 className="text-xl font-black mb-2">We got it!</h2>
-              <p className="text-sm" style={{ color: "var(--text-muted)" }}>We'll reach out within 24 hours to set up your partner profile.</p>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>We&apos;ll reach out within 24 hours to set up your partner profile.</p>
               <Link href="/" className="inline-block mt-6 text-sm transition-colors" style={{ color: "var(--accent)" }}>
                 ← Back to Szene
               </Link>
@@ -93,7 +93,7 @@ export default function PartnerPage() {
           ) : (
             <>
               <h2 className="text-xl font-black mb-1">Apply to partner</h2>
-              <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>Free to apply. We'll set everything up for you.</p>
+              <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>Free to apply. We&apos;ll set everything up for you.</p>
 
               <form onSubmit={submit} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">

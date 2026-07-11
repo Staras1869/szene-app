@@ -59,7 +59,7 @@ export function InstallPrompt() {
                 <h3 className="font-semibold text-blue-900">Install Szene App</h3>
               </div>
               <p className="text-sm text-blue-700 mb-3">
-                Add Szene to your home screen for quick access to Mannheim's best events!
+                Add Szene to your home screen for quick access to Mannheim&apos;s best events!
               </p>
               <div className="flex gap-2">
                 <Button onClick={handleInstall} size="sm" className="bg-blue-600 hover:bg-blue-700">

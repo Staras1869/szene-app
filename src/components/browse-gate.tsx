@@ -39,7 +39,8 @@ export function BrowseGate() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}>
+      style={{ backgroundColor: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}>
 
       <div className="w-full max-w-sm rounded-3xl overflow-hidden animate-in slide-in-from-bottom-6 duration-400"
         style={{ backgroundColor: "var(--card-bg)", border: "1px solid var(--card-border)" }}>

@@ -2,23 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { Calendar, Clock, MapPin, Euro, RefreshCw, ExternalLink } from "lucide-react"
+import { getBestImage } from "@/lib/image-utils"
 
 const FALLBACK = [
-  { id: "f1", title: "Rooftop Summer Sessions",       venue: "Skybar Mannheim",          date: "", time: "21:00", city: "Mannheim",   category: "Nightlife",  price: "€15", description: "Panoramic city views, craft cocktails, DJ sets.",                    sourceUrl: "https://www.google.com/search?q=Skybar+Mannheim",       imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop" },
-  { id: "f2", title: "Underground Electronic Night",  venue: "MS Connexion",             date: "", time: "23:00", city: "Mannheim",   category: "Music",      price: "€20", description: "Deep electronic beats in Mannheim's premier underground venue.",      sourceUrl: "https://www.msconnexion.de",                            imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop" },
-  { id: "f3", title: "Jazz & Wine Evening",           venue: "Heidelberg Castle Gardens", date: "", time: "19:30", city: "Heidelberg", category: "Culture",    price: "€25", description: "Live jazz trio and Rhine Valley wines in a historic setting.",         sourceUrl: "https://www.heidelberg-marketing.de",                  imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop" },
-  { id: "f4", title: "Techno Rave — Zeitraumexit",   venue: "Zeitraumexit",             date: "", time: "00:00", city: "Mannheim",   category: "Nightlife",  price: "€12", description: "All-night techno in Mannheim's iconic underground art space.",         sourceUrl: "https://www.zeitraumexit.de",                          imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop" },
-  { id: "f5", title: "Indie & Alternative Night",    venue: "Schwimmbad Club",          date: "", time: "22:00", city: "Heidelberg", category: "Music",      price: "€10", description: "Heidelberg's beloved weekly indie and post-punk night.",               sourceUrl: "https://www.schwimmbad-club.de",                       imageUrl: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&h=400&fit=crop" },
-  { id: "f6", title: "Kulturherbst: Art & Music",    venue: "Alte Feuerwache",          date: "", time: "18:00", city: "Mannheim",   category: "Culture",    price: "Free", description: "Local art installations, live performances, and community spirit.",  sourceUrl: "https://www.altefeuerwache.com",                       imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop" },
+  { id: "f1", title: "Rooftop Summer Sessions", venue: "Skybar Mannheim", date: "", time: "21:00", city: "Mannheim", category: "Nightlife", price: "€15", description: "Panoramic city views, craft cocktails, DJ sets.", sourceUrl: "https://www.google.com/search?q=Skybar+Mannheim", imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop" },
+  { id: "f2", title: "Underground Electronic Night", venue: "MS Connexion", date: "", time: "23:00", city: "Mannheim", category: "Music", price: "€20", description: "Deep electronic beats in Mannheim's premier underground venue.", sourceUrl: "https://www.msconnexion.de", imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop" },
+  { id: "f3", title: "Jazz & Wine Evening", venue: "Heidelberg Castle Gardens", date: "", time: "19:30", city: "Heidelberg", category: "Culture", price: "€25", description: "Live jazz trio and Rhine Valley wines in a historic setting.", sourceUrl: "https://www.heidelberg-marketing.de", imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop" },
+  { id: "f4", title: "Techno Rave — Zeitraumexit", venue: "Zeitraumexit", date: "", time: "00:00", city: "Mannheim", category: "Nightlife", price: "€12", description: "All-night techno in Mannheim's iconic underground art space.", sourceUrl: "https://www.zeitraumexit.de", imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop" },
+  { id: "f5", title: "Indie & Alternative Night", venue: "Schwimmbad Club", date: "", time: "22:00", city: "Heidelberg", category: "Music", price: "€10", description: "Heidelberg's beloved weekly indie and post-punk night.", sourceUrl: "https://www.schwimmbad-club.de", imageUrl: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&h=400&fit=crop" },
+  { id: "f6", title: "Kulturherbst: Art & Music", venue: "Alte Feuerwache", date: "", time: "18:00", city: "Mannheim", category: "Culture", price: "Free", description: "Local art installations, live performances, and community spirit.", sourceUrl: "https://www.altefeuerwache.com", imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop" },
 ]
 
 const CATEGORY_COLORS: Record<string, string> = {
   Nightlife: "text-violet-400 bg-violet-400/10",
-  Music:     "text-blue-400   bg-blue-400/10",
-  Culture:   "text-amber-400  bg-amber-400/10",
-  Food:      "text-emerald-400 bg-emerald-400/10",
-  Student:   "text-pink-400   bg-pink-400/10",
-  Social:    "text-teal-400   bg-teal-400/10",
+  Music: "text-blue-400   bg-blue-400/10",
+  Culture: "text-amber-400  bg-amber-400/10",
+  Food: "text-emerald-400 bg-emerald-400/10",
+  Student: "text-pink-400   bg-pink-400/10",
+  Social: "text-teal-400   bg-teal-400/10",
 }
 
 export function DynamicEvents() {
@@ -65,9 +66,8 @@ export function DynamicEvents() {
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                  filter === c ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${filter === c ? "bg-white/10 text-white" : "text-zinc-500 hover:text-white"
+                  }`}
               >
                 {c}
               </button>
@@ -86,6 +86,7 @@ export function DynamicEvents() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((event) => {
               const catStyle = CATEGORY_COLORS[event.category] ?? "text-zinc-400 bg-zinc-400/10"
+              const img = getBestImage(event as any)
               return (
                 <div
                   key={event.id}
@@ -93,10 +94,10 @@ export function DynamicEvents() {
                   className="group cursor-pointer rounded-2xl border border-white/6 bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 transition-all duration-200 overflow-hidden"
                 >
                   {/* Image */}
-                  {event.imageUrl && (
+                  {img && (
                     <div className="h-40 overflow-hidden relative">
                       <img
-                        src={event.imageUrl}
+                        src={img}
                         alt={event.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-75"
                         loading="lazy"

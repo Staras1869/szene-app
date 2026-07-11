@@ -18,7 +18,7 @@ export function VibePicker() {
     <section className="py-16 bg-zinc-950" id="discover">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-black text-white tracking-tight">What's your vibe?</h2>
+          <h2 className="text-2xl font-black text-white tracking-tight">What&apos;s your vibe?</h2>
           <p className="text-white/30 mt-1 text-sm">Pick a mood — we filter the night for you</p>
         </div>
 

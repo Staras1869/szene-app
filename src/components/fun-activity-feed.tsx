@@ -26,6 +26,8 @@ export function FunActivityFeed() {
     loadActivities()
     const interval = setInterval(loadActivities, 10000)
     return () => clearInterval(interval)
+    // Mount-only: loadActivities uses only stable setters and constants.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadActivities = async () => {
@@ -153,7 +155,7 @@ export function FunActivityFeed() {
           </div>
           <div>
             <h3 className="font-bold text-lg text-gray-900">🚀 Live Activity Feed</h3>
-            <p className="text-sm text-gray-600">What's happening right now</p>
+            <p className="text-sm text-gray-600">What&apos;s happening right now</p>
           </div>
           <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200 animate-pulse">
             🔴 LIVE

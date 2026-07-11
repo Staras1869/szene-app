@@ -27,13 +27,13 @@ export class InstagramAPI {
   constructor() {
     this.accessToken = process.env.INSTAGRAM_ACCESS_TOKEN || ""
     if (!this.accessToken) {
-      console.warn("⚠️ Instagram access token not found. Using demo data.")
+      console.warn("⚠️ Instagram access token not found. Instagram hashtag/location fetch is disabled.")
     }
   }
 
   async searchHashtag(hashtag: string, limit = 25): Promise<InstagramPost[]> {
     if (!this.accessToken) {
-      return this.generateDemoData(hashtag, limit)
+      return []
     }
 
     try {
@@ -54,7 +54,7 @@ export class InstagramAPI {
       return data.data || []
     } catch (error) {
       console.error(`Error fetching Instagram hashtag ${hashtag}:`, error)
-      return this.generateDemoData(hashtag, limit)
+      return []
     }
   }
 
@@ -74,7 +74,7 @@ export class InstagramAPI {
 
   async getLocationMedia(locationId: string, limit = 25): Promise<InstagramPost[]> {
     if (!this.accessToken) {
-      return this.generateDemoLocationData(locationId, limit)
+      return []
     }
 
     try {
@@ -90,55 +90,7 @@ export class InstagramAPI {
       return data.data || []
     } catch (error) {
       console.error(`Error fetching location media ${locationId}:`, error)
-      return this.generateDemoLocationData(locationId, limit)
+      return []
     }
-  }
-
-  private generateDemoData(hashtag: string, limit: number): InstagramPost[] {
-    const venues = [
-      "Skybar Mannheim",
-      "MS Connexion",
-      "Alte Feuerwache",
-      "Capitol Mannheim",
-      "Karlstorbahnhof",
-      "Cave 54",
-      "Villa Nachttanz",
-      "Zeitraumexit",
-      "Rooftop Bar MA",
-      "Underground Club HD",
-      "Jazz Lounge",
-      "Cocktail Corner",
-    ]
-
-    const captions = [
-      `Amazing night at {venue}! 🎉 The DJ was incredible ${hashtag} #nightlife #party`,
-      `Best cocktails in town at {venue} 🍸 Perfect for date night! ${hashtag} #cocktails`,
-      `Live music tonight at {venue}! 🎵 Starting at 21:00, entry €15 ${hashtag} #livemusic`,
-      `Rooftop vibes at {venue} 🌆 Perfect weather! ${hashtag} #rooftop #friends`,
-      `New event at {venue} this weekend! 🎊 Saturday 22:00 ${hashtag} #weekend #event`,
-      `Happy hour at {venue} until 20:00! 🍻 Half price cocktails ${hashtag} #happyhour`,
-      `Brunch special at {venue} this Sunday! 🥐 Book now ${hashtag} #brunch #sunday`,
-      `DJ battle at {venue} tonight! 🎧 Three DJs competing ${hashtag} #djbattle #electronic`,
-    ]
-
-    return Array.from({ length: limit }, (_, i) => {
-      const venue = venues[Math.floor(Math.random() * venues.length)]
-      const caption = captions[Math.floor(Math.random() * captions.length)].replace("{venue}", venue)
-
-      return {
-        id: `demo_${hashtag}_${i}`,
-        caption,
-        media_type: "IMAGE" as const,
-        media_url: `/images/${Math.random() > 0.5 ? "rooftop-bar" : "techno-club"}.jpg`,
-        permalink: `https://instagram.com/p/demo_${i}`,
-        timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        like_count: Math.floor(Math.random() * 500) + 50,
-        comments_count: Math.floor(Math.random() * 50) + 5,
-      }
-    })
-  }
-
-  private generateDemoLocationData(locationId: string, limit: number): InstagramPost[] {
-    return this.generateDemoData(`location_${locationId}`, limit)
   }
 }

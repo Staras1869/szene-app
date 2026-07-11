@@ -193,30 +193,10 @@ export class EnhancedSocialDiscovery {
   }
 
   private async discoverFromFacebook(): Promise<DiscoveredEvent[]> {
-    const events: DiscoveredEvent[] = []
-    const cities = ["Mannheim", "Heidelberg"]
-    const queries = ["party", "event", "music", "nightlife", "bar", "club", "restaurant"]
-
-    for (const city of cities) {
-      for (const query of queries) {
-        try {
-          const fbEvents = await this.facebook.searchEvents(query, city, 10)
-
-          for (const fbEvent of fbEvents) {
-            const eventData = this.analyzeFacebookEvent(fbEvent)
-            if (eventData) {
-              events.push(eventData)
-            }
-          }
-
-          await this.delay(1500)
-        } catch (error) {
-          console.error(`Error processing ${query} in ${city}:`, error)
-        }
-      }
-    }
-
-    return events
+    // Meta removed public event search (/search?type=event) from the Graph API.
+    // Real events are only available from pages you manage via getPageEvents.
+    // This method is now a no-op; use monitorVenuePages() for real data.
+    return []
   }
 
   private async monitorVenuePages(): Promise<DiscoveredEvent[]> {

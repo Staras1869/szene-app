@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { Calendar, Clock, MapPin, ArrowRight, Check, Users } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const EVENTS = [
   {
@@ -66,7 +67,7 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
     fetch(`/api/events/rsvp?eventId=${eventId}`)
       .then((r) => r.json())
       .then((d) => { setGoing(d.going ?? false); setCount((d.count ?? 0) + seed) })
-      .catch(() => {})
+      .catch(() => { })
   }, [eventId, seed])
 
   const toggle = useCallback(async () => {
@@ -77,7 +78,7 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
       const d = await res.json()
       setGoing(d.going)
       setCount((d.count ?? 0) + seed)
-    } catch {}
+    } catch { }
     setLoading(false)
   }, [user, eventId, seed])
 
@@ -93,9 +94,8 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
     <button
       onClick={toggle}
       disabled={loading}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-        going ? "bg-violet-600 text-white" : "border border-white/15 text-white/50 hover:border-violet-400/50 hover:text-white"
-      }`}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${going ? "bg-violet-600 text-white" : "border border-white/15 text-white/50 hover:border-violet-400/50 hover:text-white"
+        }`}
     >
       {going ? <Check className="w-3 h-3" /> : <Users className="w-3 h-3" />}
       {going ? "Going" : `${count} going`}
@@ -104,6 +104,7 @@ function RSVPButton({ eventId, seed }: { eventId: string; seed: number }) {
 }
 
 export function CuratedEvents() {
+  const router = useRouter()
   return (
     <section className="py-16 bg-black" id="events">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,7 +113,7 @@ export function CuratedEvents() {
             <p className="text-[11px] text-fuchsia-400 uppercase tracking-[0.15em] font-semibold mb-1">This week</p>
             <h2 className="text-2xl font-black text-white tracking-tight">Happening now</h2>
           </div>
-          <button className="hidden sm:inline-flex items-center gap-1.5 text-xs text-white/30 hover:text-white transition-colors">
+          <button onClick={() => router.push('/discover')} className="hidden sm:inline-flex items-center gap-1.5 text-xs text-white/30 hover:text-white transition-colors">
             See all <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

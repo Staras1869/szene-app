@@ -8,8 +8,8 @@ function getComprehensiveAutomation() {
   if (!comprehensiveAutomation) {
     comprehensiveAutomation = new ComprehensiveAutomation({
       openaiApiKey: process.env.OPENAI_API_KEY || "",
-      facebookAccessToken: process.env.FACEBOOK_ACCESS_TOKEN || "demo_mode",
-      instagramAccessToken: process.env.INSTAGRAM_ACCESS_TOKEN || "demo_mode",
+      facebookAccessToken: process.env.META_ACCESS_TOKEN || "",
+      instagramAccessToken: process.env.META_ACCESS_TOKEN || "",
     })
     console.log("🚀 Initialized HOURLY comprehensive automation system")
   }
@@ -103,8 +103,7 @@ export async function GET() {
       features: [
         "HOURLY website scraping",
         "30-min social media monitoring",
-        "Facebook integration (demo mode)",
-        "Instagram monitoring (demo mode)",
+        "Meta Facebook / Instagram integration",
         "AI content enhancement",
         "Real-time updates",
         "15+ venue monitoring",

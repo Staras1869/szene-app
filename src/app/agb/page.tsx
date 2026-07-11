@@ -20,13 +20,13 @@ export default function AGBPage() {
 
           <Section title="§ 1 Geltungsbereich">
             <p>
-              Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform
-              Szene (nachfolgend „Plattform"), die als Website unter <strong>szene.app</strong>
+              Diese Allgemeinen Geschäftsbedingungen (nachfolgend &bdquo;AGB&ldquo;) gelten für die Nutzung der Plattform
+              Szene (nachfolgend &bdquo;Plattform&ldquo;), die als Website unter <strong>szene.app</strong>
               betrieben wird.
             </p>
             <p>
               Betreiberin der Plattform ist die <strong>{COMPANY}</strong>, {ADDRESS}
-              (nachfolgend „Szene" oder „wir").
+              (nachfolgend &bdquo;Szene&ldquo; oder &bdquo;wir&ldquo;).
             </p>
             <p>
               Mit der Registrierung eines Nutzerkontos oder der fortgesetzten Nutzung der Plattform erklärt der

@@ -61,7 +61,7 @@ export default function SubmitPage() {
         </div>
         <h1 className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>Submitted!</h1>
         <p className="text-sm max-w-xs" style={{ color: "var(--text-muted)" }}>
-          We'll review it and add it to the app. Usually within 24h.
+          We&apos;ll review it and add it to the app. Usually within 24h.
         </p>
         <div className="flex gap-3">
           <button onClick={() => { setDone(false); setVName(""); setETitle("") }}

@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
+import { getAnthropic } from "@/lib/anthropic"
 
 export const runtime = "nodejs"
-
-const client = new Anthropic()
 
 const ADMIN_PW = process.env.ADMIN_PASSWORD ?? "szene2026"
 
@@ -51,6 +49,12 @@ Respond ONLY in this exact JSON format:
 }`
 
   try {
+    let client
+    try { client = getAnthropic() } catch (e) {
+      console.error("Anthropic client error:", e)
+      return NextResponse.json({ error: "AI not configured. Set ANTHROPIC_API_KEY." }, { status: 503 })
+    }
+
     const res = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 600,

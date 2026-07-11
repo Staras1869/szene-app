@@ -53,8 +53,8 @@ export function NewsletterPopup() {
             <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3">
               <Check className="w-6 h-6 text-emerald-400" />
             </div>
-            <p className="text-white font-semibold">You're on the list.</p>
-            <p className="text-white/40 text-sm mt-1">We'll let you know when something good is happening.</p>
+            <p className="text-white font-semibold">You&apos;re on the list.</p>
+            <p className="text-white/40 text-sm mt-1">We&apos;ll let you know when something good is happening.</p>
           </div>
         ) : (
           <>

@@ -74,6 +74,49 @@ model Event {
   @@map("events")
 }
 
+model DiscoveredVenue {
+  id            String   @id @default(cuid())
+  name          String
+  city          String
+  category      String
+  mentions      Int
+  avgEngagement Float
+  recentActivity Boolean
+  confidence    Float
+  suggestedInfo Json
+  source        String   @default("instagram")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([name, city])
+  @@map("discovered_venues")
+}
+
+model EventValidation {
+  id           String   @id @default(cuid())
+  externalId   String?
+  verdict      Boolean
+  rawResponse  String?
+  modelUsed    String?
+  confidence   Float?
+  reason       String?
+  createdAt    DateTime @default(now())
+
+  @@map("event_validations")
+}
+
+model AdminNotification {
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  meta      Json?
+  resolved  Boolean  @default(false)
+  resolvedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("admin_notifications")
+}
+
 // OSM venue id stored as string — no FK into Venue table (venues come from OpenStreetMap live)
 model Review {
   id        String   @id @default(cuid())

@@ -6,18 +6,23 @@
  *   2. Instagram Business Discovery — caption-parsed event posts per venue
  *   3. Resident Advisor (RA)      — club/electronic events, all 8 cities
  *   4. Ticketmaster               — concerts + ticketed events, all 8 cities
+ *   5. Eventbrite                 — ticketed events, all 8 cities
  *
  * Required env vars:
- *   META_ACCESS_TOKEN      — Long-lived Page Access Token
- *   META_IG_BUSINESS_ID    — Szene IG Business Account ID
+ *   META_ACCESS_TOKEN      — Long-lived Page Access Token (Meta/IG — add later)
+ *   META_IG_BUSINESS_ID    — Szene IG Business Account ID (Meta/IG — add later)
  *   TICKETMASTER_API_KEY   — Ticketmaster Discovery API key
+ *   EVENTBRITE_API_KEY     — Eventbrite Private Token
+ *   ANTHROPIC_API_KEY      — Used for AI legitimacy validation
  *
  * Run via POST /api/events/sync (secured with CRON_SECRET).
  */
 
+import { getAnthropic } from "@/lib/anthropic"
 import { prisma } from "@/lib/prisma"
-import { getBusinessProfile } from "@/lib/instagram-graph"
+import { getBusinessProfile, isInstagramConfigured } from "@/lib/instagram-graph"
 import { MANNHEIM_HEIDELBERG_VENUES, type Venue } from "@/lib/venues-database"
+import { sendAdminAlert } from "@/lib/admin-notifier"
 
 const BASE = "https://graph.facebook.com/v21.0"
 
@@ -68,21 +73,21 @@ function parseFBEvent(fb: FBEvent, venue: Venue) {
   const time = `${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")}`
 
   return {
-    title:       fb.name,
+    title: fb.name,
     description: fb.description ?? null,
     date,
-    time:        time === "00:00" ? null : time,
-    venue:       fb.place?.name ?? venue.name,
-    city:        venue.city,
-    category:    venue.category,
-    price:       null,
-    imageUrl:    fb.cover?.source ?? null,
-    sourceUrl:   fb.ticket_uri ?? `https://www.facebook.com/events/${fb.id}`,
-    lat:         null,
-    lon:         null,
-    status:      "approved",
-    source:      "facebook",
-    externalId:  `fb_${fb.id}`,
+    time: time === "00:00" ? null : time,
+    venue: fb.place?.name ?? venue.name,
+    city: venue.city,
+    category: venue.category,
+    price: null,
+    imageUrl: fb.cover?.source ?? null,
+    sourceUrl: fb.ticket_uri ?? `https://www.facebook.com/events/${fb.id}`,
+    lat: null,
+    lon: null,
+    status: "approved",
+    source: "facebook",
+    externalId: `fb_${fb.id}`,
   }
 }
 
@@ -171,6 +176,11 @@ function isEventCaption(caption: string): boolean {
 async function syncInstagramEvents(venue: Venue) {
   if (!venue.instagram) return []
 
+  if (!isInstagramConfigured()) {
+    console.warn(`[sync] Instagram sync skipped for ${venue.name}: META_ACCESS_TOKEN or META_IG_BUSINESS_ID is not configured.`)
+    return []
+  }
+
   const profile = await getBusinessProfile(venue.instagram, 12)
   if (!profile?.media?.data) return []
 
@@ -191,21 +201,75 @@ function parseIGPost(
 ) {
   const caption = post.caption ?? ""
   return {
-    title:       extractTitle(caption, venue.name),
+    title: extractTitle(caption, venue.name),
     description: caption.length > 300 ? caption.slice(0, 300) + "…" : caption,
     date,
-    time:        extractTime(caption),
-    venue:       venue.name,
-    city:        venue.city,
-    category:    venue.category,
-    price:       null,
-    imageUrl:    post.media_url ?? null,
-    sourceUrl:   post.permalink,
-    lat:         null,
-    lon:         null,
-    status:      "approved",
-    source:      "instagram",
-    externalId:  `ig_${post.id}`,
+    time: extractTime(caption),
+    venue: venue.name,
+    city: venue.city,
+    category: venue.category,
+    price: null,
+    imageUrl: post.media_url ?? null,
+    sourceUrl: post.permalink,
+    lat: null,
+    lon: null,
+    status: "approved",
+    source: "instagram",
+    externalId: `ig_${post.id}`,
+  }
+}
+
+// ─── AI validation ────────────────────────────────────────────────────────────
+
+// Batch-validates up to 20 events at once — one Claude call instead of one per event
+async function batchValidateEvents(
+  events: Array<{ title: string; venue: string; date: string; description?: string | null; source: string }>
+): Promise<Array<{ ok: boolean; raw: string; confidence: number | null; reason: string | null }>> {
+  if (events.length === 0) return []
+
+  let ai
+  try { ai = getAnthropic() } catch (e) {
+    // If Anthropic is not configured, fail-open: accept events by default
+    return events.map(() => ({ ok: true, raw: "(ai-missing - default accept)", confidence: null, reason: null }))
+  }
+
+  try {
+    const list = events
+      .map((e, i) => `${i + 1}. Title: "${e.title}" | Venue: "${e.venue}" | Date: ${e.date} | Source: ${e.source} | Desc: ${e.description?.slice(0, 100) ?? "none"}`)
+      .join("\n")
+
+    const msg = await ai.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 200,
+      system: "You are a strict event legitimacy checker for a nightlife app covering German cities. For each event return YES or NO on its own line, followed by an optional short reason in parentheses. Do not return any other text.",
+      messages: [{
+        role: "user",
+        content: `For each event below, answer YES if it is a real, specific nightlife or music event (party, concert, club night, festival, DJ event, live act). Answer NO if: spam, test data, generic title like \"Event\", missing date, or not a nightlife/music event.\n\n${list}\n\nRespond with exactly ${events.length} lines, each like: YES or NO (reason).`,
+      }],
+    })
+
+    const raw = (msg.content[0] as { text: string }).text.trim()
+    const lines = raw.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+    const results = lines.map((line) => {
+      const ok = line.toUpperCase().startsWith("YES")
+      // Try to extract a confidence number like "confidence:0.85" or "0.85"
+      const confMatch = line.match(/([0-9]+\.?[0-9]*)%?/) // crude fallback
+      let confidence: number | null = null
+      if (confMatch) {
+        const n = Number(confMatch[1])
+        confidence = n > 1 ? n / 100 : n
+        if (!isFinite(confidence)) confidence = null
+      }
+      // Extract reason inside parentheses
+      const reasonMatch = line.match(/\(([^)]+)\)/)
+      const reason = reasonMatch ? reasonMatch[1].trim() : null
+      return { ok, raw: line, confidence, reason }
+    })
+    // Pad with open approvals if fewer lines were returned
+    while (results.length < events.length) results.push({ ok: true, raw: "(no response - default accept)", confidence: null, reason: null })
+    return results
+  } catch (err) {
+    return events.map(() => ({ ok: true, raw: "(ai-error - default accept)", confidence: null, reason: null })) // fail open on API error
   }
 }
 
@@ -219,18 +283,111 @@ type EventRow = {
   status: string; source: string; externalId: string
 }
 
+// Batch-validates a list of events with AI, then upserts the approved ones.
+// Returns count of events saved.
+export async function validateAndUpsertBatch(rows: EventRow[]): Promise<number> {
+  if (rows.length === 0) return 0
+  const CHUNK = 20
+  let saved = 0
+  for (let i = 0; i < rows.length; i += CHUNK) {
+    const chunk = rows.slice(i, i + CHUNK)
+    const verdicts = await batchValidateEvents(chunk)
+    for (let j = 0; j < chunk.length; j++) {
+      const v = verdicts[j]
+      try {
+        // Store audit log for each event
+        await prisma.eventValidation.create({
+          data: {
+            externalId: chunk[j].externalId,
+            verdict: v.ok,
+            rawResponse: v.raw,
+            modelUsed: "claude-haiku-4-5-20251001",
+          },
+        })
+      } catch (e) {
+        console.warn("[sync] Failed to write event validation record:", e)
+      }
+
+      if (!v.ok) {
+        console.warn(`[sync] AI rejected: "${chunk[j].title}" @ ${chunk[j].venue}`)
+        // Create an admin notification for manual review
+        try {
+          const note = await prisma.adminNotification.create({
+            data: {
+              type: "event_rejection",
+              message: `AI rejected event: ${chunk[j].title} @ ${chunk[j].venue}`,
+              meta: {
+                externalId: chunk[j].externalId,
+                title: chunk[j].title,
+                venue: chunk[j].venue,
+                reason: v.raw,
+                confidence: v.confidence,
+              },
+            },
+          })
+          // Notify admins
+          sendAdminAlert("AI Rejected Event", `${note.message}\nReason: ${v.raw}\nExternalId: ${chunk[j].externalId}`)
+        } catch (e) {
+          console.warn("[sync] Failed to create admin notification:", e)
+        }
+        continue
+      }
+
+      await upsertEvent(chunk[j])
+      saved++
+    }
+  }
+  return saved
+}
+
+// Single-event wrapper kept for backwards compat (used by FB/IG paths)
+async function validateAndUpsert(data: EventRow): Promise<boolean> {
+  const [v] = await batchValidateEvents([data])
+  try {
+    await prisma.eventValidation.create({
+      data: {
+        externalId: data.externalId,
+        verdict: v.ok,
+        rawResponse: v.raw,
+        modelUsed: "claude-haiku-4-5-20251001",
+      },
+    })
+  } catch (e) {
+    console.warn("[sync] Failed to write event validation record:", e)
+  }
+
+  if (!v.ok) {
+    console.warn(`[sync] AI rejected: "${data.title}" @ ${data.venue}`)
+    try {
+      await prisma.adminNotification.create({
+        data: {
+          type: "event_rejection",
+          message: `AI rejected event: ${data.title} @ ${data.venue}`,
+          meta: { externalId: data.externalId, title: data.title, venue: data.venue, reason: v.raw },
+        },
+      })
+    } catch (e) {
+      console.warn("[sync] Failed to create admin notification:", e)
+    }
+    return false
+  }
+
+  await upsertEvent(data)
+  return true
+}
+
 async function upsertEvent(data: EventRow) {
   await prisma.event.upsert({
-    where:  { externalId: data.externalId },
+    where: { externalId: data.externalId },
     update: {
-      title:       data.title,
+      title: data.title,
       description: data.description,
-      date:        data.date,
-      time:        data.time,
-      venue:       data.venue,
-      imageUrl:    data.imageUrl,
-      sourceUrl:   data.sourceUrl,
-      price:       data.price,
+      date: data.date,
+      time: data.time,
+      venue: data.venue,
+      imageUrl: data.imageUrl,
+      sourceUrl: data.sourceUrl,
+      price: data.price,
     },
     create: data,
   })
@@ -250,7 +407,7 @@ async function syncRA(city: string): Promise<number> {
   if (!area) return 0
 
   const today = new Date().toISOString().split("T")[0]
-  const end   = new Date(Date.now() + 60 * 24 * 3600_000).toISOString().split("T")[0]
+  const end = new Date(Date.now() + 60 * 24 * 3600_000).toISOString().split("T")[0]
 
   const res = await fetch("https://ra.co/graphql", {
     method: "POST",
@@ -269,32 +426,31 @@ async function syncRA(city: string): Promise<number> {
 
   if (!res.ok) return 0
   const data = await res.json()
-  const listings = data?.data?.eventListings?.data ?? []
+  const listings: any[] = data?.data?.eventListings?.data ?? []
 
-  let count = 0
+  const rows: EventRow[] = []
   for (const l of listings) {
     const e = l.event
     if (!e?.id || !e?.date) continue
-    await upsertEvent({
-      title:       e.title ?? "RA Event",
+    rows.push({
+      title: e.title ?? "RA Event",
       description: null,
-      date:        e.date.split("T")[0],
-      time:        e.startTime ?? null,
-      venue:       e.venue?.name ?? city,
-      city:        city.charAt(0).toUpperCase() + city.slice(1),
-      category:    "Nightlife",
-      price:       null,
-      imageUrl:    e.images?.[0]?.filename ? `https://ra.co${e.images[0].filename}` : null,
-      sourceUrl:   e.contentUrl ? `https://ra.co${e.contentUrl}` : null,
-      lat:         null,
-      lon:         null,
-      status:      "approved",
-      source:      "ra",
-      externalId:  `ra_${e.id}`,
+      date: e.date.split("T")[0],
+      time: e.startTime ?? null,
+      venue: e.venue?.name ?? city,
+      city: city.charAt(0).toUpperCase() + city.slice(1),
+      category: "Nightlife",
+      price: null,
+      imageUrl: e.images?.[0]?.filename ? `https://ra.co${e.images[0].filename}` : null,
+      sourceUrl: e.contentUrl ? `https://ra.co${e.contentUrl}` : null,
+      lat: null,
+      lon: null,
+      status: "approved",
+      source: "ra",
+      externalId: `ra_${e.id}`,
     })
-    count++
   }
-  return count
+  return validateAndUpsertBatch(rows)
 }
 
 // ─── Ticketmaster ─────────────────────────────────────────────────────────────
@@ -326,30 +482,103 @@ async function syncTicketmaster(city: string): Promise<number> {
   const data = await res.json()
   const events = data._embedded?.events ?? []
 
-  let count = 0
+  const rows: EventRow[] = []
   for (const e of events) {
     if (!e?.id) continue
     const venue = e._embedded?.venues?.[0]
-    await upsertEvent({
-      title:       e.name,
+    rows.push({
+      title: e.name,
       description: null,
-      date:        e.dates?.start?.localDate ?? "",
-      time:        e.dates?.start?.localTime?.slice(0, 5) ?? null,
-      venue:       venue?.name ?? label,
-      city:        label,
-      category:    e.classifications?.[0]?.genre?.name ?? "Music",
-      price:       e.priceRanges ? `€${Math.round(e.priceRanges[0].min)}` : null,
-      imageUrl:    e.images?.find((i: any) => i.ratio === "16_9")?.url ?? e.images?.[0]?.url ?? null,
-      sourceUrl:   e.url ?? null,
-      lat:         venue?.location?.latitude  ? parseFloat(venue.location.latitude)  : null,
-      lon:         venue?.location?.longitude ? parseFloat(venue.location.longitude) : null,
-      status:      "approved",
-      source:      "ticketmaster",
-      externalId:  `tm_${e.id}`,
+      date: e.dates?.start?.localDate ?? "",
+      time: e.dates?.start?.localTime?.slice(0, 5) ?? null,
+      venue: venue?.name ?? label,
+      city: label,
+      category: e.classifications?.[0]?.genre?.name ?? "Music",
+      price: e.priceRanges ? `€${Math.round(e.priceRanges[0].min)}` : null,
+      imageUrl: e.images?.find((i: any) => i.ratio === "16_9")?.url ?? e.images?.[0]?.url ?? null,
+      sourceUrl: e.url ?? null,
+      lat: venue?.location?.latitude ? parseFloat(venue.location.latitude) : null,
+      lon: venue?.location?.longitude ? parseFloat(venue.location.longitude) : null,
+      status: "approved",
+      source: "ticketmaster",
+      externalId: `tm_${e.id}`,
     })
-    count++
   }
-  return count
+  return validateAndUpsertBatch(rows)
+}
+
+// ─── Eventbrite ───────────────────────────────────────────────────────────────
+
+const EB_CITIES: Record<string, string> = {
+  mannheim: "Mannheim", heidelberg: "Heidelberg", frankfurt: "Frankfurt",
+  stuttgart: "Stuttgart", karlsruhe: "Karlsruhe",
+  berlin: "Berlin", munich: "Munich", cologne: "Cologne",
+}
+
+async function syncEventbrite(city: string): Promise<number> {
+  const key = process.env.EVENTBRITE_API_KEY
+  if (!key) return 0
+
+  const label = EB_CITIES[city]
+  if (!label) return 0
+
+  const params = new URLSearchParams({
+    "location.address": `${label}, Germany`,
+    "location.within": "10km",
+    "categories": "103,105",  // 103 = Music, 105 = Nightlife
+    "expand": "venue",
+    "page_size": "50",
+  })
+
+  const allRows: EventRow[] = []
+  let nextUrl: string | null = `https://www.eventbriteapi.com/v3/events/search/?${params}`
+
+  while (nextUrl) {
+    const url = nextUrl
+    const res: Response = await fetch(url, {
+      headers: { Authorization: `Bearer ${key}` },
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) break
+
+    const data: any = await res.json()
+    const items: any[] = data.events ?? []
+
+    for (const e of items) {
+      if (!e?.id || !e?.name?.text) continue
+      const startUtc: string = e.start?.utc ?? ""
+      if (!startUtc) continue
+
+      const dt = new Date(startUtc)
+      const date = dt.toISOString().split("T")[0]
+      const time = `${String(dt.getHours()).padStart(2, "0")}:${String(dt.getMinutes()).padStart(2, "0")}`
+      const venue = e.venue
+
+      allRows.push({
+        title: e.name.text,
+        description: e.description?.text?.slice(0, 500) ?? null,
+        date,
+        time: time === "00:00" ? null : time,
+        venue: venue?.name ?? label,
+        city: label,
+        category: e.subcategory_id ? "Nightlife" : "Music",
+        price: e.is_free ? "Free" : null,
+        imageUrl: e.logo?.url ?? null,
+        sourceUrl: e.url ?? null,
+        lat: venue?.latitude ? parseFloat(venue.latitude) : null,
+        lon: venue?.longitude ? parseFloat(venue.longitude) : null,
+        status: "approved",
+        source: "eventbrite",
+        externalId: `eb_${e.id}`,
+      })
+    }
+
+    nextUrl = data.pagination?.has_more_items && data.pagination.continuation
+      ? `https://www.eventbriteapi.com/v3/events/search/?${params}&continuation=${data.pagination.continuation}`
+      : null
+  }
+
+  return validateAndUpsertBatch(allRows)
 }
 
 // ─── Main sync ────────────────────────────────────────────────────────────────
@@ -357,12 +586,13 @@ async function syncTicketmaster(city: string): Promise<number> {
 const ALL_CITIES = ["mannheim", "heidelberg", "frankfurt", "stuttgart", "karlsruhe", "berlin", "munich", "cologne"]
 
 export interface SyncResult {
-  venue:        string
-  fb:           number
-  ig:           number
-  ra:           number
+  venue: string
+  fb: number
+  ig: number
+  ra: number
   ticketmaster: number
-  errors:       string[]
+  eventbrite: number
+  errors: string[]
 }
 
 export async function syncVenueEvents(venue: Venue): Promise<SyncResult> {
@@ -374,8 +604,8 @@ export async function syncVenueEvents(venue: Venue): Promise<SyncResult> {
   try {
     const events = await fetchFacebookEvents(venue)
     for (const e of events) {
-      await upsertEvent(parseFBEvent(e, venue) as EventRow)
-      fb++
+      const saved = await validateAndUpsert(parseFBEvent(e, venue) as EventRow)
+      if (saved) fb++
     }
   } catch (err) {
     errors.push(`FB: ${String(err)}`)
@@ -385,14 +615,14 @@ export async function syncVenueEvents(venue: Venue): Promise<SyncResult> {
   try {
     const posts = await syncInstagramEvents(venue)
     for (const p of posts) {
-      await upsertEvent(p as EventRow)
-      ig++
+      const saved = await validateAndUpsert(p as EventRow)
+      if (saved) ig++
     }
   } catch (err) {
     errors.push(`IG: ${String(err)}`)
   }
 
-  return { venue: venue.name, fb, ig, ra: 0, ticketmaster: 0, errors }
+  return { venue: venue.name, fb, ig, ra: 0, ticketmaster: 0, eventbrite: 0, errors }
 }
 
 export async function syncAllVenues(): Promise<SyncResult[]> {
@@ -403,26 +633,27 @@ export async function syncAllVenues(): Promise<SyncResult[]> {
     results.push(await syncVenueEvents(venue))
   }
 
-  // RA + Ticketmaster — parallel per city, both sources at once
-  const cityResults = await Promise.allSettled(
-    ALL_CITIES.map(async (city) => {
-      const [ra, tm] = await Promise.allSettled([syncRA(city), syncTicketmaster(city)])
-      return {
-        venue:        city,
-        fb:           0,
-        ig:           0,
-        ra:           ra.status === "fulfilled" ? ra.value : 0,
-        ticketmaster: tm.status === "fulfilled" ? tm.value : 0,
-        errors:       [
-          ...(ra.status === "rejected" ? [`RA: ${ra.reason}`] : []),
-          ...(tm.status === "rejected" ? [`TM: ${tm.reason}`] : []),
-        ],
-      }
+  // RA + Ticketmaster + Eventbrite — sequential per city to stay within DB connection pool,
+  // but all three sources run in parallel within each city (fetch-heavy, not DB-heavy).
+  for (const city of ALL_CITIES) {
+    const [ra, tm, eb] = await Promise.allSettled([
+      syncRA(city),
+      syncTicketmaster(city),
+      syncEventbrite(city),
+    ])
+    results.push({
+      venue: city,
+      fb: 0,
+      ig: 0,
+      ra: ra.status === "fulfilled" ? ra.value : 0,
+      ticketmaster: tm.status === "fulfilled" ? tm.value : 0,
+      eventbrite: eb.status === "fulfilled" ? eb.value : 0,
+      errors: [
+        ...(ra.status === "rejected" ? [`RA: ${String(ra.reason)}`] : []),
+        ...(tm.status === "rejected" ? [`TM: ${String(tm.reason)}`] : []),
+        ...(eb.status === "rejected" ? [`EB: ${String(eb.reason)}`] : []),
+      ],
     })
-  )
-
-  for (const r of cityResults) {
-    if (r.status === "fulfilled") results.push(r.value)
   }
 
   return results

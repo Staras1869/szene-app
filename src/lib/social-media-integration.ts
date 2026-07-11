@@ -21,12 +21,11 @@ export class SocialMediaIntegration {
 
     try {
       if (this.config.facebookAccessToken) {
-        // Real Facebook Graph API implementation
         return await this.fetchRealFacebookEvents(venue)
-      } else {
-        // Demo mode - generate realistic events
-        return await this.generateFacebookStyleEvents(venue)
       }
+
+      console.warn(`[social-media-integration] FACEBOOK access token missing; skipping Facebook events for ${venue.name}`)
+      return []
     } catch (error) {
       console.error(`Facebook API error for ${venue.name}:`, error)
       return []
@@ -40,12 +39,11 @@ export class SocialMediaIntegration {
 
     try {
       if (this.config.instagramAccessToken) {
-        // Real Instagram API implementation
         return await this.fetchRealInstagramEvents(venue)
-      } else {
-        // Demo mode - generate realistic events
-        return await this.generateInstagramStyleEvents(venue)
       }
+
+      console.warn(`[social-media-integration] INSTAGRAM access token missing; skipping Instagram events for ${venue.name}`)
+      return []
     } catch (error) {
       console.error(`Instagram API error for ${venue.name}:`, error)
       return []
@@ -104,57 +102,14 @@ export class SocialMediaIntegration {
     }
   }
 
-  private generateFacebookStyleEvents(venue: Venue): Promise<ScrapedEventData[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const events = this.createSocialMediaEvents(venue, "facebook", 2)
-        resolve(events)
-      }, 1000)
-    })
+  private generateFacebookStyleEvents(_: Venue): Promise<ScrapedEventData[]> {
+    console.warn("[social-media-integration] Facebook demo generation disabled. No fake Facebook events will be returned.")
+    return Promise.resolve([])
   }
 
-  private generateInstagramStyleEvents(venue: Venue): Promise<ScrapedEventData[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const events = this.createSocialMediaEvents(venue, "instagram", 1)
-        resolve(events)
-      }, 800)
-    })
-  }
-
-  private createSocialMediaEvents(venue: Venue, platform: "facebook" | "instagram", count: number): ScrapedEventData[] {
-    const events: ScrapedEventData[] = []
-    const currentDate = new Date()
-
-    for (let i = 0; i < count; i++) {
-      const eventDate = new Date(currentDate)
-      eventDate.setDate(currentDate.getDate() + i * 7 + Math.floor(Math.random() * 14))
-
-      const templates = this.getSocialMediaTemplates(venue.category, platform)
-      const template = templates[Math.floor(Math.random() * templates.length)]
-
-      events.push({
-        title: template.title,
-        venue: venue.name,
-        venueId: venue.id,
-        date: eventDate.toISOString().split("T")[0],
-        time: template.time,
-        city: venue.city,
-        category: venue.category,
-        price: template.price,
-        description: template.description,
-        url: `https://${platform}.com/${venue[platform]}/events/${Date.now()}`,
-        imageUrl: this.getEventImage(venue.category),
-        source: platform,
-        rawData: {
-          platform,
-          scrapedAt: new Date().toISOString(),
-          engagement: Math.floor(Math.random() * 500) + 50,
-        },
-      })
-    }
-
-    return events
+  private generateInstagramStyleEvents(_: Venue): Promise<ScrapedEventData[]> {
+    console.warn("[social-media-integration] Instagram demo generation disabled. No fake Instagram events will be returned.")
+    return Promise.resolve([])
   }
 
   private getSocialMediaTemplates(category: string, platform: "facebook" | "instagram") {

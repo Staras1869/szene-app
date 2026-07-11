@@ -220,170 +220,81 @@ export class SocialMediaDiscovery {
   }
 
   private async scrapeInstagramHashtag(hashtag: string): Promise<SocialMediaPost[]> {
-    // For demo purposes, generate realistic posts
-    // In production, use Instagram Basic Display API
-
-    const posts: SocialMediaPost[] = []
-    const postCount = Math.floor(Math.random() * 15) + 5 // 5-20 posts per hashtag
-
-    for (let i = 0; i < postCount; i++) {
-      const post = this.generateRealisticInstagramPost(hashtag)
-      posts.push(post)
-    }
-
-    return posts
+    console.warn(`[social-media-discovery] Instagram hashtag scraping not implemented; skipping #${hashtag}`)
+    return []
   }
 
   private async scrapeFacebookEvents(city: string): Promise<SocialMediaPost[]> {
-    // For demo purposes, generate realistic Facebook events
-    // In production, use Facebook Graph API
-
-    const events: SocialMediaPost[] = []
-    const eventCount = Math.floor(Math.random() * 10) + 3 // 3-13 events per city
-
-    for (let i = 0; i < eventCount; i++) {
-      const event = this.generateRealisticFacebookEvent(city)
-      events.push(event)
-    }
-
-    return events
+    console.warn(`[social-media-discovery] Facebook event scraping not implemented; skipping city ${city}`)
+    return []
   }
 
   private async scrapeLocationStories(location: string): Promise<SocialMediaPost[]> {
-    // Generate realistic story content
-    const stories: SocialMediaPost[] = []
-    const storyCount = Math.floor(Math.random() * 8) + 2 // 2-10 stories per location
-
-    for (let i = 0; i < storyCount; i++) {
-      const story = this.generateRealisticLocationStory(location)
-      stories.push(story)
-    }
-
-    return stories
+    console.warn(`[social-media-discovery] Location story scraping not implemented; skipping location ${location}`)
+    return []
   }
 
-  private generateRealisticInstagramPost(hashtag: string): SocialMediaPost {
-    const venues = [
-      "Skybar Mannheim",
-      "MS Connexion",
-      "Alte Feuerwache",
-      "Capitol Mannheim",
-      "Karlstorbahnhof",
-      "Cave 54",
-      "Villa Nachttanz",
-      "Zeitraumexit",
-      "Rooftop Bar MA",
-      "Underground Club HD",
-      "Jazz Lounge",
-      "Cocktail Corner",
-    ]
-
-    const venue = venues[Math.floor(Math.random() * venues.length)]
-    const city = hashtag.includes("heidelberg") ? "Heidelberg" : "Mannheim"
-
-    const postTemplates = [
-      `Amazing night at ${venue}! 🎉 The DJ was incredible and the crowd was perfect ✨ ${hashtag} #nightlife #party`,
-      `Best cocktails in ${city} at ${venue} 🍸 Perfect for date night! ${hashtag} #cocktails #datenight`,
-      `Live music tonight at ${venue}! 🎵 Starting at 21:00, entry €15 ${hashtag} #livemusic #tonight`,
-      `Rooftop vibes at ${venue} 🌆 Perfect weather for drinks with friends! ${hashtag} #rooftop #friends`,
-      `New event at ${venue} this weekend! 🎊 Saturday 22:00, tickets available at door ${hashtag} #weekend #event`,
-    ]
-
-    const content = postTemplates[Math.floor(Math.random() * postTemplates.length)]
-    const extractedHashtags = content.match(/#\w+/g) || []
-
+  private generateRealisticInstagramPost(_: string): SocialMediaPost {
+    console.warn("[social-media-discovery] Instagram demo generation disabled. No fake posts will be returned.")
     return {
-      id: `ig_${Date.now()}_${Math.random()}`,
+      id: `disabled_${Date.now()}`,
       platform: "instagram",
-      author: `@${city.toLowerCase()}_nightlife_${Math.floor(Math.random() * 1000)}`,
-      content,
-      hashtags: extractedHashtags,
+      author: "",
+      content: "",
+      hashtags: [],
       location: {
-        name: venue,
-        city,
-        coordinates: {
-          lat: city === "Mannheim" ? 49.4875 : 49.4093,
-          lng: city === "Mannheim" ? 8.466 : 8.6937,
-        },
+        name: "",
+        city: "",
       },
       engagement: {
-        likes: Math.floor(Math.random() * 500) + 50,
-        comments: Math.floor(Math.random() * 50) + 5,
+        likes: 0,
+        comments: 0,
       },
-      mediaUrl: `/images/${Math.random() > 0.5 ? "rooftop-bar" : "techno-club"}.jpg`,
-      timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-      eventIndicators: this.analyzeEventContent(content),
+      timestamp: new Date().toISOString(),
+      eventIndicators: { isEvent: false, confidence: 0 },
     }
   }
 
-  private generateRealisticFacebookEvent(city: string): SocialMediaPost {
-    const eventTitles = [
-      "Saturday Night Fever Party",
-      "Live Jazz Evening",
-      "Cocktail Masterclass",
-      "Rooftop Summer Session",
-      "Underground Electronic Night",
-      "Wine Tasting Event",
-      "Speed Dating Night",
-      "Karaoke Competition",
-      "Art Gallery Opening",
-      "Food Festival",
-    ]
-
-    const title = eventTitles[Math.floor(Math.random() * eventTitles.length)]
-    const venue = `${city} Event Location ${Math.floor(Math.random() * 10) + 1}`
-    const price = `€${Math.floor(Math.random() * 20) + 10}`
-    const time = `${Math.floor(Math.random() * 4) + 19}:00`
-
-    const content = `🎉 ${title} at ${venue}! Join us for an unforgettable evening. Starting at ${time}, entry ${price}. Limited tickets available!`
-
+  private generateRealisticFacebookEvent(_: string): SocialMediaPost {
+    console.warn("[social-media-discovery] Facebook demo generation disabled. No fake events will be returned.")
     return {
-      id: `fb_${Date.now()}_${Math.random()}`,
+      id: `disabled_${Date.now()}`,
       platform: "facebook",
-      author: venue,
-      content,
-      hashtags: [`#${city.toLowerCase()}`, "#event", "#party"],
+      author: "",
+      content: "",
+      hashtags: [],
       location: {
-        name: venue,
-        city,
+        name: "",
+        city: "",
       },
       engagement: {
-        likes: Math.floor(Math.random() * 200) + 20,
-        comments: Math.floor(Math.random() * 30) + 3,
-        shares: Math.floor(Math.random() * 15) + 1,
+        likes: 0,
+        comments: 0,
+        shares: 0,
       },
-      timestamp: new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
-      eventIndicators: this.analyzeEventContent(content),
+      timestamp: new Date().toISOString(),
+      eventIndicators: { isEvent: false, confidence: 0 },
     }
   }
 
-  private generateRealisticLocationStory(location: string): SocialMediaPost {
-    const storyTemplates = [
-      `Currently at ${location} and it's packed! 🔥`,
-      `${location} has the best atmosphere tonight! ✨`,
-      `Live music at ${location} right now! 🎵`,
-      `Happy hour at ${location} until 20:00! 🍻`,
-      `New cocktail menu at ${location}! Must try! 🍸`,
-    ]
-
-    const content = storyTemplates[Math.floor(Math.random() * storyTemplates.length)]
-
+  private generateRealisticLocationStory(_: string): SocialMediaPost {
+    console.warn("[social-media-discovery] Story demo generation disabled. No fake stories will be returned.")
     return {
-      id: `story_${Date.now()}_${Math.random()}`,
+      id: `disabled_${Date.now()}`,
       platform: "instagram",
-      author: `@story_user_${Math.floor(Math.random() * 1000)}`,
-      content,
-      hashtags: [`#${location.toLowerCase().replace(/\s+/g, "")}`],
+      author: "",
+      content: "",
+      hashtags: [],
       location: {
-        name: location,
-        city: location.includes("Heidelberg") ? "Heidelberg" : "Mannheim",
+        name: "",
+        city: "",
       },
       engagement: {
-        likes: Math.floor(Math.random() * 100) + 10,
-        comments: Math.floor(Math.random() * 20) + 1,
+        likes: 0,
+        comments: 0,
       },
-      timestamp: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-      eventIndicators: this.analyzeEventContent(content),
+      timestamp: new Date().toISOString(),
+      eventIndicators: { isEvent: false, confidence: 0 },
     }
   }
 
@@ -627,7 +538,7 @@ export class SocialMediaDiscovery {
       totalPosts: allPosts.length,
       eventPosts: events.length,
       newVenuesFound: newVenues.length,
-      avgEngagement: allPosts.reduce((sum, post) => sum + post.engagement.likes, 0) / allPosts.length,
+      avgEngagement: allPosts.length ? allPosts.reduce((sum, post) => sum + post.engagement.likes, 0) / allPosts.length : 0,
       platforms: {
         instagram: allPosts.filter((p) => p.platform === "instagram").length,
         facebook: allPosts.filter((p) => p.platform === "facebook").length,

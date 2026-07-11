@@ -5,6 +5,7 @@ import { Star, MapPin, Clock, Euro, Wine, Grape, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const wineVenues = [
   {
@@ -57,6 +58,7 @@ const wineVenues = [
 export function WineSection() {
   const { t } = useLanguage()
   const [hoveredVenue, setHoveredVenue] = useState<number | null>(null)
+  const router = useRouter()
 
   const getAtmosphereTranslation = (atmosphere: string) => {
     const atmosphereMap = {
@@ -140,7 +142,13 @@ export function WineSection() {
 
                 {hoveredVenue === venue.id && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6">
-                    <Button className="bg-white text-gray-900 hover:bg-purple-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce">
+                    <Button
+                      className="bg-white text-gray-900 hover:bg-purple-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleWineClick(venue)
+                      }}
+                    >
                       <Sparkles className="w-4 h-4 mr-2" />
                       {t("bookWineTasting")}
                     </Button>
@@ -206,6 +214,7 @@ export function WineSection() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-purple-500 to-red-500 hover:from-purple-600 hover:to-red-600 text-white rounded-full px-8 shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={() => router.push('/discover?category=wine')}
           >
             {t("exploreWineCulture")}
           </Button>

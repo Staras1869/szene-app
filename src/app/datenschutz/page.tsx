@@ -124,7 +124,7 @@ export default function DatenschutzPage() {
             <ul>
               <li><strong>Auskunft</strong> (Art. 15 DSGVO) – welche Daten wir über Sie verarbeiten</li>
               <li><strong>Berichtigung</strong> (Art. 16 DSGVO) – Korrektur unrichtiger Daten</li>
-              <li><strong>Löschung</strong> (Art. 17 DSGVO) – „Recht auf Vergessenwerden"</li>
+              <li><strong>Löschung</strong> (Art. 17 DSGVO) &ndash; &bdquo;Recht auf Vergessenwerden&ldquo;</li>
               <li><strong>Einschränkung</strong> (Art. 18 DSGVO) – Einschränkung der Verarbeitung</li>
               <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO) – Erhalt Ihrer Daten in maschinenlesbarem Format</li>
               <li><strong>Widerspruch</strong> (Art. 21 DSGVO) – gegen auf berechtigtem Interesse basierende Verarbeitung</li>

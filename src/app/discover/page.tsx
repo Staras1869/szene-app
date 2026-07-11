@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { getBestImage } from "@/lib/image-utils"
 
 const VenuesMap = dynamic(() => import("@/components/venues-map"), { ssr: false })
 
@@ -117,17 +118,20 @@ function EventCard({ event }: { event: EventItem }) {
       }
     >
       <div className="aspect-[16/9] overflow-hidden bg-gradient-to-br from-purple-100 to-blue-100 relative shrink-0">
-        {event.imageUrl ? (
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl">🎉</div>
-        )}
+        {(() => {
+          const img = getBestImage(event as any)
+          return img ? (
+            <img
+              src={img}
+              alt={event.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-5xl">🎉</div>
+          )
+        })()}
         <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
           <Badge className="bg-black/60 text-white border-0 text-xs backdrop-blur-sm">{event.category}</Badge>
           {event.sourceName && (
@@ -405,7 +409,7 @@ export default function DiscoverPage() {
 
   const isLoading = activeTab === "events" ? eventsLoading
     : activeTab === "venues" ? venuesLoading
-    : webLoading
+      : webLoading
 
   const visibleVenues = showAllVenues ? venues : venues.slice(0, 30)
 
@@ -425,7 +429,7 @@ export default function DiscoverPage() {
             Discover Mannheim, Heidelberg & Frankfurt
           </h1>
           <p className="text-lg text-purple-200 max-w-2xl mx-auto">
-            Every bar, club, restaurant — and tonight's events — sourced in real time across all three cities.
+            Every bar, club, restaurant &mdash; and tonight&apos;s events &mdash; sourced in real time across all three cities.
           </p>
 
           {/* Search */}
@@ -452,19 +456,18 @@ export default function DiscoverPage() {
             {/* Tab buttons */}
             <div className="flex gap-1">
               {([
-                { id: "venues", label: "Venues",     icon: MapPin, desc: "All bars, clubs & restaurants" },
-                { id: "events", label: "Events",     icon: Clock,  desc: "Live & scraped events" },
-                { id: "map",    label: "Map",        icon: Map,    desc: "Interactive map view" },
-                { id: "web",    label: "Web Search", icon: Globe,  desc: "Google-powered results" },
+                { id: "venues", label: "Venues", icon: MapPin, desc: "All bars, clubs & restaurants" },
+                { id: "events", label: "Events", icon: Clock, desc: "Live & scraped events" },
+                { id: "map", label: "Map", icon: Map, desc: "Interactive map view" },
+                { id: "web", label: "Web Search", icon: Globe, desc: "Google-powered results" },
               ] as const).map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === tab.id
                       ? "bg-purple-600 text-white shadow-sm"
                       : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
@@ -478,11 +481,10 @@ export default function DiscoverPage() {
                 <button
                   key={c}
                   onClick={() => setActiveCity(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                    activeCity === c
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${activeCity === c
                       ? "bg-purple-600 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {c}
                 </button>
@@ -498,11 +500,10 @@ export default function DiscoverPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                    activeCategory === cat
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${activeCategory === cat
                       ? "bg-indigo-600 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -516,11 +517,10 @@ export default function DiscoverPage() {
                 <button
                   key={vt.value}
                   onClick={() => setActiveVenueType(vt.value)}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                    activeVenueType === vt.value
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${activeVenueType === vt.value
                       ? "bg-indigo-600 text-white"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   <vt.icon className="w-3.5 h-3.5" />
                   {vt.label}
@@ -560,8 +560,8 @@ export default function DiscoverPage() {
           <button
             onClick={() =>
               activeTab === "events" ? fetchEvents()
-              : activeTab === "venues" ? fetchVenues()
-              : fetchWebSearch()
+                : activeTab === "venues" ? fetchVenues()
+                  : fetchWebSearch()
             }
             disabled={isLoading}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-50"

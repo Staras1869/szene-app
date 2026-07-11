@@ -398,16 +398,6 @@ export default function VenuePage() {
             </div>
           </div>
 
-          {/* Embedded map */}
-          <div className="rounded-2xl overflow-hidden border border-white/[0.12]" style={{ height: 220 }}>
-            <iframe
-              title={`Map — ${venue.name}`}
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(venue.address)}&output=embed&z=15`}
-              className="w-full h-full"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
 
         </div>
 

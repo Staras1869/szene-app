@@ -7,6 +7,7 @@ import { Star, MapPin, Clock, Euro, Coffee, Utensils, Heart, Instagram, Globe, P
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 // Real brunch spots researched from Instagram hashtags and Google
 const brunchSpots = [
@@ -235,6 +236,7 @@ export function ComprehensiveBrunchSection() {
   const { t } = useLanguage()
   const [selectedCity, setSelectedCity] = useState<string>("all")
   const [hoveredSpot, setHoveredSpot] = useState<number | null>(null)
+  const router = useRouter()
 
   const getAtmosphereTranslation = (atmosphere: string) => {
     const atmosphereMap = {
@@ -371,7 +373,13 @@ export function ComprehensiveBrunchSection() {
                 {/* Hover overlay */}
                 {hoveredSpot === spot.id && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6">
-                    <Button className="bg-white text-gray-900 hover:bg-amber-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce">
+                    <Button
+                      className="bg-white text-gray-900 hover:bg-amber-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleBrunchClick(spot)
+                      }}
+                    >
                       <Heart className="w-4 h-4 mr-2" />
                       {t("reserveTable")}
                     </Button>
@@ -480,6 +488,7 @@ export function ComprehensiveBrunchSection() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full px-8 shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={() => router.push('/discover?category=brunch')}
           >
             {t("discoverMoreBrunch")}
           </Button>

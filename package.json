@@ -7,6 +7,8 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
+    "seed:osm-venues": "tsx scripts/seed-osm-venues.ts",
+    "load:venues": "tsx scripts/load-venues-to-db.ts",
     "sync:ios": "npx cap sync ios",
     "sync:android": "npx cap sync android",
     "open:ios": "npx cap open ios",
@@ -79,7 +81,7 @@
     "react-day-picker": "latest",
     "react-dom": "^18",
     "react-hook-form": "latest",
-    "react-leaflet": "^5.0.0",
+    "react-leaflet": "^4.2.1",
     "react-resizable-panels": "latest",
     "recharts": "latest",
     "resend": "^6.12.0",
@@ -91,16 +93,19 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@neondatabase/serverless": "latest",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.5.2",
     "@types/react": "^18.3.25",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.21",
+    "dotenv": "latest",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
+    "tsx": "latest",
     "typescript": "^5.9.2"
   }
 }

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import Anthropic from "@anthropic-ai/sdk"
+import { getAnthropic } from "@/lib/anthropic"
 import { z } from "zod"
 
 export const runtime = "nodejs"
-
-const client = new Anthropic()
 
 const MessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -15,7 +14,7 @@ const MessageSchema = z.object({
 const Schema = z.object({
   message: z.string().min(1).max(1000),
   // Whitelist cities to prevent injection via city field
-  city: z.enum(["mannheim","heidelberg","frankfurt","stuttgart","karlsruhe","berlin","munich","cologne"]).optional(),
+  city: z.enum(["mannheim", "heidelberg", "frankfurt", "stuttgart", "karlsruhe", "berlin", "munich", "cologne"]).optional(),
   history: z.array(MessageSchema).max(10).optional(),
 })
 
@@ -84,8 +83,14 @@ export async function POST(req: NextRequest) {
   ]
 
   try {
+    let client
+    try { client = getAnthropic() } catch (e) {
+      console.error("Anthropic client error:", e)
+      return NextResponse.json({ error: "AI not configured. Set ANTHROPIC_API_KEY." }, { status: 503 })
+    }
+
     const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: "claude-haiku-4-5",
       max_tokens: wantsJson ? 600 : 200,
       system,
       messages,
@@ -94,8 +99,8 @@ export async function POST(req: NextRequest) {
     const text = response.content[0].type === "text" ? response.content[0].text : ""
     return NextResponse.json({ reply: text })
   } catch (err: unknown) {
-    // Log internally but never expose error details to the client
-    console.error("Chat API error:", err instanceof Error ? err.message : String(err))
-    return NextResponse.json({ error: "AI unavailable. Please try again." }, { status: 503 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error("Chat API error:", msg)
+    return NextResponse.json({ error: "AI unavailable. Please try again.", detail: msg }, { status: 503 })
   }
 }

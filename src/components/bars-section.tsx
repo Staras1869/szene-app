@@ -5,6 +5,7 @@ import { Star, MapPin, Clock, Euro, Wine, CoffeeIcon as Cocktail, Users } from "
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const bars = [
   {
@@ -57,6 +58,7 @@ const bars = [
 export function BarsSection() {
   const { t } = useLanguage()
   const [hoveredBar, setHoveredBar] = useState<number | null>(null)
+  const router = useRouter()
 
   const handleBarClick = (bar: any) => {
     const barUrl = bar.website || `https://www.google.com/search?q=${encodeURIComponent(bar.name + " " + bar.location)}`
@@ -124,7 +126,13 @@ export function BarsSection() {
 
                 {hoveredBar === bar.id && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6">
-                    <Button className="bg-white text-gray-900 hover:bg-amber-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce">
+                    <Button
+                      className="bg-white text-gray-900 hover:bg-amber-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleBarClick(bar)
+                      }}
+                    >
                       <Users className="w-4 h-4 mr-2" />
                       Reserve Table
                     </Button>
@@ -182,6 +190,7 @@ export function BarsSection() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600 text-white rounded-full px-8 shadow-lg"
+            onClick={() => router.push('/discover?category=bars')}
           >
             🍸 Discover All Bars
           </Button>

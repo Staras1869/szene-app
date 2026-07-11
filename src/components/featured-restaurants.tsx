@@ -2,7 +2,9 @@
 
 import { Star, MapPin, Clock, Euro } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import { getBestImage } from "@/lib/image-utils"
 
 const events = [
   {
@@ -54,11 +56,12 @@ const handleEventClick = (event: any) => {
 }
 
 export function FeaturedRestaurants() {
+  const router = useRouter()
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-4 mb-16">
-          <h2 className="text-4xl font-bold text-gray-900">This Week's Highlights</h2>
+          <h2 className="text-4xl font-bold text-gray-900">This Week&apos;s Highlights</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Hand-picked events that represent the best of the Rhein-Neckar nightlife scene
           </p>
@@ -73,7 +76,7 @@ export function FeaturedRestaurants() {
             >
               <div className="aspect-[4/3] overflow-hidden relative">
                 <img
-                  src={event.image || "/placeholder.svg"}
+                  src={getBestImage(event as any)}
                   alt={`${event.name} - ${event.venue}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
@@ -138,7 +141,7 @@ export function FeaturedRestaurants() {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="rounded-full px-8">
+          <Button variant="outline" size="lg" className="rounded-full px-8" onClick={() => router.push('/discover')}>
             View All Events
           </Button>
         </div>

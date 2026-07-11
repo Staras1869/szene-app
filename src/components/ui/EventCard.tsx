@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getBestImage } from "@/lib/image-utils"
 
 export type Event = {
   id: string;
@@ -12,11 +13,12 @@ export type Event = {
 };
 
 export default function EventCard(e: Event) {
+  const img = getBestImage(e as any)
   return (
     <article className="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md">
-      {e.cover ? (
+      {img ? (
         <div className="relative aspect-[16/9]">
-          <Image src={e.cover} alt={e.title} fill className="object-cover" />
+          <Image src={img} alt={e.title} fill className="object-cover" />
         </div>
       ) : null}
 

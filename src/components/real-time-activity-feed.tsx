@@ -29,6 +29,8 @@ export function RealTimeActivityFeed() {
     const interval = setInterval(loadActivities, 10000)
 
     return () => clearInterval(interval)
+    // Mount-only: loadActivities uses only stable setters and constants.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadActivities = async () => {

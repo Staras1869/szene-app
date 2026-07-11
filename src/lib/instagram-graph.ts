@@ -25,40 +25,136 @@
 const BASE = "https://graph.facebook.com/v21.0"
 
 function token() {
-  return process.env.META_ACCESS_TOKEN ?? ""
+  return process.env.META_ACCESS_TOKEN?.trim() ?? ""
 }
 function igId() {
-  return process.env.META_IG_BUSINESS_ID ?? ""
+  return process.env.META_IG_BUSINESS_ID?.trim() ?? ""
 }
+
+const REQUIRED_IG_SCOPES = [
+  "instagram_basic",
+  "pages_read_engagement",
+  "instagram_manage_hashtags",
+]
 
 function isConfigured(): boolean {
   return Boolean(token() && igId())
 }
 
+export function isInstagramConfigured(): boolean {
+  return isConfigured()
+}
+
+async function getAppAccessToken(): Promise<string | null> {
+  const appId = process.env.FACEBOOK_APP_ID?.trim()
+  const appSecret = process.env.FACEBOOK_APP_SECRET?.trim()
+  if (!appId || !appSecret) return null
+  return `${appId}|${appSecret}`
+}
+
+export interface InstagramTokenDebugInfo {
+  configured: boolean
+  valid: boolean
+  tokenType?: string
+  appId?: string
+  userId?: string
+  expiresAt?: number
+  isLongLived?: boolean
+  scopes: string[]
+  missingScopes: string[]
+  error?: string
+}
+
+export async function debugMetaAccessToken(): Promise<InstagramTokenDebugInfo> {
+  const configured = isConfigured()
+  const appToken = await getAppAccessToken()
+  if (!configured) {
+    return {
+      configured: false,
+      valid: false,
+      scopes: [],
+      missingScopes: REQUIRED_IG_SCOPES,
+      error: "META_ACCESS_TOKEN and META_IG_BUSINESS_ID are required",
+    }
+  }
+
+  if (!appToken) {
+    return {
+      configured: true,
+      valid: false,
+      scopes: [],
+      missingScopes: REQUIRED_IG_SCOPES,
+      error: "FACEBOOK_APP_ID and FACEBOOK_APP_SECRET are required for token introspection",
+    }
+  }
+
+  try {
+    const url = `${BASE}/debug_token?input_token=${encodeURIComponent(token())}&access_token=${encodeURIComponent(appToken)}`
+    const res = await fetch(url, { next: { revalidate: 3600 } })
+    const data = await res.json()
+    if (!res.ok || !data?.data) {
+      return {
+        configured: true,
+        valid: false,
+        scopes: [],
+        missingScopes: REQUIRED_IG_SCOPES,
+        error: data?.error?.message ?? `debug_token failed: ${res.status}`,
+      }
+    }
+
+    const info = data.data
+    const scopes: string[] = Array.isArray(info.scopes) ? info.scopes : []
+    const missingScopes = REQUIRED_IG_SCOPES.filter((scope) => !scopes.includes(scope))
+    const expiresAt = typeof info.expires_at === "number" ? info.expires_at : undefined
+    const isLongLived = typeof expiresAt === "number" ? expiresAt - Math.floor(Date.now() / 1000) > 60 * 60 * 24 * 30 : false
+
+    return {
+      configured: true,
+      valid: Boolean(info.is_valid),
+      tokenType: info.type,
+      appId: info.app_id,
+      userId: info.user_id,
+      expiresAt,
+      isLongLived,
+      scopes,
+      missingScopes,
+      error: info.is_valid ? undefined : "Token is not valid",
+    }
+  } catch (error) {
+    return {
+      configured: true,
+      valid: false,
+      scopes: [],
+      missingScopes: REQUIRED_IG_SCOPES,
+      error: String(error),
+    }
+  }
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface IGMedia {
-  id:             string
-  caption?:       string
-  media_type:     "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM"
-  media_url?:     string
+  id: string
+  caption?: string
+  media_type: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM"
+  media_url?: string
   thumbnail_url?: string  // VIDEO only
-  permalink:      string
-  timestamp:      string
-  like_count?:    number
+  permalink: string
+  timestamp: string
+  like_count?: number
   comments_count?: number
 }
 
 export interface IGBusinessProfile {
-  id:              string
-  username:        string
-  name?:           string
-  biography?:      string
+  id: string
+  username: string
+  name?: string
+  biography?: string
   followers_count: number
-  media_count:     number
+  media_count: number
   profile_picture_url?: string
-  website?:        string
-  media?:          { data: IGMedia[] }
+  website?: string
+  media?: { data: IGMedia[] }
 }
 
 // ─── Hashtag Search ───────────────────────────────────────────────────────────
@@ -76,13 +172,13 @@ async function getHashtagId(hashtag: string): Promise<string | null> {
   if (cached && Date.now() - cached.fetchedAt < HASHTAG_CACHE_TTL) return cached.id
 
   const url = `${BASE}/ig_hashtag_search?user_id=${igId()}&q=${encodeURIComponent(clean)}&access_token=${token()}`
-  const res  = await fetch(url, { next: { revalidate: 3600 } })
+  const res = await fetch(url, { next: { revalidate: 3600 } })
   if (!res.ok) {
     console.error(`[ig] hashtag ID fetch failed: ${res.status}`, await res.text().catch(() => ""))
     return null
   }
   const data = await res.json()
-  const id   = data.data?.[0]?.id
+  const id = data.data?.[0]?.id
   if (id) hashtagIdCache.set(clean, { id, fetchedAt: Date.now() })
   return id ?? null
 }
@@ -127,9 +223,9 @@ export async function getBusinessProfile(
   if (!isConfigured()) return null
 
   const mediaFields = `media.limit(${postLimit}){id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count}`
-  const fields      = `business_discovery.as(target){username,name,biography,followers_count,media_count,profile_picture_url,website,${mediaFields}}`
+  const fields = `business_discovery.as(target){username,name,biography,followers_count,media_count,profile_picture_url,website,${mediaFields}}`
 
-  const url = `${BASE}/${igId()}?fields=${fields}&business_discovery={"username":"${encodeURIComponent(username)}"}&access_token=${token()}`
+  const url = `${BASE}/${igId()}?fields=${fields}&username=${encodeURIComponent(username)}&access_token=${token()}`
 
   const res = await fetch(url, { next: { revalidate: 3600 } }) // 1h cache
   if (!res.ok) {
@@ -144,14 +240,14 @@ export async function getBusinessProfile(
 // ─── City feed ────────────────────────────────────────────────────────────────
 
 const CITY_HASHTAGS: Record<string, string[]> = {
-  mannheim:   ["mannheimnightlife", "mannheimparty", "jungbusch", "msconnexion"],
+  mannheim: ["mannheimnightlife", "mannheimparty", "jungbusch", "msconnexion"],
   heidelberg: ["heidelbergnightlife", "heidelbergparty", "halle02", "cave54hd"],
-  frankfurt:  ["frankfurtnightlife", "ffmnightlife", "robertjohnson"],
-  stuttgart:  ["stuttgartnightlife", "stuttgartparty", "perkinspark"],
-  karlsruhe:  ["karlsruhenightlife", "karlsruheparty", "substage"],
-  berlin:     ["berghain", "berlinnightlife", "berlinclubs", "technoberlin"],
-  munich:     ["muenchennightlife", "muenchenparty", "harryklein"],
-  cologne:    ["koelnnightlife", "koelnparty", "bootshaus"],
+  frankfurt: ["frankfurtnightlife", "ffmnightlife", "robertjohnson"],
+  stuttgart: ["stuttgartnightlife", "stuttgartparty", "perkinspark"],
+  karlsruhe: ["karlsruhenightlife", "karlsruheparty", "substage"],
+  berlin: ["berghain", "berlinnightlife", "berlinclubs", "technoberlin"],
+  munich: ["muenchennightlife", "muenchenparty", "harryklein"],
+  cologne: ["koelnnightlife", "koelnparty", "bootshaus"],
 }
 
 /**

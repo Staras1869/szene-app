@@ -96,7 +96,7 @@ export function AiChat({ city }: { city?: string }) {
 
       {/* Backdrop (mobile only) */}
       {open && (
-        <div className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300 ${visible ? "opacity-100" : "opacity-0"}`}
+        <div className={`fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-300 ${visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
           onClick={closeChat} />
       )}
 

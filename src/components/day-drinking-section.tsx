@@ -5,6 +5,7 @@ import { Star, MapPin, Clock, Euro, Sun, Umbrella, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const dayDrinkingSpots = [
   {
@@ -57,6 +58,7 @@ const dayDrinkingSpots = [
 export function DayDrinkingSection() {
   const { t } = useLanguage()
   const [hoveredSpot, setHoveredSpot] = useState<number | null>(null)
+  const router = useRouter()
 
   const handleSpotClick = (spot: any) => {
     const spotUrl =
@@ -128,7 +130,13 @@ export function DayDrinkingSection() {
 
                 {hoveredSpot === spot.id && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6">
-                    <Button className="bg-white text-gray-900 hover:bg-yellow-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce">
+                    <Button
+                      className="bg-white text-gray-900 hover:bg-yellow-50 rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleSpotClick(spot)
+                      }}
+                    >
                       <Users className="w-4 h-4 mr-2" />
                       Join Friends
                     </Button>
@@ -186,6 +194,7 @@ export function DayDrinkingSection() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-full px-8 shadow-lg"
+            onClick={() => router.push('/discover?category=day-drinking')}
           >
             ☀️ Find Sunny Spots
           </Button>

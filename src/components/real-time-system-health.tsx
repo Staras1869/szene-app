@@ -30,6 +30,8 @@ export function RealTimeSystemHealth() {
     const interval = setInterval(updateHealth, 15000)
 
     return () => clearInterval(interval)
+    // Mount-only: updateHealth uses only stable setters and constants.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const updateHealth = () => {

@@ -35,14 +35,8 @@ export class AdvancedWebScraper {
       return []
     }
 
-    try {
-      // Generate realistic events with real images
-      const events = await this.generateRealisticEventsWithImages(venue, "website")
-      return events
-    } catch (error) {
-      console.error(`Error scraping ${venue.name} website:`, error)
-      return []
-    }
+    console.warn(`[advanced-web-scraper] Website scraping not implemented; skipping ${venue.name}`)
+    return []
   }
 
   async scrapeFacebookEvents(venue: Venue): Promise<ScrapedEventData[]> {
@@ -53,13 +47,8 @@ export class AdvancedWebScraper {
       return []
     }
 
-    try {
-      const events = await this.generateRealisticEventsWithImages(venue, "facebook")
-      return events
-    } catch (error) {
-      console.error(`Error scraping ${venue.name} Facebook:`, error)
-      return []
-    }
+    console.warn(`[advanced-web-scraper] Facebook event scraping not implemented; skipping ${venue.name}`)
+    return []
   }
 
   async scrapeInstagramEvents(venue: Venue): Promise<ScrapedEventData[]> {
@@ -70,13 +59,8 @@ export class AdvancedWebScraper {
       return []
     }
 
-    try {
-      const events = await this.generateRealisticEventsWithImages(venue, "instagram")
-      return events
-    } catch (error) {
-      console.error(`Error scraping ${venue.name} Instagram:`, error)
-      return []
-    }
+    console.warn(`[advanced-web-scraper] Instagram event scraping not implemented; skipping ${venue.name}`)
+    return []
   }
 
   private async generateRealisticEventsWithImages(

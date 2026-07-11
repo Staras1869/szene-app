@@ -52,7 +52,7 @@ export function TimeBasedSections() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">Browse by type</h2>
-          <p className="text-gray-500 text-sm mt-1">Filter by what you're looking for</p>
+          <p className="text-gray-500 text-sm mt-1">Filter by what you&apos;re looking for</p>
         </div>
 
         <div className="flex gap-2 mb-6 overflow-x-auto pb-1">

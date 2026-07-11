@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket, Activity, Dumbbell, Wind, Leaf, Droplets, Bike, Footprints, Instagram } from "lucide-react"
+import { Clock, Calendar, MapPin, Users, Search, Star, Check, ArrowUpRight, ExternalLink, Loader2, Share2, Copy, Sparkles, Navigation, ParkingCircle, Sun, Coffee, Bookmark, Map, Zap, TrendingUp, Ticket, Activity, Dumbbell, Wind, Leaf, Droplets, Bike, Footprints, Instagram, Flame } from "lucide-react"
 import { MapTab } from "./map-tab"
+import { SwipeDeck } from "./swipe-deck"
 import { triggerEventToast } from "./event-toast"
 import { triggerPushPrompt } from "./push-prompt"
 import { trackEventView } from "./browse-gate"
@@ -319,163 +320,163 @@ const OPEN_NOW: Record<string, { name: string; area: string; type: string; emoji
 }
 
 // ─── Venues ───────────────────────────────────────────────────────────────────
-const VENUES_BY_CITY: Record<string, { id: string; name: string; area: string; type: string; emoji: string; tag: string; vibe: string }[]> = {
+const VENUES_BY_CITY: Record<string, { id: string; name: string; area: string; type: string; emoji: string; tag: string; vibe: string; image: string }[]> = {
   mannheim: [
     // Clubs
-    { id: "ms-connexion",   name: "MS Connexion",        area: "Hafen",       type: "Club",        emoji: "🎧", tag: "Afro · Electronic",   vibe: "afro"    },
-    { id: "base-club",      name: "BASE Club",           area: "Jungbusch",   type: "Club",        emoji: "🔊", tag: "Latin · Bass",         vibe: "latin"   },
-    { id: "tiffany",        name: "Tiffany Club",        area: "C-Quadrat",   type: "Club",        emoji: "💜", tag: "Party · Premium",      vibe: "party"   },
-    { id: "zeitraumexit",   name: "Zeitraumexit",        area: "Jungbusch",   type: "Club",        emoji: "🖤", tag: "Hip-Hop · Underground",vibe: "hiphop"  },
-    { id: "7grad",          name: "7Grad",               area: "Jungbusch",   type: "Club",        emoji: "❄️", tag: "Techno · Underground", vibe: "party"   },
-    { id: "alte-feuerwache",name: "Alte Feuerwache",     area: "Jungbusch",   type: "Culture",     emoji: "🎭", tag: "Afro · Live",          vibe: "afro"    },
+    { id: "ms-connexion",   name: "MS Connexion",        area: "Hafen",       type: "Club",        emoji: "🎧", tag: "Afro · Electronic",   vibe: "afro",    image: "https://www.msconnexion.com/assets/images/8/MSCC_Aussen_Highlight-7c0aff06.jpg" },
+    { id: "base-club",      name: "BASE Club",           area: "Jungbusch",   type: "Club",        emoji: "🔊", tag: "Latin · Bass",         vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "tiffany",        name: "Tiffany Club",        area: "C-Quadrat",   type: "Club",        emoji: "💜", tag: "Party · Premium",      vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "zeitraumexit",   name: "Zeitraumexit",        area: "Jungbusch",   type: "Club",        emoji: "🖤", tag: "Hip-Hop · Underground",vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "7grad",          name: "7Grad",               area: "Jungbusch",   type: "Club",        emoji: "❄️", tag: "Techno · Underground", vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "alte-feuerwache",name: "Alte Feuerwache",     area: "Jungbusch",   type: "Culture",     emoji: "🎭", tag: "Afro · Live",          vibe: "afro",    image: "https://altefeuerwache.com/wp-content/uploads/2025/12/ab_1-480x300.jpg" },
     // Hidden bars — Geheimtipps
-    { id: "kaizen",         name: "Kaizen",              area: "Innenstadt",  type: "Cocktail bar",emoji: "🍸", tag: "🔒 Hidden · Cocktails", vibe: "chill"   },
-    { id: "zephyr",         name: "ZEPHYR Bar",          area: "Quadrate",    type: "Bar",         emoji: "🌬️", tag: "🔒 Hidden · Vibes",    vibe: "chill"   },
-    { id: "plan-b",         name: "Plan B",              area: "Jungbusch",   type: "Bar",         emoji: "🎲", tag: "Local · Underground",  vibe: "chill"   },
-    { id: "galerie-kurzzeit",name: "Galerie Kurzzeit",   area: "Jungbusch",   type: "Bar/Gallery", emoji: "🎨", tag: "Art · Late Night",      vibe: "chill"   },
+    { id: "kaizen",         name: "Kaizen",              area: "Innenstadt",  type: "Cocktail bar",emoji: "🍸", tag: "🔒 Hidden · Cocktails", vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "zephyr",         name: "ZEPHYR Bar",          area: "Quadrate",    type: "Bar",         emoji: "🌬️", tag: "🔒 Hidden · Vibes",    vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "plan-b",         name: "Plan B",              area: "Jungbusch",   type: "Bar",         emoji: "🎲", tag: "Local · Underground",  vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "galerie-kurzzeit",name: "Galerie Kurzzeit",   area: "Jungbusch",   type: "Bar/Gallery", emoji: "🎨", tag: "Art · Late Night",      vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
     // Outdoor & live
-    { id: "strandbar",      name: "Strandbar Rennwiese", area: "Rennwiese",   type: "Beach bar",   emoji: "🏖️", tag: "Outdoor · Summer",     vibe: "outside" },
-    { id: "ella-louis",     name: "Ella & Louis",        area: "Jungbusch",   type: "Jazz bar",    emoji: "🎷", tag: "Jazz · Intimate",      vibe: "music"   },
-    { id: "capitol",        name: "Capitol Mannheim",    area: "Innenstadt",  type: "Live venue",  emoji: "🎸", tag: "Concerts · Live",      vibe: "music"   },
-    { id: "hemingway",      name: "Hemingway Bar",       area: "Innenstadt",  type: "Bar",         emoji: "🍹", tag: "Cocktails · Date",     vibe: "chill"   },
-    { id: "weinkeller",     name: "Weinkeller Wasserturm",area:"Wasserturm",  type: "Wine bar",    emoji: "🍷", tag: "Wine · Upscale",       vibe: "chill"   },
+    { id: "strandbar",      name: "Strandbar Rennwiese", area: "Rennwiese",   type: "Beach bar",   emoji: "🏖️", tag: "Outdoor · Summer",     vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "ella-louis",     name: "Ella & Louis",        area: "Jungbusch",   type: "Jazz bar",    emoji: "🎷", tag: "Jazz · Intimate",      vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "capitol",        name: "Capitol Mannheim",    area: "Innenstadt",  type: "Live venue",  emoji: "🎸", tag: "Concerts · Live",      vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "hemingway",      name: "Hemingway Bar",       area: "Innenstadt",  type: "Bar",         emoji: "🍹", tag: "Cocktails · Date",     vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "weinkeller",     name: "Weinkeller Wasserturm",area:"Wasserturm",  type: "Wine bar",    emoji: "🍷", tag: "Wine · Upscale",       vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
     // New venues from OSM
-    { id: "hafen49",        name: "Hafen 49",            area: "Hafen",       type: "Club",        emoji: "⚓", tag: "Electronic · Hafen",   vibe: "party"   },
-    { id: "rude7",          name: "RUDE7",               area: "Jungbusch",   type: "Club",        emoji: "🔥", tag: "Techno · Underground", vibe: "party"   },
-    { id: "7er-club",       name: "7er-Club",            area: "Jungbusch",   type: "Club",        emoji: "🎛️", tag: "Electronic · Local",  vibe: "party"   },
-    { id: "speicher7",      name: "Hotel Speicher 7",    area: "Hafen",       type: "Venue/Hotel", emoji: "🏭", tag: "Events · Riverside",   vibe: "party"   },
-    { id: "taproom-jb",     name: "Taproom Jungbusch",   area: "Jungbusch",   type: "Bar",         emoji: "🍺", tag: "Craft Beer · Local",   vibe: "chill"   },
-    { id: "mono-ma",        name: "Mono",                area: "Jungbusch",   type: "Bar",         emoji: "🎶", tag: "Music · Cozy",         vibe: "music"   },
-    { id: "filmriss",       name: "Filmriss",            area: "Jungbusch",   type: "Bar",         emoji: "🎬", tag: "Indie · Alternative",  vibe: "chill"   },
-    { id: "musikpark",      name: "Musikpark",           area: "Hafen",       type: "Club",        emoji: "🏋️", tag: "Hip-Hop · Commercial", vibe: "hiphop"  },
-    { id: "kombinat",       name: "Kombinat",            area: "Innenstadt",  type: "Bar",         emoji: "🌐", tag: "Alternative · Queer",  vibe: "chill"   },
-    { id: "lyftoh",         name: "Lyftoh Bar",          area: "Innenstadt",  type: "Bar",         emoji: "🍹", tag: "Cocktails · Chill",    vibe: "chill"   },
-    { id: "cubes-ma",       name: "CUBES",               area: "Wasserturm",  type: "Bar",         emoji: "🧊", tag: "Premium · Cocktails",  vibe: "chill"   },
-    { id: "soho-ma",        name: "Soho Mannheim",       area: "Innenstadt",  type: "Club",        emoji: "🌆", tag: "Latin · R&B",          vibe: "latin"   },
-    { id: "lagerhaus-ma",   name: "Lagerhaus",           area: "Hafen",       type: "Venue",       emoji: "🏗️", tag: "Events · Concerts",   vibe: "music"   },
+    { id: "hafen49",        name: "Hafen 49",            area: "Hafen",       type: "Club",        emoji: "⚓", tag: "Electronic · Hafen",   vibe: "party",   image: "https://images.unsplash.com/photo-1471666875520-c75081f42081?w=400&h=250&fit=crop" },
+    { id: "rude7",          name: "RUDE7",               area: "Jungbusch",   type: "Club",        emoji: "🔥", tag: "Techno · Underground", vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "7er-club",       name: "7er-Club",            area: "Jungbusch",   type: "Club",        emoji: "🎛️", tag: "Electronic · Local",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "speicher7",      name: "Hotel Speicher 7",    area: "Hafen",       type: "Venue/Hotel", emoji: "🏭", tag: "Events · Riverside",   vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "taproom-jb",     name: "Taproom Jungbusch",   area: "Jungbusch",   type: "Bar",         emoji: "🍺", tag: "Craft Beer · Local",   vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "mono-ma",        name: "Mono",                area: "Jungbusch",   type: "Bar",         emoji: "🎶", tag: "Music · Cozy",         vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "filmriss",       name: "Filmriss",            area: "Jungbusch",   type: "Bar",         emoji: "🎬", tag: "Indie · Alternative",  vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "musikpark",      name: "Musikpark",           area: "Hafen",       type: "Club",        emoji: "🏋️", tag: "Hip-Hop · Commercial", vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "kombinat",       name: "Kombinat",            area: "Innenstadt",  type: "Bar",         emoji: "🌐", tag: "Alternative · Queer",  vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "lyftoh",         name: "Lyftoh Bar",          area: "Innenstadt",  type: "Bar",         emoji: "🍹", tag: "Cocktails · Chill",    vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "cubes-ma",       name: "CUBES",               area: "Wasserturm",  type: "Bar",         emoji: "🧊", tag: "Premium · Cocktails",  vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "soho-ma",        name: "Soho Mannheim",       area: "Innenstadt",  type: "Club",        emoji: "🌆", tag: "Latin · R&B",          vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "lagerhaus-ma",   name: "Lagerhaus",           area: "Hafen",       type: "Venue",       emoji: "🏗️", tag: "Events · Concerts",   vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
   ],
   heidelberg: [
-    { id: "halle02",        name: "halle02",             area: "Bahnstadt",   type: "Club",        emoji: "🏭", tag: "Afro · Electronic",   vibe: "afro"    },
-    { id: "cave-54",        name: "Cave 54",             area: "Altstadt",    type: "Club",        emoji: "🎸", tag: "Student · Rock",      vibe: "student" },
-    { id: "nachtschicht",   name: "Nachtschicht",        area: "Bergheim",    type: "Club",        emoji: "🎶", tag: "Latin · Electronic",  vibe: "latin"   },
-    { id: "obrien",         name: "O'Brien's",           area: "Altstadt",    type: "Irish pub",   emoji: "🍺", tag: "Student · Chill",     vibe: "student" },
-    { id: "billy-blues",    name: "Billy Blues",         area: "Altstadt",    type: "Music bar",   emoji: "🎸", tag: "Live Music · Rock",   vibe: "music"   },
-    { id: "tangente",       name: "Tangente",            area: "Innenstadt",  type: "Bar",         emoji: "🌙", tag: "🔒 Hidden · Late",     vibe: "chill"   },
-    { id: "green-apple",    name: "Green Apple",         area: "Altstadt",    type: "Bar",         emoji: "🍏", tag: "Student · Cocktails", vibe: "chill"   },
-    { id: "destille",       name: "Destille",            area: "Altstadt",    type: "Bar",         emoji: "🥃", tag: "Classic · Local",     vibe: "chill"   },
-    { id: "harmoniegarten", name: "Harmoniegarten",      area: "Weststadt",   type: "Garden bar",  emoji: "🌿", tag: "Outdoor · Chill",     vibe: "outside" },
-    { id: "schloss-bg",     name: "Schloss Biergarten",  area: "Schloss",     type: "Outside",     emoji: "🏰", tag: "Views · Beer garden", vibe: "outside" },
-    { id: "jazzhaus-hd",    name: "Jazzhaus Heidelberg", area: "Altstadt",    type: "Jazz club",   emoji: "🎷", tag: "Jazz · Live music",   vibe: "music"   },
-    { id: "club1900",       name: "Club 1900",           area: "Altstadt",    type: "Club",        emoji: "💛", tag: "Student · Party",     vibe: "student" },
-    { id: "studio1900",     name: "Studio 1900",         area: "Bahnstadt",   type: "Club",        emoji: "🎧", tag: "Electronic · Student",vibe: "student" },
-    { id: "schwimmbad",     name: "Schwimmbad Musik Club",area: "Altstadt",   type: "Club",        emoji: "🏊", tag: "Indie · Alternative", vibe: "music"   },
-    { id: "nachtschicht-hd",name: "Nachtschicht",        area: "Bergheim",    type: "Club",        emoji: "🌙", tag: "Latin · Electronic",  vibe: "latin"   },
+    { id: "halle02",        name: "halle02",             area: "Bahnstadt",   type: "Club",        emoji: "🏭", tag: "Afro · Electronic",   vibe: "afro",    image: "https://b3310012.smushcdn.com/3310012/wp-content/uploads/2026/03/halle02_3000_felix-aspect-ratio-1920-1080.jpeg?lossy=2&strip=1&webp=1" },
+    { id: "cave-54",        name: "Cave 54",             area: "Altstadt",    type: "Club",        emoji: "🎸", tag: "Student · Rock",      vibe: "student", image: "https://static.wixstatic.com/media/11062b_1bca6513d1444afca6a2a1c0aae87b6df000.png/v1/fill/w_1920,h_1080,al_c,q_95,enc_avif,quality_auto/11062b_1bca6513d1444afca6a2a1c0aae87b6df000.png" },
+    { id: "nachtschicht",   name: "Nachtschicht",        area: "Bergheim",    type: "Club",        emoji: "🎶", tag: "Latin · Electronic",  vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "obrien",         name: "O'Brien's",           area: "Altstadt",    type: "Irish pub",   emoji: "🍺", tag: "Student · Chill",     vibe: "student", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
+    { id: "billy-blues",    name: "Billy Blues",         area: "Altstadt",    type: "Music bar",   emoji: "🎸", tag: "Live Music · Rock",   vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "tangente",       name: "Tangente",            area: "Innenstadt",  type: "Bar",         emoji: "🌙", tag: "🔒 Hidden · Late",     vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "green-apple",    name: "Green Apple",         area: "Altstadt",    type: "Bar",         emoji: "🍏", tag: "Student · Cocktails", vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "destille",       name: "Destille",            area: "Altstadt",    type: "Bar",         emoji: "🥃", tag: "Classic · Local",     vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "harmoniegarten", name: "Harmoniegarten",      area: "Weststadt",   type: "Garden bar",  emoji: "🌿", tag: "Outdoor · Chill",     vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "schloss-bg",     name: "Schloss Biergarten",  area: "Schloss",     type: "Outside",     emoji: "🏰", tag: "Views · Beer garden", vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "jazzhaus-hd",    name: "Jazzhaus Heidelberg", area: "Altstadt",    type: "Jazz club",   emoji: "🎷", tag: "Jazz · Live music",   vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "club1900",       name: "Club 1900",           area: "Altstadt",    type: "Club",        emoji: "💛", tag: "Student · Party",     vibe: "student", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
+    { id: "studio1900",     name: "Studio 1900",         area: "Bahnstadt",   type: "Club",        emoji: "🎧", tag: "Electronic · Student",vibe: "student", image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "schwimmbad",     name: "Schwimmbad Musik Club",area: "Altstadt",   type: "Club",        emoji: "🏊", tag: "Indie · Alternative", vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "nachtschicht-hd",name: "Nachtschicht",        area: "Bergheim",    type: "Club",        emoji: "🌙", tag: "Latin · Electronic",  vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
   ],
   frankfurt: [
-    { id: "robert-johnson", name: "Robert Johnson",      area: "Offenbach",   type: "Club",     emoji: "🎛️", tag: "Afrohouse · Techno",vibe: "afro"    },
-    { id: "king-k",         name: "King Kamehameha",     area: "Sachsenhausen",type:"Club",     emoji: "🌴", tag: "Latin · Reggaeton", vibe: "latin"   },
-    { id: "cocoon",         name: "Cocoon Club",         area: "Messe",       type: "Club",     emoji: "🔮", tag: "Electronic · Party",vibe: "party"   },
-    { id: "metropol-ffm",   name: "Metropol",            area: "Sachsenhausen",type:"Club",     emoji: "🎉", tag: "Hip-Hop · R&B",     vibe: "hiphop"  },
-    { id: "jazzkeller-ffm", name: "Jazzkeller",          area: "Innenstadt",  type: "Jazz",     emoji: "🎺", tag: "Jazz · Live",       vibe: "music"   },
-    { id: "main-tower",     name: "Main Tower Lounge",   area: "Bankenviertel",type:"Rooftop",  emoji: "🌆", tag: "Views · Cocktails", vibe: "outside" },
-    { id: "gibson-ffm",     name: "Gibson",              area: "Sachsenhausen",type:"Club",     emoji: "🎸", tag: "Indie · Alternative",vibe: "music"   },
-    { id: "tanzhaus-west",  name: "Tanzhaus West",       area: "Bockenheim",  type: "Club",     emoji: "🕺", tag: "House · Techno",    vibe: "party"   },
-    { id: "nachtleben-ffm", name: "Nachtleben",          area: "Bornheim",    type: "Club",     emoji: "🌙", tag: "Rock · Indie",      vibe: "music"   },
-    { id: "pracht-ffm",     name: "PRACHT",              area: "Gallusviertel",type:"Club",     emoji: "✨", tag: "Electronic · Modern",vibe:"party"   },
-    { id: "das-bett",       name: "Das Bett",            area: "Nordend",     type: "Club",     emoji: "🛏️", tag: "Indie · Alternative",vibe: "music"   },
-    { id: "orange-peel",    name: "Orange Peel",         area: "Bornheim",    type: "Club",     emoji: "🍊", tag: "Hip-Hop · R&B",     vibe: "hiphop"  },
-    { id: "velvet-ffm",     name: "Velvet Club",         area: "Innenstadt",  type: "Club",     emoji: "🔴", tag: "Latin · Party",     vibe: "latin"   },
-    { id: "silbergold",     name: "Silbergold",          area: "Sachsenhausen",type:"Club",     emoji: "🥈", tag: "Electronic · House",vibe: "party"   },
+    { id: "robert-johnson", name: "Robert Johnson",      area: "Offenbach",   type: "Club",     emoji: "🎛️", tag: "Afrohouse · Techno",vibe: "afro",    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop" },
+    { id: "king-k",         name: "King Kamehameha",     area: "Sachsenhausen",type:"Club",     emoji: "🌴", tag: "Latin · Reggaeton", vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "cocoon",         name: "Cocoon Club",         area: "Messe",       type: "Club",     emoji: "🔮", tag: "Electronic · Party",vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "metropol-ffm",   name: "Metropol",            area: "Sachsenhausen",type:"Club",     emoji: "🎉", tag: "Hip-Hop · R&B",     vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "jazzkeller-ffm", name: "Jazzkeller",          area: "Innenstadt",  type: "Jazz",     emoji: "🎺", tag: "Jazz · Live",       vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "main-tower",     name: "Main Tower Lounge",   area: "Bankenviertel",type:"Rooftop",  emoji: "🌆", tag: "Views · Cocktails", vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "gibson-ffm",     name: "Gibson",              area: "Sachsenhausen",type:"Club",     emoji: "🎸", tag: "Indie · Alternative",vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "tanzhaus-west",  name: "Tanzhaus West",       area: "Bockenheim",  type: "Club",     emoji: "🕺", tag: "House · Techno",    vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "nachtleben-ffm", name: "Nachtleben",          area: "Bornheim",    type: "Club",     emoji: "🌙", tag: "Rock · Indie",      vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "pracht-ffm",     name: "PRACHT",              area: "Gallusviertel",type:"Club",     emoji: "✨", tag: "Electronic · Modern",vibe:"party",    image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "das-bett",       name: "Das Bett",            area: "Nordend",     type: "Club",     emoji: "🛏️", tag: "Indie · Alternative",vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "orange-peel",    name: "Orange Peel",         area: "Bornheim",    type: "Club",     emoji: "🍊", tag: "Hip-Hop · R&B",     vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "velvet-ffm",     name: "Velvet Club",         area: "Innenstadt",  type: "Club",     emoji: "🔴", tag: "Latin · Party",     vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "silbergold",     name: "Silbergold",          area: "Sachsenhausen",type:"Club",     emoji: "🥈", tag: "Electronic · House",vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
   ],
   stuttgart: [
-    { id: "perkins-park",   name: "Perkins Park",        area: "Killesberg",   type: "Club",        emoji: "🌆", tag: "Premium · Party",      vibe: "party"   },
-    { id: "climax",         name: "Climax Institutes",   area: "Schlossgarten",type: "Club",        emoji: "🔊", tag: "Techno · Hard",         vibe: "party"   },
-    { id: "im-wizemann",    name: "Im Wizemann",         area: "Feuerbach",    type: "Live / Club", emoji: "🎤", tag: "Hip-Hop · Live",        vibe: "hiphop"  },
-    { id: "7gradx",         name: "7GradX Stuttgart",    area: "West",         type: "Club",        emoji: "🔥", tag: "Latin · Afrobeats",     vibe: "latin"   },
-    { id: "mica-club",      name: "MICA Club",           area: "Innenstadt",   type: "Club",        emoji: "💃", tag: "Reggaeton · Latin",     vibe: "latin"   },
-    { id: "fridas-pier",    name: "Fridas Pier",         area: "Neckarufer",   type: "Club/outdoor",emoji: "🌊", tag: "House · Open Air",      vibe: "party"   },
-    { id: "kowalski",       name: "Kowalski Stuttgart",  area: "Süd",          type: "Club",        emoji: "🖤", tag: "Electronic · Minimal",  vibe: "party"   },
-    { id: "romantica",      name: "Romantica",           area: "Mitte",        type: "Club",        emoji: "🌹", tag: "Dance · Iconic",        vibe: "party"   },
-    { id: "schocken",       name: "Club Schocken",       area: "Innenstadt",   type: "Club",        emoji: "⚡", tag: "Techno · Underground",  vibe: "party"   },
-    { id: "lerche22",       name: "Lerche 22",           area: "Innenstadt",   type: "Club",        emoji: "🎛️", tag: "House · International", vibe: "party"   },
-    { id: "lka-longhorn",   name: "LKA Longhorn",        area: "Wangen",       type: "Live venue",  emoji: "🎸", tag: "Concerts · Live",       vibe: "music"   },
-    { id: "bix-jazzclub",   name: "BIX Jazzclub",        area: "Innenstadt",   type: "Jazz club",   emoji: "🎺", tag: "Jazz · 🔒 Hidden",      vibe: "music"   },
-    { id: "lehmann-s",      name: "Lehmann Club",        area: "West",         type: "Club",        emoji: "🔊", tag: "Electronic · Student",  vibe: "party"   },
-    { id: "universum-s",    name: "Club Universum",      area: "Mitte",        type: "Club",        emoji: "🌌", tag: "House · Party",         vibe: "party"   },
-    { id: "detroit-s",      name: "Detroit",             area: "Mitte",        type: "Club",        emoji: "🏭", tag: "Techno · Underground",  vibe: "party"   },
-    { id: "laboratorium-s", name: "Laboratorium",        area: "Vaihingen",    type: "Live venue",  emoji: "🎤", tag: "Jazz · Blues · Live",   vibe: "music"   },
-    { id: "whitenoise-s",   name: "White Noise",         area: "Innenstadt",   type: "Club",        emoji: "📻", tag: "Electronic · Minimal",  vibe: "party"   },
+    { id: "perkins-park",   name: "Perkins Park",        area: "Killesberg",   type: "Club",        emoji: "🌆", tag: "Premium · Party",      vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "climax",         name: "Climax Institutes",   area: "Schlossgarten",type: "Club",        emoji: "🔊", tag: "Techno · Hard",         vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "im-wizemann",    name: "Im Wizemann",         area: "Feuerbach",    type: "Live / Club", emoji: "🎤", tag: "Hip-Hop · Live",        vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "7gradx",         name: "7GradX Stuttgart",    area: "West",         type: "Club",        emoji: "🔥", tag: "Latin · Afrobeats",     vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "mica-club",      name: "MICA Club",           area: "Innenstadt",   type: "Club",        emoji: "💃", tag: "Reggaeton · Latin",     vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "fridas-pier",    name: "Fridas Pier",         area: "Neckarufer",   type: "Club/outdoor",emoji: "🌊", tag: "House · Open Air",      vibe: "party",   image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "kowalski",       name: "Kowalski Stuttgart",  area: "Süd",          type: "Club",        emoji: "🖤", tag: "Electronic · Minimal",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "romantica",      name: "Romantica",           area: "Mitte",        type: "Club",        emoji: "🌹", tag: "Dance · Iconic",        vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "schocken",       name: "Club Schocken",       area: "Innenstadt",   type: "Club",        emoji: "⚡", tag: "Techno · Underground",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "lerche22",       name: "Lerche 22",           area: "Innenstadt",   type: "Club",        emoji: "🎛️", tag: "House · International", vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "lka-longhorn",   name: "LKA Longhorn",        area: "Wangen",       type: "Live venue",  emoji: "🎸", tag: "Concerts · Live",       vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "bix-jazzclub",   name: "BIX Jazzclub",        area: "Innenstadt",   type: "Jazz club",   emoji: "🎺", tag: "Jazz · 🔒 Hidden",      vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "lehmann-s",      name: "Lehmann Club",        area: "West",         type: "Club",        emoji: "🔊", tag: "Electronic · Student",  vibe: "party",   image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
+    { id: "universum-s",    name: "Club Universum",      area: "Mitte",        type: "Club",        emoji: "🌌", tag: "House · Party",         vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "detroit-s",      name: "Detroit",             area: "Mitte",        type: "Club",        emoji: "🏭", tag: "Techno · Underground",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "laboratorium-s", name: "Laboratorium",        area: "Vaihingen",    type: "Live venue",  emoji: "🎤", tag: "Jazz · Blues · Live",   vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "whitenoise-s",   name: "White Noise",         area: "Innenstadt",   type: "Club",        emoji: "📻", tag: "Electronic · Minimal",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
   ],
   karlsruhe: [
-    { id: "substage",       name: "Substage",            area: "Südstadt",    type: "Club",     emoji: "🎸", tag: "Student · Live",    vibe: "student" },
-    { id: "tollhaus",       name: "Tollhaus",            area: "Oststadt",    type: "Culture",  emoji: "🎭", tag: "Afro · Culture",    vibe: "afro"    },
-    { id: "hemingway-ka",   name: "Hemingway KA",        area: "Innenstadt",  type: "Bar",      emoji: "🍸", tag: "Cocktails · Chill", vibe: "chill"   },
-    { id: "kuhler-krug",    name: "Kühler Krug",         area: "Günther-K.",  type: "Garden",   emoji: "🌿", tag: "Beer garden",       vibe: "outside" },
-    { id: "fettschmelze",   name: "Fettschmelze",        area: "Südstadt",    type: "Club",     emoji: "🔥", tag: "Techno · Bunker",   vibe: "party"   },
-    { id: "agostea-ka",     name: "Agostea",             area: "Innenstadt",  type: "Club",     emoji: "🌶️", tag: "Latin · Party",     vibe: "latin"   },
-    { id: "gotec",          name: "Gotec Club+",         area: "Innenstadt",  type: "Club",     emoji: "💫", tag: "Electronic · Party",vibe: "party"   },
-    { id: "jazzclub-ka",    name: "Jazzclub Karlsruhe",  area: "Innenstadt",  type: "Jazz club",emoji: "🎷", tag: "Jazz · Live",       vibe: "music"   },
-    { id: "erdbeermund",    name: "Erdbeermund",         area: "Innenstadt",  type: "Bar",      emoji: "🍓", tag: "Student · Chill",   vibe: "chill"   },
-    { id: "krokokeller",    name: "Krokokeller",         area: "KIT Campus",  type: "Student",  emoji: "🐊", tag: "Student · KIT",     vibe: "student" },
+    { id: "substage",       name: "Substage",            area: "Südstadt",    type: "Club",     emoji: "🎸", tag: "Student · Live",    vibe: "student", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
+    { id: "tollhaus",       name: "Tollhaus",            area: "Oststadt",    type: "Culture",  emoji: "🎭", tag: "Afro · Culture",    vibe: "afro",    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop" },
+    { id: "hemingway-ka",   name: "Hemingway KA",        area: "Innenstadt",  type: "Bar",      emoji: "🍸", tag: "Cocktails · Chill", vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
+    { id: "kuhler-krug",    name: "Kühler Krug",         area: "Günther-K.",  type: "Garden",   emoji: "🌿", tag: "Beer garden",       vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "fettschmelze",   name: "Fettschmelze",        area: "Südstadt",    type: "Club",     emoji: "🔥", tag: "Techno · Bunker",   vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "agostea-ka",     name: "Agostea",             area: "Innenstadt",  type: "Club",     emoji: "🌶️", tag: "Latin · Party",     vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "gotec",          name: "Gotec Club+",         area: "Innenstadt",  type: "Club",     emoji: "💫", tag: "Electronic · Party",vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "jazzclub-ka",    name: "Jazzclub Karlsruhe",  area: "Innenstadt",  type: "Jazz club",emoji: "🎷", tag: "Jazz · Live",       vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "erdbeermund",    name: "Erdbeermund",         area: "Innenstadt",  type: "Bar",      emoji: "🍓", tag: "Student · Chill",   vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "krokokeller",    name: "Krokokeller",         area: "KIT Campus",  type: "Student",  emoji: "🐊", tag: "Student · KIT",     vibe: "student", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
   ],
   berlin: [
-    { id: "berghain",      name: "Berghain",            area: "Friedrichshain", type: "Club",     emoji: "🖤", tag: "Techno · Iconic",      vibe: "party"  },
-    { id: "watergate",     name: "Watergate",           area: "Kreuzberg",      type: "Club",     emoji: "🌊", tag: "House · Spree view",   vibe: "party"  },
-    { id: "tresor",        name: "Tresor",              area: "Mitte",          type: "Club",     emoji: "⚙️", tag: "Techno · Legendary",  vibe: "party"  },
-    { id: "sisyphos",      name: "Sisyphos",            area: "Rummelsburg",    type: "Open Air", emoji: "🏕️", tag: "Festival · Weekend",  vibe: "outside" },
-    { id: "wilde-renate",  name: "Wilde Renate",        area: "Friedrichshain", type: "Club",     emoji: "🌿", tag: "House · Quirky",       vibe: "party"  },
-    { id: "about-blank",   name: "About Blank",         area: "Kreuzberg",      type: "Club",     emoji: "🌈", tag: "Queer · Inclusive",    vibe: "party"  },
-    { id: "kitkat",        name: "KitKatClub",          area: "Mitte",          type: "Club",     emoji: "🐱", tag: "Fetish · Electronic",  vibe: "party"  },
-    { id: "prince-charles",name: "Prince Charles",      area: "Kreuzberg",      type: "Club",     emoji: "🎛️", tag: "House · Pool club",   vibe: "party"  },
-    { id: "yaam",          name: "Yaam Club",           area: "Mitte",          type: "Beach",    emoji: "🌍", tag: "Afrobeats · Outdoor",  vibe: "afro"   },
-    { id: "five-elephant", name: "Five Elephant",       area: "Kreuzberg",      type: "Café",     emoji: "☕", tag: "Specialty · Brunch",  vibe: "chill"  },
-    { id: "kater-blau",   name: "Kater Blau",          area: "Friedrichshain", type: "Club",     emoji: "🐱", tag: "Open Air · House",     vibe: "outside"},
-    { id: "so36",         name: "SO36",                area: "Kreuzberg",      type: "Club",     emoji: "🌈", tag: "Punk · Queer · Iconic",vibe: "party"  },
-    { id: "cassiopeia",   name: "Cassiopeia",          area: "Friedrichshain", type: "Club",     emoji: "⭐", tag: "Techno · Outdoor",     vibe: "outside"},
-    { id: "astra-kulturh",name: "Astra Kulturhaus",    area: "Friedrichshain", type: "Live",     emoji: "🎸", tag: "Concerts · Live",      vibe: "music"  },
-    { id: "weekend-club", name: "Weekend Club",        area: "Mitte",          type: "Club",     emoji: "🌇", tag: "Techno · Rooftop",     vibe: "party"  },
-    { id: "matrix-b",     name: "Matrix Club",         area: "Warschauer",     type: "Club",     emoji: "🔢", tag: "Hip-Hop · Commercial", vibe: "hiphop" },
-    { id: "lido-berlin",  name: "Lido",                area: "Kreuzberg",      type: "Live",     emoji: "🎭", tag: "Concerts · Indie",     vibe: "music"  },
-    { id: "gretchen-b",   name: "Gretchen",            area: "Kreuzberg",      type: "Club",     emoji: "👘", tag: "House · Techno",       vibe: "party"  },
-    { id: "ms-hoppe",     name: "MS Hoppetosse",       area: "Treptow",        type: "Boat club",emoji: "⛴️", tag: "House · Riverside",   vibe: "outside"},
-    { id: "arena-club",   name: "Arena Club",          area: "Treptow",        type: "Club",     emoji: "🏟️", tag: "Techno · Large",      vibe: "party"  },
-    { id: "festsaal-kx",  name: "Festsaal Kreuzberg",  area: "Kreuzberg",      type: "Live",     emoji: "🎪", tag: "Indie · Concerts",     vibe: "music"  },
-    { id: "claerchens",   name: "Clärchens Ballhaus",  area: "Mitte",          type: "Ballroom", emoji: "💃", tag: "Vintage · Dance",      vibe: "chill"  },
-    { id: "golden-gate-b",name: "Golden Gate",         area: "Mitte",          type: "Club",     emoji: "🌉", tag: "Techno · Bunker",      vibe: "party"  },
+    { id: "berghain",      name: "Berghain",            area: "Friedrichshain", type: "Club",     emoji: "🖤", tag: "Techno · Iconic",      vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "watergate",     name: "Watergate",           area: "Kreuzberg",      type: "Club",     emoji: "🌊", tag: "House · Spree view",   vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "tresor",        name: "Tresor",              area: "Mitte",          type: "Club",     emoji: "⚙️", tag: "Techno · Legendary",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "sisyphos",      name: "Sisyphos",            area: "Rummelsburg",    type: "Open Air", emoji: "🏕️", tag: "Festival · Weekend",  vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "wilde-renate",  name: "Wilde Renate",        area: "Friedrichshain", type: "Club",     emoji: "🌿", tag: "House · Quirky",       vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "about-blank",   name: "About Blank",         area: "Kreuzberg",      type: "Club",     emoji: "🌈", tag: "Queer · Inclusive",    vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "kitkat",        name: "KitKatClub",          area: "Mitte",          type: "Club",     emoji: "🐱", tag: "Fetish · Electronic",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "prince-charles",name: "Prince Charles",      area: "Kreuzberg",      type: "Club",     emoji: "🎛️", tag: "House · Pool club",   vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "yaam",          name: "Yaam Club",           area: "Mitte",          type: "Beach",    emoji: "🌍", tag: "Afrobeats · Outdoor",  vibe: "afro",    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop" },
+    { id: "five-elephant", name: "Five Elephant",       area: "Kreuzberg",      type: "Café",     emoji: "☕", tag: "Specialty · Brunch",  vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "kater-blau",   name: "Kater Blau",          area: "Friedrichshain", type: "Club",     emoji: "🐱", tag: "Open Air · House",     vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "so36",         name: "SO36",                area: "Kreuzberg",      type: "Club",     emoji: "🌈", tag: "Punk · Queer · Iconic",vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "cassiopeia",   name: "Cassiopeia",          area: "Friedrichshain", type: "Club",     emoji: "⭐", tag: "Techno · Outdoor",     vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "astra-kulturh",name: "Astra Kulturhaus",    area: "Friedrichshain", type: "Live",     emoji: "🎸", tag: "Concerts · Live",      vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "weekend-club", name: "Weekend Club",        area: "Mitte",          type: "Club",     emoji: "🌇", tag: "Techno · Rooftop",     vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "matrix-b",     name: "Matrix Club",         area: "Warschauer",     type: "Club",     emoji: "🔢", tag: "Hip-Hop · Commercial", vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "lido-berlin",  name: "Lido",                area: "Kreuzberg",      type: "Live",     emoji: "🎭", tag: "Concerts · Indie",     vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "gretchen-b",   name: "Gretchen",            area: "Kreuzberg",      type: "Club",     emoji: "👘", tag: "House · Techno",       vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "ms-hoppe",     name: "MS Hoppetosse",       area: "Treptow",        type: "Boat club",emoji: "⛴️", tag: "House · Riverside",   vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "arena-club",   name: "Arena Club",          area: "Treptow",        type: "Club",     emoji: "🏟️", tag: "Techno · Large",      vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "festsaal-kx",  name: "Festsaal Kreuzberg",  area: "Kreuzberg",      type: "Live",     emoji: "🎪", tag: "Indie · Concerts",     vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "claerchens",   name: "Clärchens Ballhaus",  area: "Mitte",          type: "Ballroom", emoji: "💃", tag: "Vintage · Dance",      vibe: "chill",   image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=400&h=250&fit=crop" },
+    { id: "golden-gate-b",name: "Golden Gate",         area: "Mitte",          type: "Club",     emoji: "🌉", tag: "Techno · Bunker",      vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
   ],
   munich: [
-    { id: "harry-klein",   name: "Harry Klein",         area: "Innenstadt",     type: "Club",     emoji: "🔊", tag: "Techno · Intimate",    vibe: "party"  },
-    { id: "rote-sonne",    name: "Rote Sonne",          area: "Maximiliansp.",  type: "Club",     emoji: "🔴", tag: "Electronic · Classic", vibe: "party"  },
-    { id: "p1-munich",     name: "P1 Munich",           area: "Maximilianeum",  type: "Club",     emoji: "💎", tag: "Exclusive · Premium",  vibe: "party"  },
-    { id: "muffatwerk",    name: "Muffatwerk",          area: "Haidhausen",     type: "Venue",    emoji: "🏭", tag: "Eclectic · Riverside", vibe: "party"  },
-    { id: "blitz-munich",  name: "Blitz Club",          area: "Innenstadt",     type: "Club",     emoji: "⚡", tag: "Techno · Bunker",     vibe: "party"  },
-    { id: "backstage",     name: "Club Backstage",      area: "Neuhausen",      type: "Club",     emoji: "🎸", tag: "Rock · Live",          vibe: "music"  },
-    { id: "mma-club",      name: "MMA Club",            area: "Innenstadt",     type: "Club",     emoji: "🔥", tag: "Latin · Afrobeats",   vibe: "afro"   },
-    { id: "atomic-cafe",   name: "Atomic Café",         area: "Innenstadt",     type: "Club",     emoji: "🎸", tag: "Indie · Retro",        vibe: "music"  },
-    { id: "neuraum-m",    name: "Neuraum",             area: "Innenstadt",     type: "Club",     emoji: "🔮", tag: "Techno · Electronic",  vibe: "party"  },
-    { id: "milla-m",      name: "Milla",               area: "Maxvorstadt",    type: "Club",     emoji: "🎵", tag: "Indie · Alternative",  vibe: "music"  },
-    { id: "strom-m",      name: "STROM",               area: "Sendling",       type: "Club",     emoji: "⚡", tag: "Electronic · House",   vibe: "party"  },
-    { id: "pacha-m",      name: "Pacha München",       area: "Innenstadt",     type: "Club",     emoji: "🍒", tag: "Commercial · Premium", vibe: "party"  },
-    { id: "sweet-m",      name: "Sweet Club",          area: "Innenstadt",     type: "Club",     emoji: "🍬", tag: "Latin · R&B",          vibe: "latin"  },
-    { id: "nycclub-m",    name: "NY.Club",             area: "Innenstadt",     type: "Club",     emoji: "🗽", tag: "Hip-Hop · Commercial", vibe: "hiphop" },
-    { id: "lanuit-m",     name: "La Nuit",             area: "Schwabing",      type: "Bar",      emoji: "🌙", tag: "Cocktails · Premium",  vibe: "chill"  },
+    { id: "harry-klein",   name: "Harry Klein",         area: "Innenstadt",     type: "Club",     emoji: "🔊", tag: "Techno · Intimate",    vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "rote-sonne",    name: "Rote Sonne",          area: "Maximiliansp.",  type: "Club",     emoji: "🔴", tag: "Electronic · Classic", vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "p1-munich",     name: "P1 Munich",           area: "Maximilianeum",  type: "Club",     emoji: "💎", tag: "Exclusive · Premium",  vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "muffatwerk",    name: "Muffatwerk",          area: "Haidhausen",     type: "Venue",    emoji: "🏭", tag: "Eclectic · Riverside", vibe: "party",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "blitz-munich",  name: "Blitz Club",          area: "Innenstadt",     type: "Club",     emoji: "⚡", tag: "Techno · Bunker",     vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "backstage",     name: "Club Backstage",      area: "Neuhausen",      type: "Club",     emoji: "🎸", tag: "Rock · Live",          vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "mma-club",      name: "MMA Club",            area: "Innenstadt",     type: "Club",     emoji: "🔥", tag: "Latin · Afrobeats",   vibe: "afro",    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop" },
+    { id: "atomic-cafe",   name: "Atomic Café",         area: "Innenstadt",     type: "Club",     emoji: "🎸", tag: "Indie · Retro",        vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "neuraum-m",    name: "Neuraum",             area: "Innenstadt",     type: "Club",     emoji: "🔮", tag: "Techno · Electronic",  vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "milla-m",      name: "Milla",               area: "Maxvorstadt",    type: "Club",     emoji: "🎵", tag: "Indie · Alternative",  vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "strom-m",      name: "STROM",               area: "Sendling",       type: "Club",     emoji: "⚡", tag: "Electronic · House",   vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "pacha-m",      name: "Pacha München",       area: "Innenstadt",     type: "Club",     emoji: "🍒", tag: "Commercial · Premium", vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "sweet-m",      name: "Sweet Club",          area: "Innenstadt",     type: "Club",     emoji: "🍬", tag: "Latin · R&B",          vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "nycclub-m",    name: "NY.Club",             area: "Innenstadt",     type: "Club",     emoji: "🗽", tag: "Hip-Hop · Commercial", vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "lanuit-m",     name: "La Nuit",             area: "Schwabing",      type: "Bar",      emoji: "🌙", tag: "Cocktails · Premium",  vibe: "chill",   image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=250&fit=crop" },
   ],
   cologne: [
-    { id: "bootshaus",     name: "Bootshaus",           area: "Deutz",          type: "Club",     emoji: "⛵", tag: "Techno · World-class", vibe: "party"  },
-    { id: "cbe",           name: "Club Bahnhof Ehrenfeld", area: "Ehrenfeld",   type: "Club",     emoji: "🚂", tag: "Techno · Underground", vibe: "party"  },
-    { id: "yuca-cologne",  name: "Yuca Club",           area: "Ehrenfeld",      type: "Club",     emoji: "🔥", tag: "Latin · 1500 cap",    vibe: "latin"  },
-    { id: "gewoelbe",      name: "Gewölbe",             area: "Kalk",           type: "Club",     emoji: "🔮", tag: "House · Chill door",  vibe: "party"  },
-    { id: "odonien",       name: "Odonien",             area: "Ehrenfeld",      type: "Open Air", emoji: "🌿", tag: "Outdoor · Sculpture", vibe: "outside" },
-    { id: "stadtgarten",   name: "Stadtgarten",         area: "Innenstadt",     type: "Jazz",     emoji: "🎷", tag: "Jazz · World music",  vibe: "music"  },
-    { id: "luxor-cologne", name: "Luxor Cologne",       area: "Ehrenfeld",      type: "Club",     emoji: "🌍", tag: "Afrobeats · Energy",  vibe: "afro"   },
-    { id: "mtc-cologne",  name: "MTC",                 area: "Zülpicher Str.", type: "Club",     emoji: "🎸", tag: "Rock · Alternative",  vibe: "music"  },
-    { id: "das-ding",     name: "Das Ding",            area: "Zülpicher Str.", type: "Club",     emoji: "🎯", tag: "Student · Party",     vibe: "student"},
-    { id: "jaki-cologne", name: "JAKI",                area: "Südstadt",       type: "Jazz club",emoji: "🎷", tag: "Jazz · World",        vibe: "music"  },
-    { id: "halletor2",    name: "Die Halle Tor 2",     area: "Kalk",           type: "Club",     emoji: "🏭", tag: "Techno · Industrial", vibe: "party"  },
-    { id: "helios37",     name: "Helios 37",           area: "Ehrenfeld",      type: "Club",     emoji: "💡", tag: "Electronic · House",  vibe: "party"  },
-    { id: "nachtflug-cg", name: "Nachtflug",           area: "Innenstadt",     type: "Club",     emoji: "✈️", tag: "Party · Commercial",  vibe: "party"  },
-    { id: "trafic-cg",    name: "Trafic",              area: "Südstadt",       type: "Club",     emoji: "🚦", tag: "Hip-Hop · R&B",       vibe: "hiphop" },
-    { id: "niehler",      name: "Niehler Freiheit",    area: "Nippes",         type: "Open Air", emoji: "🌿", tag: "Outdoor · Alternative",vibe:"outside" },
+    { id: "bootshaus",     name: "Bootshaus",           area: "Deutz",          type: "Club",     emoji: "⛵", tag: "Techno · World-class", vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "cbe",           name: "Club Bahnhof Ehrenfeld", area: "Ehrenfeld",   type: "Club",     emoji: "🚂", tag: "Techno · Underground", vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "yuca-cologne",  name: "Yuca Club",           area: "Ehrenfeld",      type: "Club",     emoji: "🔥", tag: "Latin · 1500 cap",    vibe: "latin",   image: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=400&h=250&fit=crop" },
+    { id: "gewoelbe",      name: "Gewölbe",             area: "Kalk",           type: "Club",     emoji: "🔮", tag: "House · Chill door",  vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "odonien",       name: "Odonien",             area: "Ehrenfeld",      type: "Open Air", emoji: "🌿", tag: "Outdoor · Sculpture", vibe: "outside", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
+    { id: "stadtgarten",   name: "Stadtgarten",         area: "Innenstadt",     type: "Jazz",     emoji: "🎷", tag: "Jazz · World music",  vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "luxor-cologne", name: "Luxor Cologne",       area: "Ehrenfeld",      type: "Club",     emoji: "🌍", tag: "Afrobeats · Energy",  vibe: "afro",    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop" },
+    { id: "mtc-cologne",  name: "MTC",                 area: "Zülpicher Str.", type: "Club",     emoji: "🎸", tag: "Rock · Alternative",  vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "das-ding",     name: "Das Ding",            area: "Zülpicher Str.", type: "Club",     emoji: "🎯", tag: "Student · Party",     vibe: "student", image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&h=250&fit=crop" },
+    { id: "jaki-cologne", name: "JAKI",                area: "Südstadt",       type: "Jazz club",emoji: "🎷", tag: "Jazz · World",        vibe: "music",   image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&h=250&fit=crop" },
+    { id: "halletor2",    name: "Die Halle Tor 2",     area: "Kalk",           type: "Club",     emoji: "🏭", tag: "Techno · Industrial", vibe: "party",   image: "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400&h=250&fit=crop" },
+    { id: "helios37",     name: "Helios 37",           area: "Ehrenfeld",      type: "Club",     emoji: "💡", tag: "Electronic · House",  vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "nachtflug-cg", name: "Nachtflug",           area: "Innenstadt",     type: "Club",     emoji: "✈️", tag: "Party · Commercial",  vibe: "party",   image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=250&fit=crop" },
+    { id: "trafic-cg",    name: "Trafic",              area: "Südstadt",       type: "Club",     emoji: "🚦", tag: "Hip-Hop · R&B",       vibe: "hiphop",  image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400&h=250&fit=crop" },
+    { id: "niehler",      name: "Niehler Freiheit",    area: "Nippes",         type: "Open Air", emoji: "🌿", tag: "Outdoor · Alternative",vibe:"outside",  image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=250&fit=crop" },
   ],
 }
 
@@ -793,16 +794,6 @@ function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
             )}
           </div>
 
-          {/* Map embed */}
-          <div className="rounded-xl overflow-hidden border border-white/[0.10]" style={{ height: 160 }}>
-            <iframe
-              title={`Map — ${e.venue}`}
-              src={`https://maps.google.com/maps?q=${mapQuery}&output=embed&z=15`}
-              className="w-full h-full"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
 
           {/* Map / Parking / Action links */}
           <div className="flex flex-wrap gap-2">
@@ -893,6 +884,51 @@ function EventCard({ e, going, onToggle, user, city, followed, onFollow }: {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── Swipe tab (Tinder-style event discovery) ───────────────────────────────
+function SwipeTab({ city }: { city: string }) {
+  const { user } = useAuth()
+  const events = hydrateDates(EVENTS[city] ?? [])
+  const { followed, toggle: toggleFollow } = useFollowedEvents(events)
+
+  const cards = events.map(e => ({
+    id: e.id, title: e.title, venue: e.venue, date: e.date, time: e.time,
+    cat: e.cat, emoji: e.emoji, grad: e.grad, image: e.image, price: e.price,
+    going: e.going, desc: e.desc, hot: e.hot,
+  }))
+
+  function like(card: { id: string; title: string; venue: string; cat?: string; emoji?: string }) {
+    // Swipe right → save (follow) the event unless already saved
+    if (!followed.has(card.id)) toggleFollow(card.id)
+    triggerEventToast({
+      id: card.id,
+      title: card.title,
+      venue: card.venue,
+      city,
+      category: card.cat ?? "Event",
+      emoji: card.emoji ?? "🎉",
+    })
+    // RSVP for signed-in users
+    if (user) {
+      fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: card.id }),
+      }).catch(() => {})
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="mb-1">
+        <p className="text-[10px] text-violet-400 uppercase tracking-[0.2em] font-semibold mb-1">Discover</p>
+        <h2 className="text-xl font-black text-szene tracking-tight">Swipe tonight</h2>
+        <p className="text-xs text-muted mt-1">Swipe right to save · left to skip</p>
+      </div>
+      <SwipeDeck cards={cards} onLike={like} onSkip={() => {}} />
     </div>
   )
 }
@@ -1220,7 +1256,19 @@ function VenuesTab({ city }: { city: string }) {
             ) : (
               <Link key={v.id} href={`/venue/${toSlug(v.name)}`}
                 className="szene-card flex items-center gap-3 p-4 group">
-                <span className="text-2xl flex-shrink-0">{v.emoji}</span>
+                <img
+                  src={v.image}
+                  alt={v.name}
+                  className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
+                  onError={(e) => {
+                    const target = e.currentTarget
+                    target.style.display = "none"
+                    const span = document.createElement("span")
+                    span.className = "text-2xl flex-shrink-0 w-12 h-12 flex items-center justify-center"
+                    span.textContent = v.emoji
+                    target.parentNode?.insertBefore(span, target)
+                  }}
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-szene group-hover:text-violet-400 transition-colors truncate">{v.name}</p>
                   <p className="text-xs text-muted mt-0.5">{v.area}</p>
@@ -2139,14 +2187,15 @@ function ProtocolTab({ city }: { city: string }) {
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: "foryou",    label: "For You",   icon: Sparkles },
+  { id: "swipe",     label: "Swipe",     icon: Flame },
   { id: "events",    label: "Events",    icon: Calendar },
   { id: "tonight",   label: "Tonight",   icon: MapPin },
-  { id: "map",       label: "Map",       icon: Map },
+  { id: "protocol",  label: "Wellness",  icon: Activity },
   { id: "daytime",   label: "Daytime",   icon: Sun },
+  { id: "map",       label: "Map",       icon: Map },
   { id: "plan",      label: "Plan",      icon: ArrowUpRight },
   { id: "venues",    label: "Venues",    icon: Star },
   { id: "friends",   label: "Friends",   icon: Users },
-  { id: "protocol",  label: "Protocol",  icon: Activity },
 ]
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
@@ -2163,6 +2212,15 @@ export function AppShell({
   const switchTab           = setTab ?? _setTab
   const [searchOpen, setSearchOpen] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSearchOpen(true) }
+      if (e.key === "Escape") setSearchOpen(false)
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [])
 
   useEffect(() => {
     if (!localStorage.getItem("szene_onboarded")) {
@@ -2223,8 +2281,10 @@ export function AppShell({
                   </button>
                 ))}
                 <button onClick={() => setSearchOpen(true)}
-                  className="ml-auto flex-shrink-0 w-8 h-8 rounded-xl bg-surface border border-szene flex items-center justify-center text-muted hover:text-szene hover:bg-surface transition-all">
+                  className="ml-auto flex-shrink-0 flex items-center gap-2 px-3 h-8 rounded-xl bg-surface border border-szene text-muted hover:text-szene hover:border-violet-500/40 transition-all text-xs font-medium">
                   <Search className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Search</span>
+                  <span className="hidden sm:inline text-[10px] opacity-50 font-mono">⌘K</span>
                 </button>
               </div>
 
@@ -2275,9 +2335,10 @@ export function AppShell({
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6">
+      {/* Content — pb-28 ensures GuestCTA bar never hides bottom buttons */}
+      <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6 pb-28">
         {activeTab === "foryou"  && <ForYouTab   city={city} />}
+        {activeTab === "swipe"   && <SwipeTab    city={city} />}
         {activeTab === "events"  && <EventsTab   city={city} />}
         {activeTab === "tonight" && <TonightTab  city={city} />}
         {activeTab === "map"     && <MapTab city={city} venues={VENUES_BY_CITY[city] ?? []} />}

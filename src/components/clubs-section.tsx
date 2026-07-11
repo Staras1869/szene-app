@@ -5,6 +5,7 @@ import { Star, MapPin, Clock, Euro, Music, Users, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const clubs = [
   {
@@ -57,6 +58,7 @@ const clubs = [
 export function ClubsSection() {
   const { t } = useLanguage()
   const [hoveredClub, setHoveredClub] = useState<number | null>(null)
+  const router = useRouter()
 
   const handleClubClick = (club: any) => {
     const clubUrl =
@@ -125,7 +127,7 @@ export function ClubsSection() {
 
                 {hoveredClub === club.id && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-6">
-                    <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce">
+                    <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-6 shadow-lg transform translate-y-2 animate-bounce" onClick={() => handleClubClick(club)}>
                       <Users className="w-4 h-4 mr-2" />
                       Get Guest List
                     </Button>
@@ -183,6 +185,7 @@ export function ClubsSection() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full px-8 shadow-lg"
+            onClick={() => router.push('/discover?category=clubs')}
           >
             🌙 Explore All Clubs
           </Button>
